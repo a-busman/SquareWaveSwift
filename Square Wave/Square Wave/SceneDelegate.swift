@@ -8,11 +8,28 @@
 
 import UIKit
 import SwiftUI
+import AVKit
+
+class PlaybackState: ObservableObject {
+    @Published var isNowPlaying = false
+    
+    @Published var currentTitle  = "Not Playing"
+    @Published var currentGame   = ""
+    @Published var currentArtist = ""
+    @Published var currentSystem = ""
+    func updateNowPlaying() {
+        let trackInfo = AudioEngine.sharedInstance()?.getCurrentTrackInfo()
+        self.currentTitle  = trackInfo?.title  ?? ""
+        self.currentGame   = trackInfo?.game   ?? ""
+        self.currentArtist = trackInfo?.artist ?? ""
+        self.currentSystem = trackInfo?.system ?? ""
+    }
+}
 
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
     var window: UIWindow?
-
+    var playbackState = PlaybackState()
 
     func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
         // Use this method to optionally configure and attach the UIWindow `window` to the provided UIWindowScene `scene`.
@@ -24,7 +41,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
         // Create the SwiftUI view and set the context as the value for the managedObjectContext environment keyPath.
         // Add `@Environment(\.managedObjectContext)` in the views that will need the context.
-        let contentView = ContentView().environment(\.managedObjectContext, context)
+        let contentView = LibraryView().environment(\.managedObjectContext, context).environmentObject(playbackState)
 
         // Use a UIHostingController as window root view controller.
         if let windowScene = scene as? UIWindowScene {
@@ -32,6 +49,13 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
             window.rootViewController = UIHostingController(rootView: contentView)
             self.window = window
             window.makeKeyAndVisible()
+        }
+    }
+    
+    func scene(_ scene: UIScene, openURLContexts URLContexts: Set<UIOpenURLContext>) {
+        for urlContext in URLContexts {
+            NSLog("URL: \(urlContext.url.absoluteString)")
+            FileEngine.addFile(urlContext.url)
         }
     }
 
@@ -45,6 +69,12 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     func sceneDidBecomeActive(_ scene: UIScene) {
         // Called when the scene has moved from an inactive state to an active state.
         // Use this method to restart any tasks that were paused (or not yet started) when the scene was inactive.
+        do {
+            try AVAudioSession.sharedInstance().setCategory(.playback, options: .mixWithOthers)
+            try AVAudioSession.sharedInstance().setActive(true)
+        } catch {
+            NSLog("\(error.localizedDescription)")
+        }
     }
 
     func sceneWillResignActive(_ scene: UIScene) {

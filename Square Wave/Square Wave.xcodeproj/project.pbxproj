@@ -3,19 +3,80 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 50;
+	objectVersion = 51;
 	objects = {
 
 /* Begin PBXBuildFile section */
+		480E72E84A0CBAA5AD24BA45 /* Pods_Square_Wave.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DF4AB5F6BE0BBA54DAEDCB14 /* Pods_Square_Wave.framework */; };
+		FA5A25C523F52DE900D4C28A /* test.nsf in Resources */ = {isa = PBXBuildFile; fileRef = FA5A25C423F52DE900D4C28A /* test.nsf */; };
+		FA5A25C923F5BEF400D4C28A /* LibraryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA5A25C823F5BEF400D4C28A /* LibraryView.swift */; };
+		FA5A25CB23F5BF4A00D4C28A /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA5A25CA23F5BF4A00D4C28A /* SettingsView.swift */; };
+		FA5A25CD23F5C6F800D4C28A /* PlaylistsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA5A25CC23F5C6F800D4C28A /* PlaylistsView.swift */; };
+		FA5A25CF23F5C74200D4C28A /* PlatformsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA5A25CE23F5C74200D4C28A /* PlatformsView.swift */; };
+		FA5A25D123F5C75000D4C28A /* GamesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA5A25D023F5C75000D4C28A /* GamesView.swift */; };
+		FA5A25D423F5C76400D4C28A /* SongsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA5A25D323F5C76400D4C28A /* SongsView.swift */; };
+		FA5A25DA23F5E05C00D4C28A /* Square_Wave.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = FA5A25D823F5E05C00D4C28A /* Square_Wave.xcdatamodeld */; };
 		FA822D3623F1F81C005FCFB3 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA822D3523F1F81C005FCFB3 /* AppDelegate.swift */; };
 		FA822D3823F1F81C005FCFB3 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA822D3723F1F81C005FCFB3 /* SceneDelegate.swift */; };
-		FA822D3B23F1F81C005FCFB3 /* Square_Wave.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = FA822D3923F1F81C005FCFB3 /* Square_Wave.xcdatamodeld */; };
-		FA822D3D23F1F81C005FCFB3 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA822D3C23F1F81C005FCFB3 /* ContentView.swift */; };
+		FA822D3D23F1F81C005FCFB3 /* TestPlaybackView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA822D3C23F1F81C005FCFB3 /* TestPlaybackView.swift */; };
 		FA822D3F23F1F81E005FCFB3 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = FA822D3E23F1F81E005FCFB3 /* Assets.xcassets */; };
 		FA822D4223F1F81E005FCFB3 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = FA822D4123F1F81E005FCFB3 /* Preview Assets.xcassets */; };
 		FA822D4523F1F81E005FCFB3 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = FA822D4323F1F81E005FCFB3 /* LaunchScreen.storyboard */; };
 		FA822D5023F1F81E005FCFB3 /* Square_WaveTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA822D4F23F1F81E005FCFB3 /* Square_WaveTests.swift */; };
 		FA822D5B23F1F81E005FCFB3 /* Square_WaveUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA822D5A23F1F81E005FCFB3 /* Square_WaveUITests.swift */; };
+		FAC00F9D23F61F3E0072F78C /* FilePicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAC00F9C23F61F3E0072F78C /* FilePicker.swift */; };
+		FAC00F9F23F718870072F78C /* NowPlayingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAC00F9E23F718870072F78C /* NowPlayingView.swift */; };
+		FAC00FA123F728F00072F78C /* NowPlayingMiniView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAC00FA023F728F00072F78C /* NowPlayingMiniView.swift */; };
+		FAC00FA323F729660072F78C /* BlurView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAC00FA223F729660072F78C /* BlurView.swift */; };
+		FAC0768C23F513D10096B786 /* FileEngine.m in Sources */ = {isa = PBXBuildFile; fileRef = FAC0768923F513D10096B786 /* FileEngine.m */; };
+		FAC0768D23F513D10096B786 /* AudioEngine.m in Sources */ = {isa = PBXBuildFile; fileRef = FAC0768A23F513D10096B786 /* AudioEngine.m */; };
+		FAC076F523F513E30096B786 /* Gbs_Emu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FAC0769123F513E30096B786 /* Gbs_Emu.cpp */; };
+		FAC076F623F513E30096B786 /* Kss_Cpu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FAC0769223F513E30096B786 /* Kss_Cpu.cpp */; };
+		FAC076F723F513E30096B786 /* Sap_Cpu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FAC0769323F513E30096B786 /* Sap_Cpu.cpp */; };
+		FAC076F823F513E30096B786 /* Vgm_Emu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FAC0769523F513E30096B786 /* Vgm_Emu.cpp */; };
+		FAC076F923F513E30096B786 /* Classic_Emu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FAC0769623F513E30096B786 /* Classic_Emu.cpp */; };
+		FAC076FA23F513E30096B786 /* Sap_Apu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FAC0769723F513E30096B786 /* Sap_Apu.cpp */; };
+		FAC076FB23F513E30096B786 /* Nes_Oscs.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FAC0769923F513E30096B786 /* Nes_Oscs.cpp */; };
+		FAC076FC23F513E30096B786 /* M3u_Playlist.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FAC0769B23F513E30096B786 /* M3u_Playlist.cpp */; };
+		FAC076FD23F513E30096B786 /* Snes_Spc.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FAC076A223F513E30096B786 /* Snes_Spc.cpp */; };
+		FAC076FE23F513E30096B786 /* Multi_Buffer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FAC076A323F513E30096B786 /* Multi_Buffer.cpp */; };
+		FAC076FF23F513E30096B786 /* Ay_Emu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FAC076A423F513E30096B786 /* Ay_Emu.cpp */; };
+		FAC0770023F513E30096B786 /* Sms_Apu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FAC076A823F513E30096B786 /* Sms_Apu.cpp */; };
+		FAC0770123F513E30096B786 /* Effects_Buffer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FAC076AB23F513E30096B786 /* Effects_Buffer.cpp */; };
+		FAC0770223F513E30096B786 /* Ym2612_Emu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FAC076AC23F513E30096B786 /* Ym2612_Emu.cpp */; };
+		FAC0770323F513E30096B786 /* gme.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FAC076AD23F513E30096B786 /* gme.cpp */; };
+		FAC0770423F513E30096B786 /* Hes_Apu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FAC076AE23F513E30096B786 /* Hes_Apu.cpp */; };
+		FAC0770523F513E30096B786 /* Nsf_Emu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FAC076B023F513E30096B786 /* Nsf_Emu.cpp */; };
+		FAC0770623F513E30096B786 /* Nes_Fme7_Apu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FAC076B123F513E30096B786 /* Nes_Fme7_Apu.cpp */; };
+		FAC0770723F513E30096B786 /* Hes_Cpu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FAC076B223F513E30096B786 /* Hes_Cpu.cpp */; };
+		FAC0770823F513E30096B786 /* Gb_Oscs.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FAC076B323F513E30096B786 /* Gb_Oscs.cpp */; };
+		FAC0770923F513E30096B786 /* Spc_Cpu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FAC076B423F513E30096B786 /* Spc_Cpu.cpp */; };
+		FAC0770A23F513E30096B786 /* Fir_Resampler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FAC076B623F513E30096B786 /* Fir_Resampler.cpp */; };
+		FAC0770B23F513E30096B786 /* Dual_Resampler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FAC076B823F513E30096B786 /* Dual_Resampler.cpp */; };
+		FAC0770C23F513E30096B786 /* Kss_Scc_Apu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FAC076B923F513E30096B786 /* Kss_Scc_Apu.cpp */; };
+		FAC0770D23F513E30096B786 /* Nes_Apu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FAC076BC23F513E30096B786 /* Nes_Apu.cpp */; };
+		FAC0770E23F513E30096B786 /* Gb_Cpu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FAC076BD23F513E30096B786 /* Gb_Cpu.cpp */; };
+		FAC0770F23F513E30096B786 /* Blip_Buffer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FAC076BE23F513E30096B786 /* Blip_Buffer.cpp */; };
+		FAC0771023F513E30096B786 /* Nes_Cpu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FAC076C023F513E30096B786 /* Nes_Cpu.cpp */; };
+		FAC0771123F513E30096B786 /* Gb_Apu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FAC076C123F513E30096B786 /* Gb_Apu.cpp */; };
+		FAC0771223F513E30096B786 /* Vgm_Emu_Impl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FAC076C223F513E30096B786 /* Vgm_Emu_Impl.cpp */; };
+		FAC0771323F513E30096B786 /* Spc_Filter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FAC076C423F513E30096B786 /* Spc_Filter.cpp */; };
+		FAC0771423F513E30096B786 /* Data_Reader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FAC076C723F513E30096B786 /* Data_Reader.cpp */; };
+		FAC0771523F513E30096B786 /* Ay_Cpu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FAC076C923F513E30096B786 /* Ay_Cpu.cpp */; };
+		FAC0771623F513E30096B786 /* Nes_Vrc6_Apu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FAC076CA23F513E30096B786 /* Nes_Vrc6_Apu.cpp */; };
+		FAC0771723F513E30096B786 /* Gym_Emu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FAC076CC23F513E30096B786 /* Gym_Emu.cpp */; };
+		FAC0771823F513E30096B786 /* Ay_Apu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FAC076CD23F513E30096B786 /* Ay_Apu.cpp */; };
+		FAC0771923F513E30096B786 /* Nes_Namco_Apu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FAC076CF23F513E30096B786 /* Nes_Namco_Apu.cpp */; };
+		FAC0771A23F513E30096B786 /* Sap_Emu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FAC076D123F513E30096B786 /* Sap_Emu.cpp */; };
+		FAC0771B23F513E30096B786 /* Kss_Emu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FAC076D223F513E30096B786 /* Kss_Emu.cpp */; };
+		FAC0771C23F513E30096B786 /* Gme_File.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FAC076DA23F513E30096B786 /* Gme_File.cpp */; };
+		FAC0771D23F513E30096B786 /* Music_Emu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FAC076DD23F513E30096B786 /* Music_Emu.cpp */; };
+		FAC0771E23F513E30096B786 /* Spc_Dsp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FAC076EC23F513E30096B786 /* Spc_Dsp.cpp */; };
+		FAC0771F23F513E30096B786 /* Nsfe_Emu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FAC076EF23F513E30096B786 /* Nsfe_Emu.cpp */; };
+		FAC0772023F513E30096B786 /* Ym2413_Emu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FAC076F123F513E30096B786 /* Ym2413_Emu.cpp */; };
+		FAC0772123F513E30096B786 /* Spc_Emu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FAC076F323F513E30096B786 /* Spc_Emu.cpp */; };
+		FAC0772223F513E30096B786 /* Hes_Emu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FAC076F423F513E30096B786 /* Hes_Emu.cpp */; };
+		FAC0772423F5142F0096B786 /* Podfile in Resources */ = {isa = PBXBuildFile; fileRef = FAC0772323F5142F0096B786 /* Podfile */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -36,11 +97,22 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		9C6E19E4B9251F53C80CCB17 /* Pods-Square Wave.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Square Wave.debug.xcconfig"; path = "Target Support Files/Pods-Square Wave/Pods-Square Wave.debug.xcconfig"; sourceTree = "<group>"; };
+		D421A424018349B9CFDDCF29 /* Pods-Square Wave.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Square Wave.release.xcconfig"; path = "Target Support Files/Pods-Square Wave/Pods-Square Wave.release.xcconfig"; sourceTree = "<group>"; };
+		DF4AB5F6BE0BBA54DAEDCB14 /* Pods_Square_Wave.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Square_Wave.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		FA5A25C423F52DE900D4C28A /* test.nsf */ = {isa = PBXFileReference; lastKnownFileType = file; path = test.nsf; sourceTree = "<group>"; };
+		FA5A25C823F5BEF400D4C28A /* LibraryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LibraryView.swift; sourceTree = "<group>"; };
+		FA5A25CA23F5BF4A00D4C28A /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
+		FA5A25CC23F5C6F800D4C28A /* PlaylistsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaylistsView.swift; sourceTree = "<group>"; };
+		FA5A25CE23F5C74200D4C28A /* PlatformsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlatformsView.swift; sourceTree = "<group>"; };
+		FA5A25D023F5C75000D4C28A /* GamesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GamesView.swift; sourceTree = "<group>"; };
+		FA5A25D323F5C76400D4C28A /* SongsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SongsView.swift; sourceTree = "<group>"; };
+		FA5A25D923F5E05C00D4C28A /* Model.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = Model.xcdatamodel; sourceTree = "<group>"; };
+		FA5A25DB23F6157000D4C28A /* Square Wave.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "Square Wave.entitlements"; sourceTree = "<group>"; };
 		FA822D3223F1F81C005FCFB3 /* Square Wave.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Square Wave.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		FA822D3523F1F81C005FCFB3 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		FA822D3723F1F81C005FCFB3 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
-		FA822D3A23F1F81C005FCFB3 /* Square_Wave.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = Square_Wave.xcdatamodel; sourceTree = "<group>"; };
-		FA822D3C23F1F81C005FCFB3 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		FA822D3C23F1F81C005FCFB3 /* TestPlaybackView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestPlaybackView.swift; sourceTree = "<group>"; };
 		FA822D3E23F1F81E005FCFB3 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		FA822D4123F1F81E005FCFB3 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		FA822D4423F1F81E005FCFB3 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
@@ -51,6 +123,118 @@
 		FA822D5623F1F81E005FCFB3 /* Square WaveUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Square WaveUITests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		FA822D5A23F1F81E005FCFB3 /* Square_WaveUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Square_WaveUITests.swift; sourceTree = "<group>"; };
 		FA822D5C23F1F81E005FCFB3 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		FAC00F9C23F61F3E0072F78C /* FilePicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FilePicker.swift; sourceTree = "<group>"; };
+		FAC00F9E23F718870072F78C /* NowPlayingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NowPlayingView.swift; sourceTree = "<group>"; };
+		FAC00FA023F728F00072F78C /* NowPlayingMiniView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NowPlayingMiniView.swift; sourceTree = "<group>"; };
+		FAC00FA223F729660072F78C /* BlurView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlurView.swift; sourceTree = "<group>"; };
+		FAC0768723F513D10096B786 /* Square Wave-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Square Wave-Bridging-Header.h"; sourceTree = "<group>"; };
+		FAC0768823F513D10096B786 /* AudioEngine.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AudioEngine.h; sourceTree = "<group>"; };
+		FAC0768923F513D10096B786 /* FileEngine.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FileEngine.m; sourceTree = "<group>"; };
+		FAC0768A23F513D10096B786 /* AudioEngine.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AudioEngine.m; sourceTree = "<group>"; };
+		FAC0768B23F513D10096B786 /* FileEngine.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FileEngine.h; sourceTree = "<group>"; };
+		FAC0768F23F513E30096B786 /* Nes_Apu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Nes_Apu.h; sourceTree = "<group>"; };
+		FAC0769023F513E30096B786 /* Sap_Apu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Sap_Apu.h; sourceTree = "<group>"; };
+		FAC0769123F513E30096B786 /* Gbs_Emu.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Gbs_Emu.cpp; sourceTree = "<group>"; };
+		FAC0769223F513E30096B786 /* Kss_Cpu.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Kss_Cpu.cpp; sourceTree = "<group>"; };
+		FAC0769323F513E30096B786 /* Sap_Cpu.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Sap_Cpu.cpp; sourceTree = "<group>"; };
+		FAC0769423F513E30096B786 /* Gym_Emu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Gym_Emu.h; sourceTree = "<group>"; };
+		FAC0769523F513E30096B786 /* Vgm_Emu.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Vgm_Emu.cpp; sourceTree = "<group>"; };
+		FAC0769623F513E30096B786 /* Classic_Emu.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Classic_Emu.cpp; sourceTree = "<group>"; };
+		FAC0769723F513E30096B786 /* Sap_Apu.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Sap_Apu.cpp; sourceTree = "<group>"; };
+		FAC0769823F513E30096B786 /* Sap_Emu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Sap_Emu.h; sourceTree = "<group>"; };
+		FAC0769923F513E30096B786 /* Nes_Oscs.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Nes_Oscs.cpp; sourceTree = "<group>"; };
+		FAC0769A23F513E30096B786 /* Sap_Cpu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Sap_Cpu.h; sourceTree = "<group>"; };
+		FAC0769B23F513E30096B786 /* M3u_Playlist.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = M3u_Playlist.cpp; sourceTree = "<group>"; };
+		FAC0769C23F513E30096B786 /* gme.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = gme.h; sourceTree = "<group>"; };
+		FAC0769D23F513E30096B786 /* Data_Reader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Data_Reader.h; sourceTree = "<group>"; };
+		FAC0769E23F513E30096B786 /* Nes_Cpu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Nes_Cpu.h; sourceTree = "<group>"; };
+		FAC0769F23F513E30096B786 /* blargg_common.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = blargg_common.h; sourceTree = "<group>"; };
+		FAC076A023F513E30096B786 /* Spc_Cpu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Spc_Cpu.h; sourceTree = "<group>"; };
+		FAC076A123F513E30096B786 /* nes_cpu_io.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = nes_cpu_io.h; sourceTree = "<group>"; };
+		FAC076A223F513E30096B786 /* Snes_Spc.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Snes_Spc.cpp; sourceTree = "<group>"; };
+		FAC076A323F513E30096B786 /* Multi_Buffer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Multi_Buffer.cpp; sourceTree = "<group>"; };
+		FAC076A423F513E30096B786 /* Ay_Emu.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Ay_Emu.cpp; sourceTree = "<group>"; };
+		FAC076A523F513E30096B786 /* Spc_Emu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Spc_Emu.h; sourceTree = "<group>"; };
+		FAC076A623F513E30096B786 /* Dual_Resampler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Dual_Resampler.h; sourceTree = "<group>"; };
+		FAC076A723F513E30096B786 /* Spc_Filter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Spc_Filter.h; sourceTree = "<group>"; };
+		FAC076A823F513E30096B786 /* Sms_Apu.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Sms_Apu.cpp; sourceTree = "<group>"; };
+		FAC076A923F513E30096B786 /* Vgm_Emu_Impl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Vgm_Emu_Impl.h; sourceTree = "<group>"; };
+		FAC076AA23F513E30096B786 /* Spc_Dsp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Spc_Dsp.h; sourceTree = "<group>"; };
+		FAC076AB23F513E30096B786 /* Effects_Buffer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Effects_Buffer.cpp; sourceTree = "<group>"; };
+		FAC076AC23F513E30096B786 /* Ym2612_Emu.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Ym2612_Emu.cpp; sourceTree = "<group>"; };
+		FAC076AD23F513E30096B786 /* gme.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = gme.cpp; sourceTree = "<group>"; };
+		FAC076AE23F513E30096B786 /* Hes_Apu.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Hes_Apu.cpp; sourceTree = "<group>"; };
+		FAC076AF23F513E30096B786 /* Sms_Apu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Sms_Apu.h; sourceTree = "<group>"; };
+		FAC076B023F513E30096B786 /* Nsf_Emu.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Nsf_Emu.cpp; sourceTree = "<group>"; };
+		FAC076B123F513E30096B786 /* Nes_Fme7_Apu.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Nes_Fme7_Apu.cpp; sourceTree = "<group>"; };
+		FAC076B223F513E30096B786 /* Hes_Cpu.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Hes_Cpu.cpp; sourceTree = "<group>"; };
+		FAC076B323F513E30096B786 /* Gb_Oscs.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Gb_Oscs.cpp; sourceTree = "<group>"; };
+		FAC076B423F513E30096B786 /* Spc_Cpu.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Spc_Cpu.cpp; sourceTree = "<group>"; };
+		FAC076B523F513E30096B786 /* Nes_Vrc6_Apu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Nes_Vrc6_Apu.h; sourceTree = "<group>"; };
+		FAC076B623F513E30096B786 /* Fir_Resampler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Fir_Resampler.cpp; sourceTree = "<group>"; };
+		FAC076B723F513E30096B786 /* gb_cpu_io.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = gb_cpu_io.h; sourceTree = "<group>"; };
+		FAC076B823F513E30096B786 /* Dual_Resampler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Dual_Resampler.cpp; sourceTree = "<group>"; };
+		FAC076B923F513E30096B786 /* Kss_Scc_Apu.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Kss_Scc_Apu.cpp; sourceTree = "<group>"; };
+		FAC076BA23F513E30096B786 /* M3u_Playlist.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = M3u_Playlist.h; sourceTree = "<group>"; };
+		FAC076BB23F513E30096B786 /* Kss_Scc_Apu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Kss_Scc_Apu.h; sourceTree = "<group>"; };
+		FAC076BC23F513E30096B786 /* Nes_Apu.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Nes_Apu.cpp; sourceTree = "<group>"; };
+		FAC076BD23F513E30096B786 /* Gb_Cpu.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Gb_Cpu.cpp; sourceTree = "<group>"; };
+		FAC076BE23F513E30096B786 /* Blip_Buffer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Blip_Buffer.cpp; sourceTree = "<group>"; };
+		FAC076BF23F513E30096B786 /* Multi_Buffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Multi_Buffer.h; sourceTree = "<group>"; };
+		FAC076C023F513E30096B786 /* Nes_Cpu.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Nes_Cpu.cpp; sourceTree = "<group>"; };
+		FAC076C123F513E30096B786 /* Gb_Apu.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Gb_Apu.cpp; sourceTree = "<group>"; };
+		FAC076C223F513E30096B786 /* Vgm_Emu_Impl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Vgm_Emu_Impl.cpp; sourceTree = "<group>"; };
+		FAC076C323F513E30096B786 /* Nsfe_Emu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Nsfe_Emu.h; sourceTree = "<group>"; };
+		FAC076C423F513E30096B786 /* Spc_Filter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Spc_Filter.cpp; sourceTree = "<group>"; };
+		FAC076C523F513E30096B786 /* Classic_Emu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Classic_Emu.h; sourceTree = "<group>"; };
+		FAC076C623F513E30096B786 /* Nes_Oscs.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Nes_Oscs.h; sourceTree = "<group>"; };
+		FAC076C723F513E30096B786 /* Data_Reader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Data_Reader.cpp; sourceTree = "<group>"; };
+		FAC076C823F513E30096B786 /* blargg_config.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = blargg_config.h; sourceTree = "<group>"; };
+		FAC076C923F513E30096B786 /* Ay_Cpu.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Ay_Cpu.cpp; sourceTree = "<group>"; };
+		FAC076CA23F513E30096B786 /* Nes_Vrc6_Apu.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Nes_Vrc6_Apu.cpp; sourceTree = "<group>"; };
+		FAC076CB23F513E30096B786 /* Vgm_Emu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Vgm_Emu.h; sourceTree = "<group>"; };
+		FAC076CC23F513E30096B786 /* Gym_Emu.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Gym_Emu.cpp; sourceTree = "<group>"; };
+		FAC076CD23F513E30096B786 /* Ay_Apu.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Ay_Apu.cpp; sourceTree = "<group>"; };
+		FAC076CE23F513E30096B786 /* Effects_Buffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Effects_Buffer.h; sourceTree = "<group>"; };
+		FAC076CF23F513E30096B786 /* Nes_Namco_Apu.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Nes_Namco_Apu.cpp; sourceTree = "<group>"; };
+		FAC076D023F513E30096B786 /* Gb_Oscs.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Gb_Oscs.h; sourceTree = "<group>"; };
+		FAC076D123F513E30096B786 /* Sap_Emu.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Sap_Emu.cpp; sourceTree = "<group>"; };
+		FAC076D223F513E30096B786 /* Kss_Emu.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Kss_Emu.cpp; sourceTree = "<group>"; };
+		FAC076D323F513E30096B786 /* Gb_Cpu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Gb_Cpu.h; sourceTree = "<group>"; };
+		FAC076D423F513E30096B786 /* Hes_Apu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Hes_Apu.h; sourceTree = "<group>"; };
+		FAC076D523F513E30096B786 /* Music_Emu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Music_Emu.h; sourceTree = "<group>"; };
+		FAC076D623F513E30096B786 /* Hes_Cpu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Hes_Cpu.h; sourceTree = "<group>"; };
+		FAC076D723F513E30096B786 /* Gb_Apu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Gb_Apu.h; sourceTree = "<group>"; };
+		FAC076D823F513E30096B786 /* Nes_Namco_Apu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Nes_Namco_Apu.h; sourceTree = "<group>"; };
+		FAC076D923F513E30096B786 /* Hes_Emu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Hes_Emu.h; sourceTree = "<group>"; };
+		FAC076DA23F513E30096B786 /* Gme_File.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Gme_File.cpp; sourceTree = "<group>"; };
+		FAC076DB23F513E30096B786 /* Snes_Spc.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Snes_Spc.h; sourceTree = "<group>"; };
+		FAC076DC23F513E30096B786 /* Gbs_Emu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Gbs_Emu.h; sourceTree = "<group>"; };
+		FAC076DD23F513E30096B786 /* Music_Emu.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Music_Emu.cpp; sourceTree = "<group>"; };
+		FAC076DE23F513E30096B786 /* Nsf_Emu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Nsf_Emu.h; sourceTree = "<group>"; };
+		FAC076DF23F513E30096B786 /* Sms_Oscs.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Sms_Oscs.h; sourceTree = "<group>"; };
+		FAC076E023F513E30096B786 /* sap_cpu_io.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = sap_cpu_io.h; sourceTree = "<group>"; };
+		FAC076E123F513E30096B786 /* Ym2413_Emu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Ym2413_Emu.h; sourceTree = "<group>"; };
+		FAC076E223F513E30096B786 /* Kss_Emu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Kss_Emu.h; sourceTree = "<group>"; };
+		FAC076E323F513E30096B786 /* Fir_Resampler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Fir_Resampler.h; sourceTree = "<group>"; };
+		FAC076E423F513E30096B786 /* Nes_Fme7_Apu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Nes_Fme7_Apu.h; sourceTree = "<group>"; };
+		FAC076E523F513E30096B786 /* gme_types.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = gme_types.h; sourceTree = "<group>"; };
+		FAC076E623F513E30096B786 /* Blip_Buffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Blip_Buffer.h; sourceTree = "<group>"; };
+		FAC076E723F513E30096B786 /* Kss_Cpu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Kss_Cpu.h; sourceTree = "<group>"; };
+		FAC076E823F513E30096B786 /* Gme_File.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Gme_File.h; sourceTree = "<group>"; };
+		FAC076E923F513E30096B786 /* Ym2612_Emu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Ym2612_Emu.h; sourceTree = "<group>"; };
+		FAC076EA23F513E30096B786 /* Ay_Apu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Ay_Apu.h; sourceTree = "<group>"; };
+		FAC076EB23F513E30096B786 /* blargg_source.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = blargg_source.h; sourceTree = "<group>"; };
+		FAC076EC23F513E30096B786 /* Spc_Dsp.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Spc_Dsp.cpp; sourceTree = "<group>"; };
+		FAC076ED23F513E30096B786 /* blargg_endian.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = blargg_endian.h; sourceTree = "<group>"; };
+		FAC076EE23F513E30096B786 /* Ay_Cpu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Ay_Cpu.h; sourceTree = "<group>"; };
+		FAC076EF23F513E30096B786 /* Nsfe_Emu.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Nsfe_Emu.cpp; sourceTree = "<group>"; };
+		FAC076F023F513E30096B786 /* Ay_Emu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Ay_Emu.h; sourceTree = "<group>"; };
+		FAC076F123F513E30096B786 /* Ym2413_Emu.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Ym2413_Emu.cpp; sourceTree = "<group>"; };
+		FAC076F223F513E30096B786 /* hes_cpu_io.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = hes_cpu_io.h; sourceTree = "<group>"; };
+		FAC076F323F513E30096B786 /* Spc_Emu.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Spc_Emu.cpp; sourceTree = "<group>"; };
+		FAC076F423F513E30096B786 /* Hes_Emu.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Hes_Emu.cpp; sourceTree = "<group>"; };
+		FAC0772323F5142F0096B786 /* Podfile */ = {isa = PBXFileReference; lastKnownFileType = text; path = Podfile; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -58,6 +242,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				480E72E84A0CBAA5AD24BA45 /* Pods_Square_Wave.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -78,13 +263,33 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		7C4BEDAAD9AF5E2C2797924A /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				DF4AB5F6BE0BBA54DAEDCB14 /* Pods_Square_Wave.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		CB09196A770D105C1805E32B /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				9C6E19E4B9251F53C80CCB17 /* Pods-Square Wave.debug.xcconfig */,
+				D421A424018349B9CFDDCF29 /* Pods-Square Wave.release.xcconfig */,
+			);
+			path = Pods;
+			sourceTree = "<group>";
+		};
 		FA822D2923F1F81C005FCFB3 = {
 			isa = PBXGroup;
 			children = (
+				FAC0772323F5142F0096B786 /* Podfile */,
 				FA822D3423F1F81C005FCFB3 /* Square Wave */,
 				FA822D4E23F1F81E005FCFB3 /* Square WaveTests */,
 				FA822D5923F1F81E005FCFB3 /* Square WaveUITests */,
 				FA822D3323F1F81C005FCFB3 /* Products */,
+				CB09196A770D105C1805E32B /* Pods */,
+				7C4BEDAAD9AF5E2C2797924A /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -101,14 +306,27 @@
 		FA822D3423F1F81C005FCFB3 /* Square Wave */ = {
 			isa = PBXGroup;
 			children = (
+				FA5A25DB23F6157000D4C28A /* Square Wave.entitlements */,
+				FAC0768623F513920096B786 /* Engine */,
 				FA822D3523F1F81C005FCFB3 /* AppDelegate.swift */,
+				FA5A25C423F52DE900D4C28A /* test.nsf */,
 				FA822D3723F1F81C005FCFB3 /* SceneDelegate.swift */,
-				FA822D3C23F1F81C005FCFB3 /* ContentView.swift */,
+				FA822D3C23F1F81C005FCFB3 /* TestPlaybackView.swift */,
 				FA822D3E23F1F81E005FCFB3 /* Assets.xcassets */,
 				FA822D4323F1F81E005FCFB3 /* LaunchScreen.storyboard */,
+				FA5A25D823F5E05C00D4C28A /* Square_Wave.xcdatamodeld */,
 				FA822D4623F1F81E005FCFB3 /* Info.plist */,
-				FA822D3923F1F81C005FCFB3 /* Square_Wave.xcdatamodeld */,
 				FA822D4023F1F81E005FCFB3 /* Preview Content */,
+				FA5A25C823F5BEF400D4C28A /* LibraryView.swift */,
+				FAC00FA223F729660072F78C /* BlurView.swift */,
+				FA5A25CA23F5BF4A00D4C28A /* SettingsView.swift */,
+				FA5A25CC23F5C6F800D4C28A /* PlaylistsView.swift */,
+				FAC00FA023F728F00072F78C /* NowPlayingMiniView.swift */,
+				FA5A25CE23F5C74200D4C28A /* PlatformsView.swift */,
+				FA5A25D023F5C75000D4C28A /* GamesView.swift */,
+				FA5A25D323F5C76400D4C28A /* SongsView.swift */,
+				FAC00F9C23F61F3E0072F78C /* FilePicker.swift */,
+				FAC00F9E23F718870072F78C /* NowPlayingView.swift */,
 			);
 			path = "Square Wave";
 			sourceTree = "<group>";
@@ -139,6 +357,128 @@
 			path = "Square WaveUITests";
 			sourceTree = "<group>";
 		};
+		FAC0768623F513920096B786 /* Engine */ = {
+			isa = PBXGroup;
+			children = (
+				FAC0768E23F513E30096B786 /* gme */,
+				FAC0768823F513D10096B786 /* AudioEngine.h */,
+				FAC0768A23F513D10096B786 /* AudioEngine.m */,
+				FAC0768B23F513D10096B786 /* FileEngine.h */,
+				FAC0768923F513D10096B786 /* FileEngine.m */,
+				FAC0768723F513D10096B786 /* Square Wave-Bridging-Header.h */,
+			);
+			path = Engine;
+			sourceTree = "<group>";
+		};
+		FAC0768E23F513E30096B786 /* gme */ = {
+			isa = PBXGroup;
+			children = (
+				FAC0768F23F513E30096B786 /* Nes_Apu.h */,
+				FAC0769023F513E30096B786 /* Sap_Apu.h */,
+				FAC0769123F513E30096B786 /* Gbs_Emu.cpp */,
+				FAC0769223F513E30096B786 /* Kss_Cpu.cpp */,
+				FAC0769323F513E30096B786 /* Sap_Cpu.cpp */,
+				FAC0769423F513E30096B786 /* Gym_Emu.h */,
+				FAC0769523F513E30096B786 /* Vgm_Emu.cpp */,
+				FAC0769623F513E30096B786 /* Classic_Emu.cpp */,
+				FAC0769723F513E30096B786 /* Sap_Apu.cpp */,
+				FAC0769823F513E30096B786 /* Sap_Emu.h */,
+				FAC0769923F513E30096B786 /* Nes_Oscs.cpp */,
+				FAC0769A23F513E30096B786 /* Sap_Cpu.h */,
+				FAC0769B23F513E30096B786 /* M3u_Playlist.cpp */,
+				FAC0769C23F513E30096B786 /* gme.h */,
+				FAC0769D23F513E30096B786 /* Data_Reader.h */,
+				FAC0769E23F513E30096B786 /* Nes_Cpu.h */,
+				FAC0769F23F513E30096B786 /* blargg_common.h */,
+				FAC076A023F513E30096B786 /* Spc_Cpu.h */,
+				FAC076A123F513E30096B786 /* nes_cpu_io.h */,
+				FAC076A223F513E30096B786 /* Snes_Spc.cpp */,
+				FAC076A323F513E30096B786 /* Multi_Buffer.cpp */,
+				FAC076A423F513E30096B786 /* Ay_Emu.cpp */,
+				FAC076A523F513E30096B786 /* Spc_Emu.h */,
+				FAC076A623F513E30096B786 /* Dual_Resampler.h */,
+				FAC076A723F513E30096B786 /* Spc_Filter.h */,
+				FAC076A823F513E30096B786 /* Sms_Apu.cpp */,
+				FAC076A923F513E30096B786 /* Vgm_Emu_Impl.h */,
+				FAC076AA23F513E30096B786 /* Spc_Dsp.h */,
+				FAC076AB23F513E30096B786 /* Effects_Buffer.cpp */,
+				FAC076AC23F513E30096B786 /* Ym2612_Emu.cpp */,
+				FAC076AD23F513E30096B786 /* gme.cpp */,
+				FAC076AE23F513E30096B786 /* Hes_Apu.cpp */,
+				FAC076AF23F513E30096B786 /* Sms_Apu.h */,
+				FAC076B023F513E30096B786 /* Nsf_Emu.cpp */,
+				FAC076B123F513E30096B786 /* Nes_Fme7_Apu.cpp */,
+				FAC076B223F513E30096B786 /* Hes_Cpu.cpp */,
+				FAC076B323F513E30096B786 /* Gb_Oscs.cpp */,
+				FAC076B423F513E30096B786 /* Spc_Cpu.cpp */,
+				FAC076B523F513E30096B786 /* Nes_Vrc6_Apu.h */,
+				FAC076B623F513E30096B786 /* Fir_Resampler.cpp */,
+				FAC076B723F513E30096B786 /* gb_cpu_io.h */,
+				FAC076B823F513E30096B786 /* Dual_Resampler.cpp */,
+				FAC076B923F513E30096B786 /* Kss_Scc_Apu.cpp */,
+				FAC076BA23F513E30096B786 /* M3u_Playlist.h */,
+				FAC076BB23F513E30096B786 /* Kss_Scc_Apu.h */,
+				FAC076BC23F513E30096B786 /* Nes_Apu.cpp */,
+				FAC076BD23F513E30096B786 /* Gb_Cpu.cpp */,
+				FAC076BE23F513E30096B786 /* Blip_Buffer.cpp */,
+				FAC076BF23F513E30096B786 /* Multi_Buffer.h */,
+				FAC076C023F513E30096B786 /* Nes_Cpu.cpp */,
+				FAC076C123F513E30096B786 /* Gb_Apu.cpp */,
+				FAC076C223F513E30096B786 /* Vgm_Emu_Impl.cpp */,
+				FAC076C323F513E30096B786 /* Nsfe_Emu.h */,
+				FAC076C423F513E30096B786 /* Spc_Filter.cpp */,
+				FAC076C523F513E30096B786 /* Classic_Emu.h */,
+				FAC076C623F513E30096B786 /* Nes_Oscs.h */,
+				FAC076C723F513E30096B786 /* Data_Reader.cpp */,
+				FAC076C823F513E30096B786 /* blargg_config.h */,
+				FAC076C923F513E30096B786 /* Ay_Cpu.cpp */,
+				FAC076CA23F513E30096B786 /* Nes_Vrc6_Apu.cpp */,
+				FAC076CB23F513E30096B786 /* Vgm_Emu.h */,
+				FAC076CC23F513E30096B786 /* Gym_Emu.cpp */,
+				FAC076CD23F513E30096B786 /* Ay_Apu.cpp */,
+				FAC076CE23F513E30096B786 /* Effects_Buffer.h */,
+				FAC076CF23F513E30096B786 /* Nes_Namco_Apu.cpp */,
+				FAC076D023F513E30096B786 /* Gb_Oscs.h */,
+				FAC076D123F513E30096B786 /* Sap_Emu.cpp */,
+				FAC076D223F513E30096B786 /* Kss_Emu.cpp */,
+				FAC076D323F513E30096B786 /* Gb_Cpu.h */,
+				FAC076D423F513E30096B786 /* Hes_Apu.h */,
+				FAC076D523F513E30096B786 /* Music_Emu.h */,
+				FAC076D623F513E30096B786 /* Hes_Cpu.h */,
+				FAC076D723F513E30096B786 /* Gb_Apu.h */,
+				FAC076D823F513E30096B786 /* Nes_Namco_Apu.h */,
+				FAC076D923F513E30096B786 /* Hes_Emu.h */,
+				FAC076DA23F513E30096B786 /* Gme_File.cpp */,
+				FAC076DB23F513E30096B786 /* Snes_Spc.h */,
+				FAC076DC23F513E30096B786 /* Gbs_Emu.h */,
+				FAC076DD23F513E30096B786 /* Music_Emu.cpp */,
+				FAC076DE23F513E30096B786 /* Nsf_Emu.h */,
+				FAC076DF23F513E30096B786 /* Sms_Oscs.h */,
+				FAC076E023F513E30096B786 /* sap_cpu_io.h */,
+				FAC076E123F513E30096B786 /* Ym2413_Emu.h */,
+				FAC076E223F513E30096B786 /* Kss_Emu.h */,
+				FAC076E323F513E30096B786 /* Fir_Resampler.h */,
+				FAC076E423F513E30096B786 /* Nes_Fme7_Apu.h */,
+				FAC076E523F513E30096B786 /* gme_types.h */,
+				FAC076E623F513E30096B786 /* Blip_Buffer.h */,
+				FAC076E723F513E30096B786 /* Kss_Cpu.h */,
+				FAC076E823F513E30096B786 /* Gme_File.h */,
+				FAC076E923F513E30096B786 /* Ym2612_Emu.h */,
+				FAC076EA23F513E30096B786 /* Ay_Apu.h */,
+				FAC076EB23F513E30096B786 /* blargg_source.h */,
+				FAC076EC23F513E30096B786 /* Spc_Dsp.cpp */,
+				FAC076ED23F513E30096B786 /* blargg_endian.h */,
+				FAC076EE23F513E30096B786 /* Ay_Cpu.h */,
+				FAC076EF23F513E30096B786 /* Nsfe_Emu.cpp */,
+				FAC076F023F513E30096B786 /* Ay_Emu.h */,
+				FAC076F123F513E30096B786 /* Ym2413_Emu.cpp */,
+				FAC076F223F513E30096B786 /* hes_cpu_io.h */,
+				FAC076F323F513E30096B786 /* Spc_Emu.cpp */,
+				FAC076F423F513E30096B786 /* Hes_Emu.cpp */,
+			);
+			path = gme;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -146,9 +486,11 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = FA822D5F23F1F81E005FCFB3 /* Build configuration list for PBXNativeTarget "Square Wave" */;
 			buildPhases = (
+				5224BAB81D889C8E9893D7E9 /* [CP] Check Pods Manifest.lock */,
 				FA822D2E23F1F81C005FCFB3 /* Sources */,
 				FA822D2F23F1F81C005FCFB3 /* Frameworks */,
 				FA822D3023F1F81C005FCFB3 /* Resources */,
+				9E9B8F1180431C7CB14314B8 /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -207,6 +549,7 @@
 				TargetAttributes = {
 					FA822D3123F1F81C005FCFB3 = {
 						CreatedOnToolsVersion = 11.3;
+						LastSwiftMigration = 1130;
 					};
 					FA822D4A23F1F81E005FCFB3 = {
 						CreatedOnToolsVersion = 11.3;
@@ -245,6 +588,8 @@
 			files = (
 				FA822D4523F1F81E005FCFB3 /* LaunchScreen.storyboard in Resources */,
 				FA822D4223F1F81E005FCFB3 /* Preview Assets.xcassets in Resources */,
+				FAC0772423F5142F0096B786 /* Podfile in Resources */,
+				FA5A25C523F52DE900D4C28A /* test.nsf in Resources */,
 				FA822D3F23F1F81E005FCFB3 /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -265,15 +610,115 @@
 		};
 /* End PBXResourcesBuildPhase section */
 
+/* Begin PBXShellScriptBuildPhase section */
+		5224BAB81D889C8E9893D7E9 /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-Square Wave-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+		9E9B8F1180431C7CB14314B8 /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-Square Wave/Pods-Square Wave-frameworks-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-Square Wave/Pods-Square Wave-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-Square Wave/Pods-Square Wave-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+/* End PBXShellScriptBuildPhase section */
+
 /* Begin PBXSourcesBuildPhase section */
 		FA822D2E23F1F81C005FCFB3 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				FAC076F723F513E30096B786 /* Sap_Cpu.cpp in Sources */,
+				FAC0768D23F513D10096B786 /* AudioEngine.m in Sources */,
+				FAC0770623F513E30096B786 /* Nes_Fme7_Apu.cpp in Sources */,
+				FAC0771923F513E30096B786 /* Nes_Namco_Apu.cpp in Sources */,
+				FA5A25D423F5C76400D4C28A /* SongsView.swift in Sources */,
+				FA5A25C923F5BEF400D4C28A /* LibraryView.swift in Sources */,
+				FAC076F823F513E30096B786 /* Vgm_Emu.cpp in Sources */,
+				FAC0771623F513E30096B786 /* Nes_Vrc6_Apu.cpp in Sources */,
+				FAC0770C23F513E30096B786 /* Kss_Scc_Apu.cpp in Sources */,
 				FA822D3623F1F81C005FCFB3 /* AppDelegate.swift in Sources */,
-				FA822D3B23F1F81C005FCFB3 /* Square_Wave.xcdatamodeld in Sources */,
-				FA822D3D23F1F81C005FCFB3 /* ContentView.swift in Sources */,
+				FA5A25CB23F5BF4A00D4C28A /* SettingsView.swift in Sources */,
+				FAC0771E23F513E30096B786 /* Spc_Dsp.cpp in Sources */,
+				FAC00FA123F728F00072F78C /* NowPlayingMiniView.swift in Sources */,
+				FAC0770D23F513E30096B786 /* Nes_Apu.cpp in Sources */,
+				FAC0768C23F513D10096B786 /* FileEngine.m in Sources */,
+				FAC076FE23F513E30096B786 /* Multi_Buffer.cpp in Sources */,
+				FAC0770F23F513E30096B786 /* Blip_Buffer.cpp in Sources */,
+				FAC0770323F513E30096B786 /* gme.cpp in Sources */,
+				FAC0771C23F513E30096B786 /* Gme_File.cpp in Sources */,
+				FAC0771023F513E30096B786 /* Nes_Cpu.cpp in Sources */,
+				FAC076FD23F513E30096B786 /* Snes_Spc.cpp in Sources */,
+				FAC0771723F513E30096B786 /* Gym_Emu.cpp in Sources */,
+				FAC0770E23F513E30096B786 /* Gb_Cpu.cpp in Sources */,
+				FA5A25D123F5C75000D4C28A /* GamesView.swift in Sources */,
+				FAC0771423F513E30096B786 /* Data_Reader.cpp in Sources */,
+				FAC0771A23F513E30096B786 /* Sap_Emu.cpp in Sources */,
+				FAC076FF23F513E30096B786 /* Ay_Emu.cpp in Sources */,
+				FAC0770823F513E30096B786 /* Gb_Oscs.cpp in Sources */,
+				FAC0772023F513E30096B786 /* Ym2413_Emu.cpp in Sources */,
+				FAC076FC23F513E30096B786 /* M3u_Playlist.cpp in Sources */,
+				FAC0770723F513E30096B786 /* Hes_Cpu.cpp in Sources */,
+				FAC076F923F513E30096B786 /* Classic_Emu.cpp in Sources */,
+				FAC0770123F513E30096B786 /* Effects_Buffer.cpp in Sources */,
+				FAC0771823F513E30096B786 /* Ay_Apu.cpp in Sources */,
+				FAC0771123F513E30096B786 /* Gb_Apu.cpp in Sources */,
+				FAC0770423F513E30096B786 /* Hes_Apu.cpp in Sources */,
+				FAC0770923F513E30096B786 /* Spc_Cpu.cpp in Sources */,
+				FAC076FB23F513E30096B786 /* Nes_Oscs.cpp in Sources */,
+				FAC0771B23F513E30096B786 /* Kss_Emu.cpp in Sources */,
+				FAC0771F23F513E30096B786 /* Nsfe_Emu.cpp in Sources */,
+				FA5A25CD23F5C6F800D4C28A /* PlaylistsView.swift in Sources */,
+				FAC076F623F513E30096B786 /* Kss_Cpu.cpp in Sources */,
+				FA5A25DA23F5E05C00D4C28A /* Square_Wave.xcdatamodeld in Sources */,
+				FAC0771523F513E30096B786 /* Ay_Cpu.cpp in Sources */,
+				FAC0772123F513E30096B786 /* Spc_Emu.cpp in Sources */,
+				FAC0771323F513E30096B786 /* Spc_Filter.cpp in Sources */,
+				FAC0771223F513E30096B786 /* Vgm_Emu_Impl.cpp in Sources */,
+				FAC00FA323F729660072F78C /* BlurView.swift in Sources */,
+				FAC0770523F513E30096B786 /* Nsf_Emu.cpp in Sources */,
+				FA5A25CF23F5C74200D4C28A /* PlatformsView.swift in Sources */,
+				FAC0770A23F513E30096B786 /* Fir_Resampler.cpp in Sources */,
+				FAC0770223F513E30096B786 /* Ym2612_Emu.cpp in Sources */,
+				FA822D3D23F1F81C005FCFB3 /* TestPlaybackView.swift in Sources */,
+				FAC0770B23F513E30096B786 /* Dual_Resampler.cpp in Sources */,
+				FAC0772223F513E30096B786 /* Hes_Emu.cpp in Sources */,
+				FAC0770023F513E30096B786 /* Sms_Apu.cpp in Sources */,
+				FAC00F9F23F718870072F78C /* NowPlayingView.swift in Sources */,
+				FAC0771D23F513E30096B786 /* Music_Emu.cpp in Sources */,
+				FAC076FA23F513E30096B786 /* Sap_Apu.cpp in Sources */,
+				FAC00F9D23F61F3E0072F78C /* FilePicker.swift in Sources */,
 				FA822D3823F1F81C005FCFB3 /* SceneDelegate.swift in Sources */,
+				FAC076F523F513E30096B786 /* Gbs_Emu.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -436,10 +881,15 @@
 		};
 		FA822D6023F1F81E005FCFB3 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 9C6E19E4B9251F53C80CCB17 /* Pods-Square Wave.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_ENTITLEMENTS = "Square Wave/Square Wave.entitlements";
 				CODE_SIGN_STYLE = Automatic;
+				DEFINES_MODULE = YES;
 				DEVELOPMENT_ASSET_PATHS = "\"Square Wave/Preview Content\"";
+				DEVELOPMENT_TEAM = D9J98STRHA;
 				ENABLE_PREVIEWS = YES;
 				INFOPLIST_FILE = "Square Wave/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -448,17 +898,24 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "com.abusman.Square-Wave";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = "Square Wave/Engine/Square Wave-Bridging-Header.h";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Debug;
 		};
 		FA822D6123F1F81E005FCFB3 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = D421A424018349B9CFDDCF29 /* Pods-Square Wave.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_ENTITLEMENTS = "Square Wave/Square Wave.entitlements";
 				CODE_SIGN_STYLE = Automatic;
+				DEFINES_MODULE = YES;
 				DEVELOPMENT_ASSET_PATHS = "\"Square Wave/Preview Content\"";
+				DEVELOPMENT_TEAM = D9J98STRHA;
 				ENABLE_PREVIEWS = YES;
 				INFOPLIST_FILE = "Square Wave/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -467,8 +924,9 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "com.abusman.Square-Wave";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = "Square Wave/Engine/Square Wave-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Release;
 		};
@@ -594,12 +1052,12 @@
 /* End XCConfigurationList section */
 
 /* Begin XCVersionGroup section */
-		FA822D3923F1F81C005FCFB3 /* Square_Wave.xcdatamodeld */ = {
+		FA5A25D823F5E05C00D4C28A /* Square_Wave.xcdatamodeld */ = {
 			isa = XCVersionGroup;
 			children = (
-				FA822D3A23F1F81C005FCFB3 /* Square_Wave.xcdatamodel */,
+				FA5A25D923F5E05C00D4C28A /* Model.xcdatamodel */,
 			);
-			currentVersion = FA822D3A23F1F81C005FCFB3 /* Square_Wave.xcdatamodel */;
+			currentVersion = FA5A25D923F5E05C00D4C28A /* Model.xcdatamodel */;
 			path = Square_Wave.xcdatamodeld;
 			sourceTree = "<group>";
 			versionGroupType = wrapper.xcdatamodel;
