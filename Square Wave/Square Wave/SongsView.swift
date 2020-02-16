@@ -12,7 +12,7 @@ struct SongsView: View {
     @EnvironmentObject var playbackState: PlaybackState
     @FetchRequest(entity: Track.entity(), sortDescriptors: []) var tracks: FetchedResults<Track>
     @State private var sortSheetShowing = false
-    @State private var animationSettings = AnimationSettings(tracks: [])
+    @State private var animationSettings: [Track : AnimationSettings] = [:]
     
     private func shouldDisplayAnimation(_ track: Track) -> Bool {
         let shouldAnimate = (track == self.playbackState.nowPlayingTrack)
@@ -24,16 +24,23 @@ struct SongsView: View {
     }
     
     private func getSettings(for track: Track) -> AnimationSettings {
+        guard let settings = self.animationSettings[track] else { return AnimationSettings() }
         if shouldDisplayAnimation(track) {
             if shouldAnimate(track) {
-                animationSettings.startAnimating(track)
+                settings.startAnimating()
             } else {
-                animationSettings.pauseAnimating(track)
+                settings.pauseAnimating()
             }
         } else {
-            animationSettings.hideAnimation(track)
+            settings.hideAnimation()
         }
-        return self.animationSettings
+        return settings
+    }
+    
+    private func updateSettings() {
+        for track in tracks {
+            self.animationSettings[track] = AnimationSettings()
+        }
     }
     
     var body: some View {
@@ -48,8 +55,8 @@ struct SongsView: View {
                     }) {
                         HStack
                         {
-                            ListArtView(track: track)
-                                .frame(width: 30.0, height: 30.0).environmentObject(self.getSettings(for: track))
+                            ListArtView(animationSettings: self.getSettings(for: track))
+                                .frame(width: 34.0, height: 34.0)
                             VStack(alignment: .leading) {
                                 Text("\(self.tracks[self.tracks.firstIndex(of: track) ?? 0].name ?? "")")
                                 Text("\(self.tracks[self.tracks.firstIndex(of: track) ?? 0].game?.name ?? "")")
@@ -78,7 +85,7 @@ struct SongsView: View {
             .cancel()
         ])
         }.onAppear(perform: {
-            self.animationSettings.updateTracks(Array(self.tracks))
+            self.updateSettings()
             })
     }
 }

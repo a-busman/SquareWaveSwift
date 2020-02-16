@@ -19,7 +19,6 @@ class AnimatedUIView: UIView {
             if newValue {
                 generateShapes(withAnimation: true)
             } else {
-                self.generateShapes(withAnimation: false)
                 self.firstBar?.removeAllAnimations()
                 self.secondBar?.removeAllAnimations()
                 self.thirdBar?.removeAllAnimations()
@@ -65,17 +64,17 @@ class AnimatedUIView: UIView {
         let path3 = UIBezierPath()
         let path4 = UIBezierPath()
                 
-        path1.move(to: CGPoint(x: 6.0, y: 22.0))
-        path1.addLine(to: CGPoint(x: 6.0, y: 8.0))
+        path1.move(to: CGPoint(x: 6.8, y: 26.0))
+        path1.addLine(to: CGPoint(x: 6.8, y: 8.0))
         
-        path2.move(to: CGPoint(x: 12.0, y: 22.0))
-        path2.addLine(to: CGPoint(x: 12.0, y: 8.0))
+        path2.move(to: CGPoint(x: 13.6, y: 26.0))
+        path2.addLine(to: CGPoint(x: 13.6, y: 8.0))
         
-        path3.move(to: CGPoint(x: 18.0, y: 22.0))
-        path3.addLine(to: CGPoint(x: 18.0, y: 8.0))
+        path3.move(to: CGPoint(x: 20.4, y: 26.0))
+        path3.addLine(to: CGPoint(x: 20.4, y: 8.0))
         
-        path4.move(to: CGPoint(x: 24.0, y: 22.0))
-        path4.addLine(to: CGPoint(x: 24.0, y: 8.0))
+        path4.move(to: CGPoint(x: 27.2, y: 26.0))
+        path4.addLine(to: CGPoint(x: 27.2, y: 8.0))
         
         self.firstBar = CAShapeLayer()
         self.firstBar?.fillColor = UIColor.white.cgColor
@@ -146,45 +145,23 @@ class AnimatedUIView: UIView {
     }
 }
 
-struct AnimationSetting: Identifiable {
-    var id: Int
-    
-    var isAnimated = false
-    var isDisplayed = false
-    
-    init(id: Int, isAnimated: Bool, isDisplayed: Bool) {
-        self.id = id
-        self.isAnimated = isAnimated
-        self.isDisplayed = isDisplayed
-    }
-}
-
 class AnimationSettings: ObservableObject {
-    @Published var animationSettings: [Track : AnimationSetting] = [:]
+    @Published var isAnimated:  Bool = false
+    @Published var isDisplayed: Bool = false
     
-    init(tracks: [Track]) {
-        self.updateTracks(tracks)
+    func startAnimating() {
+        self.isAnimated  = true
+        self.isDisplayed = true
     }
     
-    func updateTracks(_ tracks: [Track]) {
-        for (i, track) in tracks.enumerated() {
-            animationSettings[track] = AnimationSetting(id: i, isAnimated: false, isDisplayed: false)
-        }
+    func pauseAnimating() {
+        self.isDisplayed = true
+        self.isAnimated  = false
     }
     
-    func startAnimating(_ track: Track) {
-        animationSettings[track]?.isAnimated = true
-        animationSettings[track]?.isDisplayed = true
-    }
-    
-    func pauseAnimating(_ track: Track) {
-        animationSettings[track]?.isDisplayed = true
-        animationSettings[track]?.isAnimated  = false
-    }
-    
-    func hideAnimation(_ track: Track) {
-        animationSettings[track]?.isDisplayed = false
-        animationSettings[track]?.isAnimated  = false
+    func hideAnimation() {
+        self.isDisplayed = false
+        self.isAnimated  = false
     }
 }
 
@@ -201,8 +178,7 @@ struct AnimatedView: UIViewRepresentable {
 }
 
 struct ListArtView: View {
-    var track: Track
-    @EnvironmentObject var animationSettings: AnimationSettings
+    @ObservedObject var animationSettings: AnimationSettings
     @State var isAnimated: Bool = false
     
     var body: some View {
@@ -212,7 +188,7 @@ struct ListArtView: View {
                     .resizable()
                     .aspectRatio(contentMode: .fit)
                     .foregroundColor(.red)
-                if (self.animationSettings.animationSettings[self.track]?.isDisplayed ?? false) {
+                if (self.animationSettings.isDisplayed) {
                     Rectangle()
                         .foregroundColor(.black)
                         .opacity(0.6)
@@ -222,15 +198,13 @@ struct ListArtView: View {
                 }
             }
         }.onReceive(animationSettings.objectWillChange, perform: { _ in
-            if let setting = self.animationSettings.animationSettings[self.track] {
-                self.isAnimated = setting.isAnimated
-            }
+            self.isAnimated = self.animationSettings.isAnimated
         })
     }
 }
 
 struct ListArtView_Previews: PreviewProvider {
     static var previews: some View {
-        ListArtView(track: Track()).environmentObject(AnimationSettings(tracks: []))
+        ListArtView(animationSettings: AnimationSettings())
     }
 }
