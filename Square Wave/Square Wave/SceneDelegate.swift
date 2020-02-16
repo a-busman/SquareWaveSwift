@@ -10,22 +10,6 @@ import UIKit
 import SwiftUI
 import AVKit
 
-class PlaybackState: ObservableObject {
-    @Published var isNowPlaying = false
-    
-    @Published var currentTitle  = "Not Playing"
-    @Published var currentGame   = ""
-    @Published var currentArtist = ""
-    @Published var currentSystem = ""
-    func updateNowPlaying() {
-        let trackInfo = AudioEngine.sharedInstance()?.getCurrentTrackInfo()
-        self.currentTitle  = trackInfo?.title  ?? ""
-        self.currentGame   = trackInfo?.game   ?? ""
-        self.currentArtist = trackInfo?.artist ?? ""
-        self.currentSystem = trackInfo?.system ?? ""
-    }
-}
-
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
     var window: UIWindow?
@@ -71,7 +55,6 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         // Use this method to restart any tasks that were paused (or not yet started) when the scene was inactive.
         do {
             try AVAudioSession.sharedInstance().setCategory(.playback, options: .mixWithOthers)
-            try AVAudioSession.sharedInstance().setActive(true)
         } catch {
             NSLog("\(error.localizedDescription)")
         }

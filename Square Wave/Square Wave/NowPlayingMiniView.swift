@@ -24,22 +24,19 @@ struct NowPlayingMiniView: View {
                     .frame(height: 50.0)
                     .padding()
                 VStack(alignment: .leading) {
-                    Text(self.playbackState.currentTitle)
+                    Text(self.playbackState.nowPlayingTrack?.name ?? "Not Playing")
                         .foregroundColor(Color(.label))
-                    if self.playbackState.currentGame.count > 0 {
-                        Text(self.playbackState.currentGame)
+                    if (self.playbackState.nowPlayingTrack?.game?.name?.count ?? 0) > 0 {
+                        Text(self.playbackState.nowPlayingTrack?.game?.name ?? "")
                             .foregroundColor(Color(.secondaryLabel))
                     }
                 }
                 Spacer()
                 Button(action: {
                     if !self.playbackState.isNowPlaying {
-                        AudioEngine.sharedInstance()?.play()
-                        self.playbackState.isNowPlaying = true
-                        self.playbackState.updateNowPlaying()
+                        self.playbackState.play()
                     } else {
-                        AudioEngine.sharedInstance()?.pause()
-                        self.playbackState.isNowPlaying = false
+                        self.playbackState.pause()
                     }
                 }) {
                     Image(systemName: playbackState.isNowPlaying ? "pause.fill" : "play.fill")
@@ -48,8 +45,7 @@ struct NowPlayingMiniView: View {
                         .frame(height: 25.0)
                 }.foregroundColor(Color(.label))
                 Button(action: {
-                    AudioEngine.sharedInstance()?.nextTrack()
-                    self.playbackState.updateNowPlaying()
+                    self.playbackState.nextTrack()
                 }) {
                     Image(systemName: "forward.fill")
                     .resizable()

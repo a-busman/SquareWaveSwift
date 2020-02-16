@@ -37,6 +37,7 @@
 - (void)nextTrack;
 - (void)prevTrack;
 - (TrackInfo *)getCurrentTrackInfo;
+- (int)getElapsedTime;
 
 @end
 #endif /* AudioEngine_h */

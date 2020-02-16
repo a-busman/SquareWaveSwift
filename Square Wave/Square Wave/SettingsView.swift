@@ -17,7 +17,7 @@ struct SettingsView: View {
                     FileEngine.clearAll()
                 }) {
                     Text("Delete All")
-                }
+                }.foregroundColor(.red)
             }.navigationBarTitle("Settings", displayMode: .inline)
                 .navigationBarItems(trailing: Button(action: {
                     self.presentationMode.wrappedValue.dismiss()

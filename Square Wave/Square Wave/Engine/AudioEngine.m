@@ -9,7 +9,6 @@
 #import "gme/gme.h"
 #import <AudioToolbox/AudioToolbox.h>
 #import <AVFoundation/AVFoundation.h>
-#import "Square_Wave-Swift.h"
 
 #import "AudioEngine.h"
 
@@ -102,8 +101,8 @@ const int kBufferCount = 3;
 
 - (void)pause {
     AudioQueuePause(_mAudioQueue);
-    //AVAudioSession *session = AVAudioSession.sharedInstance;
-    //[session setActive:false error:NULL];
+    AVAudioSession *session = AVAudioSession.sharedInstance;
+    [session setActive:false error:NULL];
     _mIsPaused = YES;
 }
 
@@ -111,8 +110,8 @@ const int kBufferCount = 3;
     _mIsPlaying = NO;
     _mIsPaused = NO;
     AudioQueueStop(_mAudioQueue, YES);
-    //AVAudioSession *session = AVAudioSession.sharedInstance;
-    //[session setActive:false error:NULL];
+    AVAudioSession *session = AVAudioSession.sharedInstance;
+    [session setActive:false error:NULL];
 
 }
 
@@ -160,6 +159,13 @@ const int kBufferCount = 3;
     
     gme_free_info(info);
     return ret;
+}
+
+- (int)getElapsedTime {
+    if (_mEmu != NULL) {
+        return gme_tell(_mEmu);
+    }
+    return -1;
 }
 
 - (void)startAudioQueue {
