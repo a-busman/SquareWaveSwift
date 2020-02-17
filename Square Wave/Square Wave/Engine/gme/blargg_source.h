@@ -16,8 +16,14 @@ all other #include lines. */
 // module. A failed requirement indicates a bug outside the module.
 // void require( bool expr );
 #undef require
-#define require( expr ) assert( expr )
 
+#if DEBUG_BLARGG
+#define require( expr ) assert( expr )
+#else
+#define require( expr ) ( expr )
+#undef assert
+#define assert( expr ) ( expr )
+#endif
 // Use to provide hints to compiler for optimized code layout in situations where we
 // can almost always expect a conditional to go one way or the other.  Should only be
 // used in situations where an unexpected branch is truly exceptional though!

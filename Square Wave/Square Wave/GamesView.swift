@@ -9,8 +9,35 @@
 import SwiftUI
 
 struct GamesView: View {
+    @FetchRequest(entity: Game.entity(), sortDescriptors: []) var games: FetchedResults<Game>
+
     var body: some View {
-        Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
+        List {
+            Section(footer: Text("Total Games: \(games.count)")
+                .foregroundColor(Color(.tertiaryLabel))) {
+                if games.count > 0 {
+                    ForEach(games, id: \.self) { (game: Game) in
+                        NavigationLink(destination: SongsView(title: game.name ?? "Songs", predicate: NSPredicate(format: "game.id == %@", game.id! as CVarArg))) {
+                            VStack(alignment: .leading) {
+                                Text("\(game.name ?? "")")
+                                if game.system != nil {
+                                    Text("\(game.system?.name ?? "")")
+                                        .foregroundColor(Color(.secondaryLabel))
+                                        .font(.subheadline)
+                                }
+                            }
+                            
+                        }
+                    }
+                } else {
+                    Text("Add games to your Library")
+                }
+            }
+            Section(footer: Rectangle().foregroundColor(.clear)
+                .background(Color(.systemBackground))) {
+                    EmptyView()
+            }.padding(.horizontal, -15)
+        }.navigationBarTitle(Text("Games"))
     }
 }
 

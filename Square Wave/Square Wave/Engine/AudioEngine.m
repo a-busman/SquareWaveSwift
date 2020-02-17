@@ -41,6 +41,10 @@
 
 @implementation AudioEngine
 
+#define CHECK_EMU_AND_RETURN() \
+if (!_mEmu) { \
+return; \
+}
 const int kSampleRate = 44100;
 const int kBufferSize = 8000;
 const int kBufferCount = 3;
@@ -77,6 +81,7 @@ const int kBufferCount = 3;
 }
 
 - (void)setTrack:(int)track {
+    CHECK_EMU_AND_RETURN();
     _mTrack = track;
     int count = gme_track_count(_mEmu);
     if (_mTrack > count - 1) {
@@ -86,6 +91,7 @@ const int kBufferCount = 3;
 }
 
 - (void)play {
+    CHECK_EMU_AND_RETURN();
     if (!_mFileName) {
         NSLog(@"No file name to play");
         return;
@@ -116,6 +122,7 @@ const int kBufferCount = 3;
 }
 
 - (void)nextTrack {
+    CHECK_EMU_AND_RETURN();
     int count = gme_track_count(_mEmu);
     _mTrack++;
     if (_mTrack > count - 1) {
@@ -125,6 +132,7 @@ const int kBufferCount = 3;
 }
 
 - (void)prevTrack {
+    CHECK_EMU_AND_RETURN();
     _mTrack--;
     if (_mTrack < 0) {
         _mTrack++;
@@ -133,11 +141,40 @@ const int kBufferCount = 3;
 }
 
 - (void)setMuteVoices:(int)mask {
+    CHECK_EMU_AND_RETURN();
     _mVoiceMask = mask;
     gme_mute_voices(_mEmu, mask);
 }
 
+- (BOOL)getTrackEnded {
+    if (_mEmu) {
+        return gme_track_ended(_mEmu);
+    }
+    return true;
+}
+
+- (void)fadeOutCurrentTrack {
+    CHECK_EMU_AND_RETURN();
+    gme_info_t *info = NULL;
+    gme_track_info(_mEmu, &info, _mTrack);
+    gme_set_fade(_mEmu, info->play_length);
+    gme_free_info(info);
+}
+
+- (void)setFadeTime:(int)msec {
+    CHECK_EMU_AND_RETURN();
+    gme_set_fade(_mEmu, msec);
+}
+
+- (void)resetFadeTime {
+    CHECK_EMU_AND_RETURN();
+    gme_reset_fade(_mEmu);
+}
+
 - (TrackInfo *)getCurrentTrackInfo {
+    if (!_mEmu) {
+        return NULL;
+    }
     TrackInfo *ret = [[TrackInfo alloc] init];
     gme_info_t *info = NULL;
     
@@ -162,13 +199,14 @@ const int kBufferCount = 3;
 }
 
 - (int)getElapsedTime {
-    if (_mEmu != NULL) {
+    if (_mEmu) {
         return gme_tell(_mEmu);
     }
     return -1;
 }
 
 - (void)startAudioQueue {
+    CHECK_EMU_AND_RETURN();
     if (_mIsPlaying == NO) {
         OSStatus err;
         AudioQueueReset(_mAudioQueue);

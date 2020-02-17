@@ -14,6 +14,7 @@ struct LibraryView: View {
     @State private var showingSettings = false
     @State private var inputFiles: [URL]? 
     @State private var fromFolder = false
+    @State private var nowPlayingShowing = false
     @EnvironmentObject var playbackState: PlaybackState
     private let position: CGFloat = 75.0
     var body: some View {
@@ -30,7 +31,7 @@ struct LibraryView: View {
                         NavigationLink(destination: GamesView()) {
                             Text("Games")
                         }
-                        NavigationLink(destination: SongsView()) {
+                        NavigationLink(destination: SongsView(predicate: nil)) {
                             Text("Songs")
                         }
                         
@@ -70,9 +71,11 @@ struct LibraryView: View {
                         )
                 }
 
-                NowPlayingMiniView()
+                NowPlayingMiniView(nowPlayingTapped: self.$nowPlayingShowing)
                     .frame(width: geometry.size.width, height: self.position + (UIScreen.main.bounds.height - geometry.size.height))
                     .offset(y:geometry.size.height - self.position)
+            }.sheet(isPresented: self.$nowPlayingShowing) {
+                NowPlayingView()
             }
         }
     }

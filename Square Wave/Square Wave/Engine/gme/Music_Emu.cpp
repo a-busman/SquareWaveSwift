@@ -42,6 +42,12 @@ void Music_Emu::clear_track_vars()
 	warning(); // clear warning
 }
 
+void Music_Emu::reset_fade()
+{
+    fade_start = INT_MAX / 2 + 1;
+    fade_step  = 1;
+}
+
 void Music_Emu::unload()
 {
 	voice_count_ = 0;

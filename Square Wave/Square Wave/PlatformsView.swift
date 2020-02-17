@@ -16,8 +16,10 @@ struct PlatformsView: View {
             Section(footer: Text("Total Platforms: \(platforms.count)")
                 .foregroundColor(Color(.tertiaryLabel))) {
                 if platforms.count > 0 {
-                    ForEach(platforms, id: \.id) { platform in
-                        Text("\(platform.name ?? "")")
+                    ForEach(platforms, id: \.self) { (platform: System) in
+                        NavigationLink(destination: SongsView(title: platform.name ?? "Songs", predicate: NSPredicate(format: "system.id == %@", platform.id! as CVarArg))) {
+                            Text("\(platform.name ?? "")")
+                        }
                     }
                 } else {
                     Text("Add games to your Library")

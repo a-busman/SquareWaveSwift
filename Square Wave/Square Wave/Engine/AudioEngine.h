@@ -38,6 +38,10 @@
 - (void)prevTrack;
 - (TrackInfo *)getCurrentTrackInfo;
 - (int)getElapsedTime;
+- (BOOL)getTrackEnded;
+- (void)fadeOutCurrentTrack;
+- (void)setFadeTime:(int)msec;
+- (void)resetFadeTime;
 
 @end
 #endif /* AudioEngine_h */

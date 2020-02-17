@@ -9,6 +9,7 @@
 import SwiftUI
 
 struct NowPlayingMiniView: View {
+    @Binding var nowPlayingTapped: Bool
     @State var playButtonImage = "play.fill"
     @EnvironmentObject var playbackState: PlaybackState
 
@@ -54,13 +55,15 @@ struct NowPlayingMiniView: View {
                     .padding()
                 }.foregroundColor(Color(.label))
             }
+        }.onTapGesture {
+            self.nowPlayingTapped = true
         }
     }
 }
 
 struct NowPlayingMiniView_Previews: PreviewProvider {
     static var previews: some View {
-        NowPlayingMiniView()
+        NowPlayingMiniView(nowPlayingTapped: .constant(false))
             .frame(width: UIScreen.main.bounds.width, height: 75.0)
     }
 }

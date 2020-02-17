@@ -10,9 +10,18 @@ import SwiftUI
 
 struct SongsView: View {
     @EnvironmentObject var playbackState: PlaybackState
-    @FetchRequest(entity: Track.entity(), sortDescriptors: []) var tracks: FetchedResults<Track>
+    var predicate: NSPredicate?
+    var tracksRequest : FetchRequest<Track>
+    var tracks: FetchedResults<Track>{tracksRequest.wrappedValue}
+    var title: String
     @State private var sortSheetShowing = false
     @State private var animationSettings: [Track : AnimationSettings] = [:]
+    
+    init(title: String = "Songs", predicate: NSPredicate?) {
+        self.predicate = predicate
+        self.tracksRequest = FetchRequest(entity: Track.entity(), sortDescriptors: [], predicate: predicate)
+        self.title = title
+    }
     
     private func shouldDisplayAnimation(_ track: Track) -> Bool {
         let shouldAnimate = (track == self.playbackState.nowPlayingTrack)
@@ -70,7 +79,7 @@ struct SongsView: View {
                 Text("Add games to your Library")
             }
             
-        }.navigationBarTitle(Text("Songs"), displayMode: .inline)
+        }.navigationBarTitle(Text(self.title), displayMode: .inline)
             .padding(EdgeInsets(top: 0.0, leading: 0.0, bottom: 75.0, trailing: 0.0))
             .navigationBarItems(trailing: Button(action: {
                 self.sortSheetShowing = true
@@ -93,6 +102,6 @@ struct SongsView: View {
 struct SongsView_Previews: PreviewProvider {
     static let playbackState = PlaybackState()
     static var previews: some View {
-        SongsView()
+        SongsView(predicate: nil)
     }
 }

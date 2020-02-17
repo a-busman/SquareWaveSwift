@@ -41,6 +41,9 @@ void gme_delete( Music_Emu* );
 Fade time can be changed while track is playing. */
 void gme_set_fade( Music_Emu*, int start_msec );
 
+/* Remove track fade */
+void gme_reset_fade( Music_Emu* );
+    
 /* True if a track has reached its end */
 int gme_track_ended( Music_Emu const* );
 

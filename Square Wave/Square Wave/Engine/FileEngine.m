@@ -355,6 +355,7 @@ typedef enum {
         NSString *artistName = strlen(gameInfo->author) > 0 ? [NSString stringWithUTF8String:gameInfo->author] : @"No Artist";
         NSString *gameName   = strlen(gameInfo->game)   > 0 ? [NSString stringWithUTF8String:gameInfo->game]   : @"No Game";
         NSString *systemName = strlen(gameInfo->system) > 0 ? [NSString stringWithUTF8String:gameInfo->system] : @"No System";
+        int trackLength = gameInfo->play_length;
         
         NSPredicate *predicate = [NSPredicate predicateWithFormat:@"name == %@ AND artist.name == %@ AND game.name == %@ AND system.name == %@", trackName, artistName, gameName, systemName];
         [request setPredicate:predicate];
@@ -375,6 +376,7 @@ typedef enum {
         [trackMO setFavourite:NO];
         [trackMO setTrackNum:i];
         [trackMO setUrl:relativePath];
+        [trackMO setLength:trackLength];
         
         // Look up other attributes, if they don't exist, create them.
         
@@ -390,19 +392,6 @@ typedef enum {
         
         [trackMO setArtist:artistMO];
         
-        objects = [FileEngine getObjectsByName:gameName entity:@"Game"];
-        
-        if (objects != nil && [objects count] > 0) {
-            gameMO = (Game *)[objects firstObject];
-        } else {
-            gameMO = [[Game alloc] initWithContext:objectContext];
-            [gameMO setId:[NSUUID UUID]];
-            [gameMO setName:gameName];
-            [gameMO setYear:strlen(gameInfo->copyright) > 0 ? [NSString stringWithUTF8String:gameInfo->copyright] : [NSString stringWithFormat:@"No Year"]];
-        }
-        
-        [trackMO setGame:gameMO];
-        
         objects = [FileEngine getObjectsByName:[NSString stringWithUTF8String:gameInfo->system] entity:@"System"];
         
         if (objects != nil && [objects count] > 0) {
@@ -414,6 +403,20 @@ typedef enum {
         }
         
         [trackMO setSystem:systemMO];
+        
+        objects = [FileEngine getObjectsByName:gameName entity:@"Game"];
+        
+        if (objects != nil && [objects count] > 0) {
+            gameMO = (Game *)[objects firstObject];
+        } else {
+            gameMO = [[Game alloc] initWithContext:objectContext];
+            [gameMO setId:[NSUUID UUID]];
+            [gameMO setName:gameName];
+            [gameMO setYear:strlen(gameInfo->copyright) > 0 ? [NSString stringWithUTF8String:gameInfo->copyright] : [NSString stringWithFormat:@"No Year"]];
+            [gameMO setSystem:systemMO];
+        }
+        
+        [trackMO setGame:gameMO];
 
         [delegate saveContext];
     }

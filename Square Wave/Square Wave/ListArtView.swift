@@ -44,6 +44,21 @@ class AnimatedUIView: UIView {
     var thirdBase:  CAShapeLayer?
     var fourthBase: CAShapeLayer?
     
+    init() {
+        super.init(frame: .zero)
+        self.generateShapes(withAnimation: false)
+    }
+    
+    init(isAnimated: Bool) {
+        super.init(frame: .zero)
+        self.generateShapes(withAnimation: isAnimated)
+    }
+    
+    required init?(coder: NSCoder) {
+        super.init(coder: coder)
+        self.generateShapes(withAnimation: false)
+    }
+    
     func generateShapes(withAnimation animation: Bool) {
         let rand1: CGFloat = CGFloat(drand48())
         let rand2: CGFloat = CGFloat(drand48())
@@ -167,9 +182,9 @@ class AnimationSettings: ObservableObject {
 
 struct AnimatedView: UIViewRepresentable {
     @Binding var isAnimated: Bool
-
+    
     func makeUIView(context: UIViewRepresentableContext<AnimatedView>) -> AnimatedUIView {
-        return AnimatedUIView()
+        return AnimatedUIView(isAnimated: self.isAnimated)
     }
     
     func updateUIView(_ uiView: AnimatedUIView, context: UIViewRepresentableContext<AnimatedView>) {

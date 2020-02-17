@@ -14,6 +14,10 @@ class PlaybackState: ObservableObject {
             if self.isNowPlaying {
                 self.playTimer = Timer.scheduledTimer(withTimeInterval: 0.5, repeats: true) { _ in
                     self.elapsedTime = Int(AudioEngine.sharedInstance()?.getElapsedTime() ?? 0)
+                    if AudioEngine.sharedInstance()?.getTrackEnded() ?? false && !self.loopTrack {
+                        self.playTimer?.invalidate()
+                        self.nextTrack()
+                    }
                 }
             } else {
                 self.playTimer?.invalidate()
@@ -25,21 +29,37 @@ class PlaybackState: ObservableObject {
     @Published var currentTracklist: [Track] = []
     @Published var trackNum          = 0
     @Published var elapsedTime       = 0
+    @Published var loopTrack         = false {
+        didSet {
+            self.setFade()
+        }
+    }
     
     var playTimer: Timer?
+    
+    func setFade() {
+        if self.loopTrack {
+            AudioEngine.sharedInstance()?.resetFadeTime()
+        } else {
+            AudioEngine.sharedInstance()?.fadeOutCurrentTrack()
+        }
+    }
     
     func play() {
         DispatchQueue.global().async {
             AudioEngine.sharedInstance()?.play()
+            self.setFade()
         }
         self.isNowPlaying = true
+        
     }
     
     func pause() {
         DispatchQueue.global().async {
             AudioEngine.sharedInstance()?.pause()
         }
-        self.isNowPlaying = false    }
+        self.isNowPlaying = false
+    }
     
     func play(index: Int) {
         guard index < self.currentTracklist.count else { return }
@@ -58,6 +78,8 @@ class PlaybackState: ObservableObject {
             AudioEngine.sharedInstance()?.setFileName(path)
             AudioEngine.sharedInstance()?.setTrack(Int32(track.trackNum))
             AudioEngine.sharedInstance()?.play()
+            self.setFade()
+
         }
     }
     
@@ -73,6 +95,7 @@ class PlaybackState: ObservableObject {
         if self.nowPlayingTrack != nil && nextTrack.url == self.nowPlayingTrack!.url {
             DispatchQueue.global().async {
                 AudioEngine.sharedInstance()?.nextTrack()
+                self.setFade()
             }
             self.nowPlayingTrack = nextTrack
         } else {
