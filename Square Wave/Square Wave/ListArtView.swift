@@ -195,19 +195,22 @@ struct AnimatedView: UIViewRepresentable {
 struct ListArtView: View {
     @ObservedObject var animationSettings: AnimationSettings
     @State var isAnimated: Bool = false
+    var albumArt: String = ""
+    let cornerRadius: CGFloat = 4.0
     
     var body: some View {
         GeometryReader { geometry in
             ZStack(alignment: .leading) {
-                Image(systemName: "a.square.fill")
+                Image(uiImage: ListArtView.getImage(for: self.albumArt) ?? UIImage())
                     .resizable()
                     .aspectRatio(contentMode: .fit)
-                    .foregroundColor(.red)
+                    .cornerRadius(4.0)
+                    .overlay(RoundedRectangle(cornerRadius: self.cornerRadius).stroke(Color(.lightGray), lineWidth: 0.5))
                 if (self.animationSettings.isDisplayed) {
                     Rectangle()
                         .foregroundColor(.black)
                         .opacity(0.6)
-                        .cornerRadius(4.0)
+                        .cornerRadius(self.cornerRadius)
                     AnimatedView(isAnimated: self.$isAnimated)
                         .frame(width: geometry.size.width, height: geometry.size.height)
                 }
@@ -215,6 +218,42 @@ struct ListArtView: View {
         }.onReceive(animationSettings.objectWillChange, perform: { _ in
             self.isAnimated = self.animationSettings.isAnimated
         })
+    }
+    
+    enum StringMap: String {
+        case msx        = "MSX"
+        case nes        = "Nintendo NES"
+        case snes       = "Super Nintendo"
+        case atari      = "Atari XL"
+        case smsgenesis = "Sega SMS/Genesis"
+        case gameboy    = "Game Boy"
+        case spectrum   = "ZX Spectrum"
+        case turbo      = "TurboGrafx"
+    }
+    
+    static func getImage(for system: String) -> UIImage? {
+        var imageName: String = ""
+        switch (system) {
+        case StringMap.msx.rawValue:
+            imageName = "msx"
+        case StringMap.nes.rawValue:
+            imageName = "nes"
+        case StringMap.snes.rawValue:
+            imageName = "snes"
+        case StringMap.atari.rawValue:
+            imageName = "atari"
+        case StringMap.smsgenesis.rawValue:
+            imageName = "megadrive"
+        case StringMap.gameboy.rawValue:
+            imageName = "gameboy"
+        case StringMap.spectrum.rawValue:
+            imageName = "spectrum"
+        case StringMap.turbo.rawValue:
+            imageName = "turbografx"
+        default:
+            return nil
+        }
+        return UIImage(named: imageName)
     }
 }
 

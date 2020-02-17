@@ -16,7 +16,11 @@ class PlaybackState: ObservableObject {
                     self.elapsedTime = Int(AudioEngine.sharedInstance()?.getElapsedTime() ?? 0)
                     if AudioEngine.sharedInstance()?.getTrackEnded() ?? false && !self.loopTrack {
                         self.playTimer?.invalidate()
-                        self.nextTrack()
+                        if self.trackNum + 1 < self.currentTracklist.count {
+                            self.nextTrack()
+                        } else {
+                            self.stop()
+                        }
                     }
                 }
             } else {

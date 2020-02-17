@@ -19,10 +19,12 @@ struct NowPlayingMiniView: View {
                 .background(BlurView())
                 .foregroundColor(.clear)
             HStack {
-                Image(systemName: "a.square.fill")
+                Image(uiImage: ListArtView.getImage(for: self.playbackState.nowPlayingTrack?.system?.name ?? "") ?? UIImage())
                     .resizable()
                     .aspectRatio(contentMode: .fit)
                     .frame(height: 50.0)
+                    .cornerRadius(6.0)
+                    .overlay(RoundedRectangle(cornerRadius: 6.0).stroke(Color(.lightGray), lineWidth: 0.5))
                     .padding()
                 VStack(alignment: .leading) {
                     Text(self.playbackState.nowPlayingTrack?.name ?? "Not Playing")

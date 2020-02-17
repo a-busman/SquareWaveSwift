@@ -64,7 +64,7 @@ struct SongsView: View {
                     }) {
                         HStack
                         {
-                            ListArtView(animationSettings: self.getSettings(for: track))
+                            ListArtView(animationSettings: self.getSettings(for: track), albumArt: track.system?.name ?? "")
                                 .frame(width: 34.0, height: 34.0)
                             VStack(alignment: .leading) {
                                 Text("\(self.tracks[self.tracks.firstIndex(of: track) ?? 0].name ?? "")")

@@ -354,7 +354,7 @@ typedef enum {
         NSString *trackName  = strlen(gameInfo->song)   > 0 ? [NSString stringWithUTF8String:gameInfo->song]   : [NSString stringWithFormat:@"Track %d", i + 1];
         NSString *artistName = strlen(gameInfo->author) > 0 ? [NSString stringWithUTF8String:gameInfo->author] : @"No Artist";
         NSString *gameName   = strlen(gameInfo->game)   > 0 ? [NSString stringWithUTF8String:gameInfo->game]   : @"No Game";
-        NSString *systemName = strlen(gameInfo->system) > 0 ? [NSString stringWithUTF8String:gameInfo->system] : @"No System";
+        NSString *systemName = strlen(gme_type_system(gme_type(emu))) > 0 ? [NSString stringWithUTF8String:gme_type_system(gme_type(emu))] : @"No System";
         int trackLength = gameInfo->play_length;
         
         NSPredicate *predicate = [NSPredicate predicateWithFormat:@"name == %@ AND artist.name == %@ AND game.name == %@ AND system.name == %@", trackName, artistName, gameName, systemName];
@@ -392,7 +392,7 @@ typedef enum {
         
         [trackMO setArtist:artistMO];
         
-        objects = [FileEngine getObjectsByName:[NSString stringWithUTF8String:gameInfo->system] entity:@"System"];
+        objects = [FileEngine getObjectsByName:[NSString stringWithUTF8String:gme_type_system(gme_type(emu))] entity:@"System"];
         
         if (objects != nil && [objects count] > 0) {
             systemMO = (System *)[objects firstObject];
