@@ -75,7 +75,7 @@ struct LibraryView: View {
                     .frame(width: geometry.size.width, height: self.position + (UIScreen.main.bounds.height - geometry.size.height))
                     .offset(y:geometry.size.height - self.position)
             }.sheet(isPresented: self.$nowPlayingShowing) {
-                NowPlayingView()
+                NowPlayingView().environmentObject(self.playbackState)
             }
         }
     }

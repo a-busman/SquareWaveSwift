@@ -106,4 +106,24 @@ class PlaybackState: ObservableObject {
             self.play(nextTrack)
         }
     }
+    
+    func prevTrack() {
+        guard ((self.trackNum - 1) >= 0 && self.elapsedTime < 3000) else {
+            self.stop()
+            self.play()
+            return
+        }
+        let newNum = self.trackNum
+        self.trackNum -= 1
+        let prevTrack = self.currentTracklist[self.trackNum]
+        if self.nowPlayingTrack != nil && prevTrack.url == self.nowPlayingTrack!.url {
+            DispatchQueue.global().async {
+                AudioEngine.sharedInstance()?.prevTrack()
+                self.setFade()
+            }
+            self.nowPlayingTrack = prevTrack
+        } else {
+            self.play(prevTrack)
+        }
+    }
 }

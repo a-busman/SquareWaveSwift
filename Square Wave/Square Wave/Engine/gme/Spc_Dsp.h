@@ -154,6 +154,9 @@ private:
 
 #include <assert.h>
 
+#undef assert
+#define assert( expr ) ( expr )
+
 inline int Spc_Dsp::sample_count() const { return m.out - m.out_begin; }
 
 inline int Spc_Dsp::read( int addr ) const

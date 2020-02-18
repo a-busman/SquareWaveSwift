@@ -262,6 +262,9 @@ private:
 
 #include <assert.h>
 
+#undef assert
+#define assert( expr ) ( expr )
+
 inline int Snes_Spc::sample_count() const { return (m.extra_clocks >> 5) * 2; }
 
 inline int Snes_Spc::read_port( time_t t, int port )

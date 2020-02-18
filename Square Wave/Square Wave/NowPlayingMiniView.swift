@@ -24,7 +24,7 @@ struct NowPlayingMiniView: View {
                     .aspectRatio(contentMode: .fit)
                     .frame(height: 50.0)
                     .cornerRadius(6.0)
-                    .overlay(RoundedRectangle(cornerRadius: 6.0).stroke(Color(.lightGray), lineWidth: 0.5))
+                    .overlay(RoundedRectangle(cornerRadius: 6.0).stroke(Color(.systemGray4), lineWidth: 0.5))
                     .padding()
                 VStack(alignment: .leading) {
                     Text(self.playbackState.nowPlayingTrack?.name ?? "Not Playing")
@@ -42,7 +42,7 @@ struct NowPlayingMiniView: View {
                         self.playbackState.pause()
                     }
                 }) {
-                    Image(systemName: playbackState.isNowPlaying ? "pause.fill" : "play.fill")
+                    Image(systemName: self.playbackState.isNowPlaying ? "pause.fill" : "play.fill")
                     .resizable()
                         .aspectRatio(contentMode: .fit)
                         .frame(height: 25.0)

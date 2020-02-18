@@ -333,6 +333,9 @@ private:
 
 #include <assert.h>
 
+#undef assert
+#define assert( expr ) ( expr )
+
 template<int quality,int range>
 inline void Blip_Synth<quality,range>::offset_resampled( blip_resampled_time_t time,
 		int delta, Blip_Buffer* blip_buf ) const

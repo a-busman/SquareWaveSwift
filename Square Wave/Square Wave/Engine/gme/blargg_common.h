@@ -9,6 +9,9 @@
 #include <assert.h>
 #include <limits.h>
 
+#undef assert
+#define assert( expr ) ( expr )
+
 #undef BLARGG_COMMON_H
 // allow blargg_config.h to #include blargg_common.h
 #include "blargg_config.h"

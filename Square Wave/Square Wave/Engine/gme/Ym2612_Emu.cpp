@@ -11,6 +11,9 @@
 #include <stdio.h>
 #include <math.h>
 
+#undef assert
+#define assert( expr ) ( expr )
+
 /* Copyright (C) 2002 Stéphane Dallongeville (gens AT consolemul.com) */
 /* Copyright (C) 2004-2006 Shay Green. This module is free software; you
 can redistribute it and/or modify it under the terms of the GNU Lesser
