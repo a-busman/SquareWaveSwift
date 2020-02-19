@@ -8,6 +8,7 @@
 
 import SwiftUI
 import MediaPlayer
+import AVKit
 
 class ScrubBar: UISlider {
     override func trackRect(forBounds bounds: CGRect) -> CGRect {
@@ -58,6 +59,18 @@ struct VolumeView: UIViewRepresentable {
     }
 }
 
+struct AirplayView: UIViewRepresentable {
+    
+    func makeUIView(context: Context) -> AVRoutePickerView {
+        let view = AVRoutePickerView()
+        return view
+    }
+    
+    func updateUIView(_ view: AVRoutePickerView, context: Context) {
+        
+    }
+}
+
 struct ScrubBarView: UIViewRepresentable {
     typealias UIViewType = ScrubBar
     @Binding var value: Float
@@ -81,24 +94,30 @@ struct ScrubBarView: UIViewRepresentable {
 struct NowPlayingView: View {
     @EnvironmentObject var playbackState: PlaybackState
     @State var scrubTime: Float = 0.0
+    @State var elapsedTime: Int = 0
+    @State var totalTime: Int = 0
+    @State var remainingTime: Int = 0
+    @State var elapsedString: String = "--:--"
+    @State var remainingString: String = "--:--"
     var body: some View {
         VStack {
             RoundedRectangle(cornerRadius: 2.5)
                 .frame(width: 40.0, height: 5.0)
                 .foregroundColor(Color(.systemGray3))
                 .padding()
-            Spacer()
             Image(uiImage: ListArtView.getImage(for: self.playbackState.nowPlayingTrack?.system?.name ?? "") ?? UIImage())
+                .resizable()
+                .aspectRatio(contentMode: .fill)
+                .frame(width: 256, height: 256)
                 .cornerRadius(10.0)
                 .overlay(RoundedRectangle(cornerRadius: 10.0).stroke(Color(.systemGray4), lineWidth: 0.5))
-                .padding()
             HStack {
                 VStack(alignment: .leading) {
                     Text(self.playbackState.nowPlayingTrack?.name ?? "Not Playing")
                         .font(.system(size: 24.0, weight: .bold, design: .default))
-                    Text(self.playbackState.nowPlayingTrack?.game?.name ?? "")
+                    Text(self.playbackState.nowPlayingTrack?.game?.name ?? " ")
                         .font(.system(size: 24.0))
-                }.padding()
+                }
                 Spacer()
                 if self.playbackState.nowPlayingTrack != nil {
                     Button(action: {
@@ -109,21 +128,19 @@ struct NowPlayingView: View {
                     .frame(width: 30, height: 30)
                     .background(Color(.systemGray5))
                     .cornerRadius(15.0)
-                    .padding()
                 }
             }.padding()
             VStack {
                 ScrubBarView(value: self.$scrubTime)
-                    .disabled(self.playbackState.nowPlayingTrack == nil)
+                    .disabled(true)
 
                 HStack {
-                    Text("--:--")
+                    Text(self.elapsedString)
                     Spacer()
-                    Text("--:--")
+                    Text(self.remainingString)
                 }
             }
-            .padding()
-            Spacer()
+            .padding(Edge.Set(arrayLiteral: .bottom, .horizontal))
             HStack {
                 Spacer()
                 Button(action: {
@@ -146,7 +163,7 @@ struct NowPlayingView: View {
                     Image(systemName: self.playbackState.isNowPlaying ? "pause.fill" : "play.fill")
                         .resizable()
                         .aspectRatio(contentMode: .fit)
-                        .frame(height: 42.0)
+                        .frame(width: 42.0, height: 42.0)
                 }
                 .padding()
                 Spacer()
@@ -162,8 +179,7 @@ struct NowPlayingView: View {
                 Spacer()
             }
             .foregroundColor(Color(.label))
-            .padding()
-            Spacer()
+            .padding(.bottom)
             HStack(alignment: .top) {
                 Image(systemName: "speaker.fill")
                     .resizable()
@@ -179,6 +195,50 @@ struct NowPlayingView: View {
                     .foregroundColor(Color(.systemGray))
                     .offset(x: 0.0, y: 4.0)
             }.padding()
+            HStack {
+                Spacer()
+                Button(action: {
+                    
+                }) {
+                    ZStack {
+                        RoundedRectangle(cornerRadius: 25.0)
+                            .foregroundColor(Color(.systemGray4))
+                        Image(systemName: "repeat")
+                            .resizable()
+                            .aspectRatio(contentMode: .fit)
+                            .frame(height: 20.0)
+                            .foregroundColor(Color(.label))
+                    }
+                }
+                    .frame(width: 50.0, height: 50.0)
+                    .padding()
+                AirplayView()
+                    .frame(height: 24.0)
+                    .padding()
+                Button(action: {
+                    
+                }) {
+                    ZStack {
+                        RoundedRectangle(cornerRadius: 25.0)
+                            .foregroundColor(Color(.systemGray4))
+                        Image(systemName: "shuffle")
+                            .resizable()
+                            .aspectRatio(contentMode: .fit)
+                            .frame(height: 20.0)
+                            .foregroundColor(Color(.label))
+                    }
+                }
+                    .frame(width: 50.0, height: 50.0)
+                    .padding()
+                Spacer()
+            }.padding()
+        }.onReceive(self.playbackState.objectWillChange) {
+            self.elapsedTime = self.playbackState.elapsedTime
+            self.totalTime = Int(self.playbackState.nowPlayingTrack?.length ?? 1)
+            self.remainingTime = self.totalTime - self.elapsedTime
+            self.scrubTime = Float(self.elapsedTime) / Float(self.totalTime)
+            self.elapsedString = String(format: "%02d:%02d", (self.elapsedTime / 1000) / 60, (self.elapsedTime / 1000) % 60)
+            self.remainingString = String(format: "-%02d:%02d", (self.remainingTime / 1000) / 60, max(((self.remainingTime / 1000) % 60), 0))
         }
     }
 }

@@ -14,9 +14,6 @@ import CoreData
 class AppDelegate: UIResponder, UIApplicationDelegate {
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
-        let path = Bundle.main.path(forResource: "test", ofType: "nsf")
-        AudioEngine.sharedInstance()?.setFileName(path)
-        AudioEngine.sharedInstance()?.setTrack(0)
         return true
     }
     

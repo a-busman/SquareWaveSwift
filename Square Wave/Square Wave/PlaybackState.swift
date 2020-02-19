@@ -7,12 +7,14 @@
 //
 
 import Foundation
+import CoreData
+import UIKit
 
 class PlaybackState: ObservableObject {
     @Published var isNowPlaying = false {
         didSet {
             if self.isNowPlaying {
-                self.playTimer = Timer.scheduledTimer(withTimeInterval: 0.5, repeats: true) { _ in
+                self.playTimer = Timer.scheduledTimer(withTimeInterval: 0.1, repeats: true) { _ in
                     self.elapsedTime = Int(AudioEngine.sharedInstance()?.getElapsedTime() ?? 0)
                     if AudioEngine.sharedInstance()?.getTrackEnded() ?? false && !self.loopTrack {
                         self.playTimer?.invalidate()
@@ -50,11 +52,30 @@ class PlaybackState: ObservableObject {
     }
     
     func play() {
+        guard self.currentTracklist.count > 0 else {
+            self.populateTrackList()
+            self.play(index: 0)
+            return
+        }
         DispatchQueue.global().async {
             AudioEngine.sharedInstance()?.play()
             self.setFade()
         }
         self.isNowPlaying = true
+        
+    }
+    
+    func populateTrackList() {
+        let delegate = UIApplication.shared.delegate as! AppDelegate
+        let context  = delegate.persistentContainer.viewContext
+        let request = NSFetchRequest<Track>(entityName: "Track")
+        request.returnsObjectsAsFaults = false
+        do {
+            let results = try context.fetch(request)
+            self.currentTracklist = results
+        } catch {
+            NSLog("Could not get tracks: \(error.localizedDescription)")
+        }
         
     }
     
@@ -101,6 +122,7 @@ class PlaybackState: ObservableObject {
                 AudioEngine.sharedInstance()?.nextTrack()
                 self.setFade()
             }
+            self.isNowPlaying = true
             self.nowPlayingTrack = nextTrack
         } else {
             self.play(nextTrack)
@@ -113,7 +135,6 @@ class PlaybackState: ObservableObject {
             self.play()
             return
         }
-        let newNum = self.trackNum
         self.trackNum -= 1
         let prevTrack = self.currentTracklist[self.trackNum]
         if self.nowPlayingTrack != nil && prevTrack.url == self.nowPlayingTrack!.url {

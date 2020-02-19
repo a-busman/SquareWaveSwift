@@ -8,7 +8,6 @@
 
 /* Begin PBXBuildFile section */
 		480E72E84A0CBAA5AD24BA45 /* Pods_Square_Wave.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DF4AB5F6BE0BBA54DAEDCB14 /* Pods_Square_Wave.framework */; };
-		FA5A25C523F52DE900D4C28A /* test.nsf in Resources */ = {isa = PBXBuildFile; fileRef = FA5A25C423F52DE900D4C28A /* test.nsf */; };
 		FA5A25C923F5BEF400D4C28A /* LibraryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA5A25C823F5BEF400D4C28A /* LibraryView.swift */; };
 		FA5A25CB23F5BF4A00D4C28A /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA5A25CA23F5BF4A00D4C28A /* SettingsView.swift */; };
 		FA5A25CD23F5C6F800D4C28A /* PlaylistsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA5A25CC23F5C6F800D4C28A /* PlaylistsView.swift */; };
@@ -102,7 +101,6 @@
 		9C6E19E4B9251F53C80CCB17 /* Pods-Square Wave.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Square Wave.debug.xcconfig"; path = "Target Support Files/Pods-Square Wave/Pods-Square Wave.debug.xcconfig"; sourceTree = "<group>"; };
 		D421A424018349B9CFDDCF29 /* Pods-Square Wave.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Square Wave.release.xcconfig"; path = "Target Support Files/Pods-Square Wave/Pods-Square Wave.release.xcconfig"; sourceTree = "<group>"; };
 		DF4AB5F6BE0BBA54DAEDCB14 /* Pods_Square_Wave.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Square_Wave.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		FA5A25C423F52DE900D4C28A /* test.nsf */ = {isa = PBXFileReference; lastKnownFileType = file; path = test.nsf; sourceTree = "<group>"; };
 		FA5A25C823F5BEF400D4C28A /* LibraryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LibraryView.swift; sourceTree = "<group>"; };
 		FA5A25CA23F5BF4A00D4C28A /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		FA5A25CC23F5C6F800D4C28A /* PlaylistsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaylistsView.swift; sourceTree = "<group>"; };
@@ -313,7 +311,6 @@
 				FA5A25DB23F6157000D4C28A /* Square Wave.entitlements */,
 				FAC0768623F513920096B786 /* Engine */,
 				FA822D3523F1F81C005FCFB3 /* AppDelegate.swift */,
-				FA5A25C423F52DE900D4C28A /* test.nsf */,
 				FA822D3723F1F81C005FCFB3 /* SceneDelegate.swift */,
 				FA822D3C23F1F81C005FCFB3 /* TestPlaybackView.swift */,
 				FA822D3E23F1F81E005FCFB3 /* Assets.xcassets */,
@@ -595,7 +592,6 @@
 				FA822D4523F1F81E005FCFB3 /* LaunchScreen.storyboard in Resources */,
 				FA822D4223F1F81E005FCFB3 /* Preview Assets.xcassets in Resources */,
 				FAC0772423F5142F0096B786 /* Podfile in Resources */,
-				FA5A25C523F52DE900D4C28A /* test.nsf in Resources */,
 				FA822D3F23F1F81E005FCFB3 /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
