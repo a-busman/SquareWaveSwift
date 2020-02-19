@@ -47,7 +47,7 @@ return; \
 }
 const int kSampleRate = 44100;
 const int kBufferSize = 8000;
-const int kBufferCount = 3;
+const int kBufferCount = 5;
 
 + (AudioEngine *)sharedInstance {
     static AudioEngine *sharedInstance = nil;

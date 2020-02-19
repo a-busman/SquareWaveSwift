@@ -9,13 +9,15 @@
 import Foundation
 import CoreData
 import UIKit
+import MediaPlayer
 
 class PlaybackState: ObservableObject {
     @Published var isNowPlaying = false {
         didSet {
             if self.isNowPlaying {
-                self.playTimer = Timer.scheduledTimer(withTimeInterval: 0.1, repeats: true) { _ in
+                self.playTimer = Timer.scheduledTimer(withTimeInterval: 0.5, repeats: true) { _ in
                     self.elapsedTime = Int(AudioEngine.sharedInstance()?.getElapsedTime() ?? 0)
+                    self.updateNowPlayingElapsed()
                     if AudioEngine.sharedInstance()?.getTrackEnded() ?? false && !self.loopTrack {
                         self.playTimer?.invalidate()
                         if self.trackNum + 1 < self.currentTracklist.count {
@@ -43,12 +45,111 @@ class PlaybackState: ObservableObject {
     
     var playTimer: Timer?
     
+    var nowPlayingInfo = [String : Any]()
+    
+    init() {
+        UIApplication.shared.beginReceivingRemoteControlEvents()
+        let commandCenter = MPRemoteCommandCenter.shared()
+        
+        commandCenter.togglePlayPauseCommand.addTarget { (event) -> MPRemoteCommandHandlerStatus in
+            if self.isNowPlaying {
+                self.pause()
+            } else {
+                self.play()
+            }
+            return .success
+        }
+        
+        commandCenter.pauseCommand.addTarget { (event) -> MPRemoteCommandHandlerStatus in
+            self.pause()
+            return .success
+        }
+        
+        commandCenter.playCommand.addTarget { (event) -> MPRemoteCommandHandlerStatus in
+            self.play()
+            return .success
+        }
+        
+        commandCenter.nextTrackCommand.addTarget { (event) -> MPRemoteCommandHandlerStatus in
+            self.nextTrack()
+            return .success
+        }
+        
+        commandCenter.previousTrackCommand.addTarget { (event) -> MPRemoteCommandHandlerStatus in
+            self.prevTrack()
+            return .success
+        }
+/*
+        commandCenter.changeShuffleModeCommand.addTarget { (event) -> MPRemoteCommandHandlerStatus in
+            let shuffleStatus = event as! MPChangeShuffleModeCommandEvent
+            
+            if shuffleStatus.shuffleType == .off {
+                self.shuffle = false
+                let _currentSongIndex = self.indicies[self.currentSongIndex]
+                self.currentSongIndex = _currentSongIndex
+                self.indicies = Array(stride(from: 0, to: self.currentPlaylist?.songs?.count ?? 0, by: 1))
+            } else {
+                self.shuffle = true
+                let _currentSongIndex = self.currentSongIndex
+                self.indicies.remove(at: _currentSongIndex)
+                self.currentSongIndex = 0
+                self.indicies = [_currentSongIndex] + self.indicies.shuffled()
+            }
+            UserDefaults.standard.set(self.shuffle, forKey: "shuffle")
+            self.nowPlayingViewController?.shuffle(enabled: self.shuffle)
+
+            return .success
+        }
+        
+        commandCenter.changeRepeatModeCommand.addTarget { (event) -> MPRemoteCommandHandlerStatus in
+            let repeatStatus = event as! MPChangeRepeatModeCommandEvent
+            
+            if repeatStatus.repeatType == .all {
+                self.repeats = true
+                self.repeat1 = false
+            } else if repeatStatus.repeatType == .one {
+                self.repeats = true
+                self.repeat1 = true
+            } else {
+                self.repeats = false
+                self.repeat1 = false
+            }
+            UserDefaults.standard.set(self.repeats, forKey: "repeats")
+            UserDefaults.standard.set(self.repeat1, forKey: "repeat1")
+            self.nowPlayingViewController?.repeat(enabled: self.repeats, one: self.repeat1)
+            return .success
+        }
+ */
+    }
+    
     func setFade() {
         if self.loopTrack {
             AudioEngine.sharedInstance()?.resetFadeTime()
         } else {
             AudioEngine.sharedInstance()?.fadeOutCurrentTrack()
         }
+    }
+    
+    func updateNowPlayingInfoCenter() {
+        self.nowPlayingInfo[MPMediaItemPropertyTitle] = self.nowPlayingTrack?.name ?? ""
+        self.nowPlayingInfo[MPMediaItemPropertyArtist] = self.nowPlayingTrack?.game?.name ?? ""
+        
+        let image = ListArtView.getImage(for: self.nowPlayingTrack?.system?.name ?? "")
+        let mediaArtwork = MPMediaItemArtwork(boundsSize: CGSize(width: 768, height: 768), requestHandler: { (size) -> UIImage in
+            if let scaledImage = image?.image(with: size) {
+                return scaledImage
+            } else {
+                return image!
+            }
+        })
+        self.nowPlayingInfo[MPMediaItemPropertyArtwork] = mediaArtwork
+        self.nowPlayingInfo[MPMediaItemPropertyPlaybackDuration] = (self.nowPlayingTrack?.length ?? 0) / 1000
+        self.updateNowPlayingElapsed()
+    }
+    
+    func updateNowPlayingElapsed() {
+        self.nowPlayingInfo[MPNowPlayingInfoPropertyElapsedPlaybackTime] = self.elapsedTime / 1000
+        MPNowPlayingInfoCenter.default().nowPlayingInfo = self.nowPlayingInfo
     }
     
     func play() {
@@ -62,6 +163,8 @@ class PlaybackState: ObservableObject {
             self.setFade()
         }
         self.isNowPlaying = true
+        self.nowPlayingInfo[MPNowPlayingInfoPropertyPlaybackRate] = 1.0
+        self.updateNowPlayingInfoCenter()
         
     }
     
@@ -84,6 +187,8 @@ class PlaybackState: ObservableObject {
             AudioEngine.sharedInstance()?.pause()
         }
         self.isNowPlaying = false
+        self.nowPlayingInfo[MPNowPlayingInfoPropertyPlaybackRate] = 0.0
+        MPNowPlayingInfoCenter.default().nowPlayingInfo = self.nowPlayingInfo
     }
     
     func play(index: Int) {
@@ -94,8 +199,6 @@ class PlaybackState: ObservableObject {
     }
     
     private func play(_ track: Track) {
-        self.isNowPlaying    = true
-        self.nowPlayingTrack = track
         DispatchQueue.global().async {
             let path = URL(fileURLWithPath: FileEngine.getMusicDirectory()).appendingPathComponent(track.url!).path
 
@@ -106,11 +209,17 @@ class PlaybackState: ObservableObject {
             self.setFade()
 
         }
+        self.nowPlayingTrack = track
+        self.nowPlayingInfo[MPNowPlayingInfoPropertyPlaybackRate] = 1.0
+        self.updateNowPlayingInfoCenter()
+        self.isNowPlaying = true
     }
     
     func stop() {
         self.isNowPlaying = false
         AudioEngine.sharedInstance()?.stop()
+        self.nowPlayingInfo[MPNowPlayingInfoPropertyPlaybackRate] = 0.0
+        MPNowPlayingInfoCenter.default().nowPlayingInfo = self.nowPlayingInfo
     }
     
     func nextTrack() {
@@ -122,8 +231,9 @@ class PlaybackState: ObservableObject {
                 AudioEngine.sharedInstance()?.nextTrack()
                 self.setFade()
             }
-            self.isNowPlaying = true
             self.nowPlayingTrack = nextTrack
+            self.updateNowPlayingInfoCenter()
+            self.isNowPlaying = true
         } else {
             self.play(nextTrack)
         }
@@ -146,5 +256,30 @@ class PlaybackState: ObservableObject {
         } else {
             self.play(prevTrack)
         }
+    }
+}
+
+extension UIImage {
+    func image(with size:CGSize) -> UIImage?
+    {
+        var scaledImageRect = CGRect.zero;
+        let originalSize = self.size
+        let aspectWidth:CGFloat = size.width / originalSize.width;
+        let aspectHeight:CGFloat = size.height / originalSize.height;
+        let aspectRatio:CGFloat = max(aspectWidth, aspectHeight);
+        
+        scaledImageRect.size.width = originalSize.width * aspectRatio;
+        scaledImageRect.size.height = originalSize.height * aspectRatio;
+        scaledImageRect.origin.x = (size.width - scaledImageRect.size.width) / 2.0;
+        scaledImageRect.origin.y = (size.height - scaledImageRect.size.height) / 2.0;
+        
+        UIGraphicsBeginImageContextWithOptions(size, false, 0);
+        
+        self.draw(in: scaledImageRect);
+        
+        let scaledImage = UIGraphicsGetImageFromCurrentImageContext();
+        UIGraphicsEndImageContext();
+        
+        return scaledImage;
     }
 }
