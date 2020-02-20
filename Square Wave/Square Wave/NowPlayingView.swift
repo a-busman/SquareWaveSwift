@@ -63,6 +63,8 @@ struct AirplayView: UIViewRepresentable {
     
     func makeUIView(context: Context) -> AVRoutePickerView {
         let view = AVRoutePickerView()
+        view.activeTintColor = .label
+        view.tintColor = .systemGray
         return view
     }
     
@@ -105,7 +107,7 @@ struct NowPlayingView: View {
                 .frame(width: 40.0, height: 5.0)
                 .foregroundColor(Color(.systemGray3))
                 .padding()
-            Image(uiImage: ListArtView.getImage(for: self.playbackState.nowPlayingTrack?.system?.name ?? "") ?? UIImage())
+            Image(uiImage: ListArtView.getImage(for: self.playbackState.nowPlayingTrack?.system?.name ?? "") ?? UIImage(named: "placeholder-art")!)
                 .resizable()
                 .aspectRatio(contentMode: .fill)
                 .frame(width: 256, height: 256)
@@ -146,7 +148,7 @@ struct NowPlayingView: View {
                 Button(action: {
                     self.playbackState.prevTrack()
                 }) {
-                    Image(systemName: "backward.fill")
+                    Image(systemName: "backward.end.fill")
                         .resizable()
                         .aspectRatio(contentMode: .fit)
                         .frame(height: 30.0)
@@ -170,7 +172,7 @@ struct NowPlayingView: View {
                 Button(action: {
                     self.playbackState.nextTrack()
                 }) {
-                    Image(systemName: "forward.fill")
+                    Image(systemName: "forward.end.fill")
                         .resizable()
                         .aspectRatio(contentMode: .fit)
                         .frame(height: 30.0)

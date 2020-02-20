@@ -18,12 +18,17 @@ class PlaybackState: ObservableObject {
                 self.playTimer = Timer.scheduledTimer(withTimeInterval: 0.5, repeats: true) { _ in
                     self.elapsedTime = Int(AudioEngine.sharedInstance()?.getElapsedTime() ?? 0)
                     self.updateNowPlayingElapsed()
-                    if AudioEngine.sharedInstance()?.getTrackEnded() ?? false && !self.loopTrack {
-                        self.playTimer?.invalidate()
-                        if self.trackNum + 1 < self.currentTracklist.count {
-                            self.nextTrack()
-                        } else {
-                            self.stop()
+                    if let didEnd = AudioEngine.sharedInstance()?.getTrackEnded() {
+                        if didEnd && !self.loopTrack && !self.trackEnded {
+                            self.playTimer?.invalidate()
+                            self.trackEnded = true
+                            if self.trackNum + 1 < self.currentTracklist.count {
+                                self.nextTrack()
+                            } else {
+                                self.stop()
+                            }
+                        } else if !didEnd {
+                            self.trackEnded = false
                         }
                     }
                 }
@@ -43,9 +48,11 @@ class PlaybackState: ObservableObject {
         }
     }
     
-    var playTimer: Timer?
+    private var trackEnded: Bool = false
     
-    var nowPlayingInfo = [String : Any]()
+    private var playTimer: Timer?
+    
+    private var nowPlayingInfo = [String : Any]()
     
     init() {
         UIApplication.shared.beginReceivingRemoteControlEvents()

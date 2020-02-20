@@ -12,6 +12,15 @@ struct NowPlayingMiniView: View {
     @Binding var nowPlayingTapped: Bool
     @State var playButtonImage = "play.fill"
     @EnvironmentObject var playbackState: PlaybackState
+    
+    var swipe: some Gesture {
+        DragGesture()
+            .onChanged({ value in
+                if value.predictedEndLocation.y < -20.0 {
+                    self.nowPlayingTapped = true
+                }
+            })
+    }
 
     var body: some View {
         ZStack(alignment: .top) {
@@ -19,7 +28,7 @@ struct NowPlayingMiniView: View {
                 .background(BlurView())
                 .foregroundColor(.clear)
             HStack {
-                Image(uiImage: ListArtView.getImage(for: self.playbackState.nowPlayingTrack?.system?.name ?? "") ?? UIImage())
+                Image(uiImage: ListArtView.getImage(for: self.playbackState.nowPlayingTrack?.system?.name ?? "") ?? UIImage(named: "placeholder-art")!)
                     .resizable()
                     .aspectRatio(contentMode: .fit)
                     .frame(height: 50.0)
@@ -50,7 +59,7 @@ struct NowPlayingMiniView: View {
                 Button(action: {
                     self.playbackState.nextTrack()
                 }) {
-                    Image(systemName: "forward.fill")
+                    Image(systemName: "forward.end.fill")
                     .resizable()
                         .aspectRatio(contentMode: .fit)
                         .frame(height: 20.0)
@@ -59,7 +68,7 @@ struct NowPlayingMiniView: View {
             }
         }.onTapGesture {
             self.nowPlayingTapped = true
-        }
+        }.gesture(swipe)
     }
 }
 
