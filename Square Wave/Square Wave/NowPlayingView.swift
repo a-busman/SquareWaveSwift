@@ -200,7 +200,7 @@ struct NowPlayingView: View {
             HStack {
                 Spacer()
                 Button(action: {
-                    
+                    self.playbackState.loop()
                 }) {
                     ZStack {
                         RoundedRectangle(cornerRadius: 25.0)
@@ -218,7 +218,7 @@ struct NowPlayingView: View {
                     .frame(height: 24.0)
                     .padding()
                 Button(action: {
-                    
+                    self.playbackState.shuffle()
                 }) {
                     ZStack {
                         RoundedRectangle(cornerRadius: 25.0)

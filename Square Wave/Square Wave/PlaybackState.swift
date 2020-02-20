@@ -39,15 +39,28 @@ class PlaybackState: ObservableObject {
     }
 
     @Published var nowPlayingTrack:  Track?
-    @Published var currentTracklist: [Track] = []
-    @Published var trackNum          = 0
-    @Published var elapsedTime       = 0
-    @Published var loopTrack         = false {
+    private var nowPlayingPlaylist: Playlist?
+    @Published var currentTracklist: [Track] = [] {
         didSet {
-            self.setFade()
+            if self.nowPlayingPlaylist == nil {
+                self.getNowPlayingPlaylist()
+            }
+            let delegate = UIApplication.shared.delegate as! AppDelegate
+            self.nowPlayingPlaylist?.removeFromTracks(at: NSIndexSet(indexesIn: NSRange(location: 0, length: self.nowPlayingPlaylist?.tracks?.count ?? 1)))
+            self.nowPlayingPlaylist?.addToTracks(NSOrderedSet(array: self.currentTracklist))
+            delegate.saveContext()
         }
     }
     
+    private var originalTrackList: [Track] = []
+    @Published var trackNum = 0 {
+        didSet {
+            UserDefaults.standard.set(self.trackNum, forKey: "lastPlayedTracknum")
+        }
+    }
+    @Published var elapsedTime   = 0
+    @Published var loopTrack     = false
+    @Published var shuffleTracks = false
     private var trackEnded: Bool = false
     
     private var playTimer: Timer?
@@ -127,6 +140,65 @@ class PlaybackState: ObservableObject {
             return .success
         }
  */
+        self.getNowPlayingPlaylist()
+        self.currentTracklist = self.nowPlayingPlaylist?.tracks?.array as? [Track] ?? []
+        self.trackNum = UserDefaults.standard.integer(forKey: "lastPlayedTracknum")
+        
+        if self.trackNum < self.currentTracklist.count {
+            self.nowPlayingTrack = self.currentTracklist[self.trackNum]
+            self.setupAudioEngine()
+        }
+        
+        self.loopTrack = UserDefaults.standard.bool(forKey: "loopTrack")
+        self.shuffleTracks = UserDefaults.standard.bool(forKey: "shuffleTracks")
+    }
+    
+    func getNowPlayingPlaylist() {
+        let delegate = UIApplication.shared.delegate as! AppDelegate
+        let context  = delegate.persistentContainer.viewContext
+        let request = NSFetchRequest<Playlist>(entityName: "Playlist")
+        request.predicate = NSPredicate(format: "isNowPlaying == true")
+        request.returnsObjectsAsFaults = false
+        do {
+            let results = try context.fetch(request)
+            self.nowPlayingPlaylist = results.first
+            if self.nowPlayingPlaylist == nil {
+                self.nowPlayingPlaylist = Playlist(context: context)
+                self.nowPlayingPlaylist?.isNowPlaying = true
+            }
+        } catch {
+            NSLog("Could not get now playing playlist: \(error.localizedDescription)")
+        }
+    }
+    
+    func shuffle() {
+        if !self.shuffleTracks {
+            self.originalTrackList = Array(self.currentTracklist)
+            var tempList = Array(self.currentTracklist)
+            if self.nowPlayingTrack != nil {
+                tempList.remove(at: self.trackNum)
+            }
+            tempList.shuffle()
+            if self.nowPlayingTrack != nil {
+                self.currentTracklist = [self.nowPlayingTrack!] + tempList
+            } else {
+                self.currentTracklist = tempList
+            }
+            self.trackNum = 0
+        } else {
+            self.currentTracklist = self.originalTrackList
+            self.trackNum = self.currentTracklist.firstIndex(of: self.nowPlayingTrack ?? Track()) ?? 0
+        }
+        self.shuffleTracks.toggle()
+        UserDefaults.standard.set(self.shuffleTracks, forKey: "shuffleTracks")
+    }
+    
+    func loop() {
+        if self.loopTrack {
+            self.setFade()
+        }
+        self.loopTrack.toggle()
+        UserDefaults.standard.set(self.loopTrack, forKey: "loopTrack")
     }
     
     func setFade() {
@@ -222,6 +294,14 @@ class PlaybackState: ObservableObject {
         self.isNowPlaying = true
     }
     
+    private func setupAudioEngine() {
+        let path = URL(fileURLWithPath: FileEngine.getMusicDirectory()).appendingPathComponent(self.nowPlayingTrack?.url ?? "").path
+
+        AudioEngine.sharedInstance()?.stop()
+        AudioEngine.sharedInstance()?.setFileName(path)
+        AudioEngine.sharedInstance()?.setTrack(Int32(self.nowPlayingTrack?.trackNum ?? 0))
+    }
+    
     func stop() {
         self.isNowPlaying = false
         AudioEngine.sharedInstance()?.stop()
@@ -233,17 +313,7 @@ class PlaybackState: ObservableObject {
         guard (self.trackNum + 1) < self.currentTracklist.count else { return }
         self.trackNum += 1
         let nextTrack = self.currentTracklist[self.trackNum]
-        if self.nowPlayingTrack != nil && nextTrack.url == self.nowPlayingTrack!.url {
-            DispatchQueue.global().async {
-                AudioEngine.sharedInstance()?.nextTrack()
-                self.setFade()
-            }
-            self.nowPlayingTrack = nextTrack
-            self.updateNowPlayingInfoCenter()
-            self.isNowPlaying = true
-        } else {
-            self.play(nextTrack)
-        }
+        self.play(nextTrack)
     }
     
     func prevTrack() {
@@ -254,15 +324,7 @@ class PlaybackState: ObservableObject {
         }
         self.trackNum -= 1
         let prevTrack = self.currentTracklist[self.trackNum]
-        if self.nowPlayingTrack != nil && prevTrack.url == self.nowPlayingTrack!.url {
-            DispatchQueue.global().async {
-                AudioEngine.sharedInstance()?.prevTrack()
-                self.setFade()
-            }
-            self.nowPlayingTrack = prevTrack
-        } else {
-            self.play(prevTrack)
-        }
+        self.play(prevTrack)
     }
 }
 
