@@ -103,16 +103,19 @@ struct NowPlayingView: View {
     @State var remainingString: String = "--:--"
     var body: some View {
         VStack {
+            // MARK: - Drag Handle
             RoundedRectangle(cornerRadius: 2.5)
                 .frame(width: 40.0, height: 5.0)
                 .foregroundColor(Color(.systemGray3))
                 .padding()
+            // MARK: - Album Art
             Image(uiImage: ListArtView.getImage(for: self.playbackState.nowPlayingTrack?.system?.name ?? "") ?? UIImage(named: "placeholder-art")!)
                 .resizable()
                 .aspectRatio(contentMode: .fill)
                 .frame(width: 256, height: 256)
                 .cornerRadius(10.0)
                 .overlay(RoundedRectangle(cornerRadius: 10.0).stroke(Color(.systemGray4), lineWidth: 0.5))
+            // MARK: - Track Info
             HStack {
                 VStack(alignment: .leading) {
                     Text(self.playbackState.nowPlayingTrack?.name ?? "Not Playing")
@@ -132,6 +135,7 @@ struct NowPlayingView: View {
                     .cornerRadius(15.0)
                 }
             }.padding()
+            // MARK: - Scrub Bar
             VStack {
                 ScrubBarView(value: self.$scrubTime)
                     .disabled(true)
@@ -143,6 +147,7 @@ struct NowPlayingView: View {
                 }
             }
             .padding(Edge.Set(arrayLiteral: .bottom, .horizontal))
+            // MARK: - Playback Controls
             HStack {
                 Spacer()
                 Button(action: {
@@ -182,6 +187,7 @@ struct NowPlayingView: View {
             }
             .foregroundColor(Color(.label))
             .padding(.bottom)
+            // MARK: - Volume Controls
             HStack(alignment: .top) {
                 Image(systemName: "speaker.fill")
                     .resizable()
@@ -197,6 +203,7 @@ struct NowPlayingView: View {
                     .foregroundColor(Color(.systemGray))
                     .offset(x: 0.0, y: 4.0)
             }.padding()
+            // MARK: - Playback Modifiers
             HStack {
                 Spacer()
                 Button(action: {
@@ -215,19 +222,21 @@ struct NowPlayingView: View {
                     .frame(width: 50.0, height: 50.0)
                     .padding()
                 AirplayView()
-                    .frame(height: 24.0)
+                    .frame(height: 30.0)
                     .padding()
                 Button(action: {
                     self.playbackState.shuffle()
                 }) {
                     ZStack {
-                        RoundedRectangle(cornerRadius: 25.0)
-                            .foregroundColor(Color(.systemGray4))
+                        if self.playbackState.shuffleTracks {
+                            RoundedRectangle(cornerRadius: 25.0)
+                                .foregroundColor(Color(.systemGray4))
+                        }
                         Image(systemName: "shuffle")
                             .resizable()
                             .aspectRatio(contentMode: .fit)
                             .frame(height: 20.0)
-                            .foregroundColor(Color(.label))
+                            .foregroundColor(self.playbackState.shuffleTracks ? Color(.label) : Color(.systemGray))
                     }
                 }
                     .frame(width: 50.0, height: 50.0)

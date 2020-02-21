@@ -18,7 +18,11 @@ struct PlatformsView: View {
                 if platforms.count > 0 {
                     ForEach(platforms, id: \.self) { (platform: System) in
                         NavigationLink(destination: SongsView(title: platform.name ?? "Songs", predicate: NSPredicate(format: "system.id == %@", platform.id! as CVarArg))) {
-                            Text("\(platform.name ?? "")")
+                            HStack {
+                                ListArtView(animationSettings: AnimationSettings(), albumArt: platform.name ?? "")
+                                .frame(width: 34.0, height: 34.0)
+                                Text("\(platform.name ?? "")")
+                            }
                         }
                     }
                 } else {

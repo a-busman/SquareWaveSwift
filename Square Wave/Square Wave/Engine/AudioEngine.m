@@ -42,13 +42,17 @@
 @implementation AudioEngine
 
 #define CHECK_EMU_AND_RETURN() \
+do { \
 if (!_mEmu) { \
 return; \
-}
+} \
+} while(0);
+
 const int kSampleRate = 44100;
 const int kBufferSize = 8000;
-const int kBufferCount = 5;
+const int kBufferCount = 3;
 
+// MARK: - Initialization
 + (AudioEngine *)sharedInstance {
     static AudioEngine *sharedInstance = nil;
     static dispatch_once_t onceToken;
@@ -57,6 +61,7 @@ const int kBufferCount = 5;
     });
     return sharedInstance;
 }
+
 
 - (id)init {
     if (!(self = [super init])) return nil;
@@ -68,6 +73,13 @@ const int kBufferCount = 5;
         return nil;
     }
     return self;
+}
+
+- (void)dealloc {
+    if (_mEmu) {
+        gme_delete(_mEmu);
+        _mEmu = NULL;
+    }
 }
 
 - (void)setFileName:(NSString *)fileName {
@@ -94,6 +106,7 @@ const int kBufferCount = 5;
     }
 }
 
+// MARK: - Playback
 - (void)play {
     @synchronized (self) {
         CHECK_EMU_AND_RETURN();
@@ -162,6 +175,7 @@ const int kBufferCount = 5;
     }
 }
 
+// MARK: - Track Properties
 - (BOOL)getTrackEnded {
     @synchronized (self) {
         if (_mEmu) {
@@ -233,6 +247,7 @@ const int kBufferCount = 5;
     return -1;
 }
 
+// MARK: - Audio Management
 - (void)startAudioQueue {
     @synchronized (self) {
         CHECK_EMU_AND_RETURN();
@@ -311,13 +326,6 @@ void AudioEngineOutputBufferCallback(void * inUserData, AudioQueueRef inAQ, Audi
             err = AudioQueueStop(queue, NO);
             if (err != noErr) NSLog(@"AudioQueueStop() error: %d", err);
         }
-    }
-}
-
-- (void)dealloc {
-    if (_mEmu) {
-        gme_delete(_mEmu);
-        _mEmu = NULL;
     }
 }
 

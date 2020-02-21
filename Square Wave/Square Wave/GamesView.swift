@@ -18,12 +18,16 @@ struct GamesView: View {
                 if games.count > 0 {
                     ForEach(games, id: \.self) { (game: Game) in
                         NavigationLink(destination: SongsView(title: game.name ?? "Songs", predicate: NSPredicate(format: "game.id == %@", game.id! as CVarArg))) {
-                            VStack(alignment: .leading) {
-                                Text("\(game.name ?? "")")
-                                if game.system != nil {
-                                    Text("\(game.system?.name ?? "")")
-                                        .foregroundColor(Color(.secondaryLabel))
-                                        .font(.subheadline)
+                            HStack {
+                                ListArtView(animationSettings: AnimationSettings(), albumArt: game.system?.name ?? "")
+                                .frame(width: 34.0, height: 34.0)
+                                VStack(alignment: .leading) {
+                                    Text("\(game.name ?? "")")
+                                    if game.system != nil {
+                                        Text("\(game.system?.name ?? "")")
+                                            .foregroundColor(Color(.secondaryLabel))
+                                            .font(.subheadline)
+                                    }
                                 }
                             }
                             

@@ -54,6 +54,37 @@ struct SongsView: View {
     
     var body: some View {
         List {
+            HStack {
+                ZStack {
+                    RoundedRectangle(cornerRadius: 5.0)
+                        .foregroundColor(Color(.systemGray6))
+                    HStack {
+                        Image(systemName: "play.fill")
+                        Text("Play")
+                    }
+                }
+                    .onTapGesture {
+                        self.playbackState.currentTracklist = Array(self.tracks)
+                        self.playbackState.shuffleTracks = false
+                        self.playbackState.play(index: 0)
+                }
+                Spacer()
+                ZStack {
+                    RoundedRectangle(cornerRadius: 5.0)
+                    .foregroundColor(Color(.systemGray6))
+                    HStack {
+                        Image(systemName: "shuffle")
+                        Text("Shuffle")
+                    }
+                }.onTapGesture {
+                    self.playbackState.currentTracklist = Array(self.tracks)
+                    self.playbackState.nowPlayingTrack = nil
+                    self.playbackState.shuffleTracks = true
+                    self.playbackState.shuffle(true)
+                    self.playbackState.play(index: 0)
+                }
+            }
+            .frame(height: 40.0)
             if tracks.count > 0 {
                 ForEach(tracks, id: \.id) { track in
                     Button(action: {

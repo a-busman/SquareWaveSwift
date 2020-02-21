@@ -38,7 +38,15 @@ class PlaybackState: ObservableObject {
         }
     }
 
-    @Published var nowPlayingTrack:  Track?
+    @Published var nowPlayingTrack:  Track? {
+        didSet {
+            if nowPlayingTrack != nil {
+                UserDefaults.standard.set(self.nowPlayingTrack!.id!.uuidString, forKey: "lastPlayedTrack")
+            } else {
+                UserDefaults.standard.removeObject(forKey: "lastPlayedTrack")
+            }
+        }
+    }
     private var nowPlayingPlaylist: Playlist?
     @Published var currentTracklist: [Track] = [] {
         didSet {
@@ -47,7 +55,8 @@ class PlaybackState: ObservableObject {
             }
             let delegate = UIApplication.shared.delegate as! AppDelegate
             self.nowPlayingPlaylist?.removeFromTracks(at: NSIndexSet(indexesIn: NSRange(location: 0, length: self.nowPlayingPlaylist?.tracks?.count ?? 1)))
-            self.nowPlayingPlaylist?.addToTracks(NSOrderedSet(array: self.currentTracklist))
+            let playlistToSave = self.originalTrackList.count == 0 ? self.currentTracklist : self.originalTrackList
+            self.nowPlayingPlaylist?.addToTracks(NSOrderedSet(array: playlistToSave))
             delegate.saveContext()
         }
     }
@@ -67,6 +76,7 @@ class PlaybackState: ObservableObject {
     
     private var nowPlayingInfo = [String : Any]()
     
+    // MARK: - Initialization
     init() {
         UIApplication.shared.beginReceivingRemoteControlEvents()
         let commandCenter = MPRemoteCommandCenter.shared()
@@ -99,28 +109,21 @@ class PlaybackState: ObservableObject {
             self.prevTrack()
             return .success
         }
-/*
+
         commandCenter.changeShuffleModeCommand.addTarget { (event) -> MPRemoteCommandHandlerStatus in
             let shuffleStatus = event as! MPChangeShuffleModeCommandEvent
             
             if shuffleStatus.shuffleType == .off {
-                self.shuffle = false
-                let _currentSongIndex = self.indicies[self.currentSongIndex]
-                self.currentSongIndex = _currentSongIndex
-                self.indicies = Array(stride(from: 0, to: self.currentPlaylist?.songs?.count ?? 0, by: 1))
+                self.shuffle(false)
+                self.shuffleTracks = false
             } else {
-                self.shuffle = true
-                let _currentSongIndex = self.currentSongIndex
-                self.indicies.remove(at: _currentSongIndex)
-                self.currentSongIndex = 0
-                self.indicies = [_currentSongIndex] + self.indicies.shuffled()
+                self.shuffle(true)
+                self.shuffleTracks = true
             }
-            UserDefaults.standard.set(self.shuffle, forKey: "shuffle")
-            self.nowPlayingViewController?.shuffle(enabled: self.shuffle)
 
             return .success
         }
-        
+/*
         commandCenter.changeRepeatModeCommand.addTarget { (event) -> MPRemoteCommandHandlerStatus in
             let repeatStatus = event as! MPChangeRepeatModeCommandEvent
             
@@ -140,17 +143,43 @@ class PlaybackState: ObservableObject {
             return .success
         }
  */
+        self.loopTrack = UserDefaults.standard.bool(forKey: "loopTrack")
+        self.shuffleTracks = UserDefaults.standard.bool(forKey: "shuffleTracks")
         self.getNowPlayingPlaylist()
         self.currentTracklist = self.nowPlayingPlaylist?.tracks?.array as? [Track] ?? []
-        self.trackNum = UserDefaults.standard.integer(forKey: "lastPlayedTracknum")
+        self.originalTrackList = self.currentTracklist
+        if let lastPlayingID = UserDefaults.standard.string(forKey: "lastPlayedTrack") {
+            let delegate = UIApplication.shared.delegate as! AppDelegate
+            let context = delegate.persistentContainer.viewContext
+            let request = NSFetchRequest<Track>(entityName: "Track")
+            request.predicate = NSPredicate(format: "id == %@", (UUID(uuidString: lastPlayingID) ?? UUID()) as CVarArg)
+            request.returnsObjectsAsFaults = false
+            do {
+                let results = try context.fetch(request)
+                self.nowPlayingTrack = results.first
+                if !self.shuffleTracks {
+                    self.trackNum = UserDefaults.standard.integer(forKey: "lastPlayedTracknum")
+                }
+            } catch {
+                NSLog("Could not get last played track: %s", error.localizedDescription)
+            }
+        }
         
         if self.trackNum < self.currentTracklist.count {
-            self.nowPlayingTrack = self.currentTracklist[self.trackNum]
             self.setupAudioEngine()
         }
         
-        self.loopTrack = UserDefaults.standard.bool(forKey: "loopTrack")
-        self.shuffleTracks = UserDefaults.standard.bool(forKey: "shuffleTracks")
+        if self.shuffleTracks {
+            self.shuffle(true)
+        }
+    }
+    
+    private func setupAudioEngine() {
+        let path = URL(fileURLWithPath: FileEngine.getMusicDirectory()).appendingPathComponent(self.nowPlayingTrack?.url ?? "").path
+
+        AudioEngine.sharedInstance()?.stop()
+        AudioEngine.sharedInstance()?.setFileName(path)
+        AudioEngine.sharedInstance()?.setTrack(Int32(self.nowPlayingTrack?.trackNum ?? 0))
     }
     
     func getNowPlayingPlaylist() {
@@ -171,9 +200,20 @@ class PlaybackState: ObservableObject {
         }
     }
     
+    // MARK: - Playback Modifiers
     func shuffle() {
         if !self.shuffleTracks {
-            self.originalTrackList = Array(self.currentTracklist)
+            self.shuffle(true)
+        } else {
+            self.shuffle(false)
+        }
+        self.shuffleTracks.toggle()
+        UserDefaults.standard.set(self.shuffleTracks, forKey: "shuffleTracks")
+    }
+    
+    func shuffle(_ enabled: Bool) {
+        if enabled {
+            self.originalTrackList = self.currentTracklist
             var tempList = Array(self.currentTracklist)
             if self.nowPlayingTrack != nil {
                 tempList.remove(at: self.trackNum)
@@ -189,8 +229,6 @@ class PlaybackState: ObservableObject {
             self.currentTracklist = self.originalTrackList
             self.trackNum = self.currentTracklist.firstIndex(of: self.nowPlayingTrack ?? Track()) ?? 0
         }
-        self.shuffleTracks.toggle()
-        UserDefaults.standard.set(self.shuffleTracks, forKey: "shuffleTracks")
     }
     
     func loop() {
@@ -209,6 +247,7 @@ class PlaybackState: ObservableObject {
         }
     }
     
+    // MARK: - Now Playing Info Center
     func updateNowPlayingInfoCenter() {
         self.nowPlayingInfo[MPMediaItemPropertyTitle] = self.nowPlayingTrack?.name ?? ""
         self.nowPlayingInfo[MPMediaItemPropertyArtist] = self.nowPlayingTrack?.game?.name ?? ""
@@ -231,6 +270,7 @@ class PlaybackState: ObservableObject {
         MPNowPlayingInfoCenter.default().nowPlayingInfo = self.nowPlayingInfo
     }
     
+    // MARK: - Playback
     func play() {
         guard self.currentTracklist.count > 0 else {
             self.populateTrackList()
@@ -273,7 +313,11 @@ class PlaybackState: ObservableObject {
     func play(index: Int) {
         guard index < self.currentTracklist.count else { return }
         let track = self.currentTracklist[index]
-        self.trackNum = index
+        if self.shuffleTracks {
+            self.shuffle(true)
+        } else {
+            self.trackNum = index
+        }
         self.play(track)
     }
     
@@ -292,14 +336,6 @@ class PlaybackState: ObservableObject {
         self.nowPlayingInfo[MPNowPlayingInfoPropertyPlaybackRate] = 1.0
         self.updateNowPlayingInfoCenter()
         self.isNowPlaying = true
-    }
-    
-    private func setupAudioEngine() {
-        let path = URL(fileURLWithPath: FileEngine.getMusicDirectory()).appendingPathComponent(self.nowPlayingTrack?.url ?? "").path
-
-        AudioEngine.sharedInstance()?.stop()
-        AudioEngine.sharedInstance()?.setFileName(path)
-        AudioEngine.sharedInstance()?.setTrack(Int32(self.nowPlayingTrack?.trackNum ?? 0))
     }
     
     func stop() {
@@ -328,6 +364,7 @@ class PlaybackState: ObservableObject {
     }
 }
 
+// MARK: -
 extension UIImage {
     func image(with size:CGSize) -> UIImage?
     {

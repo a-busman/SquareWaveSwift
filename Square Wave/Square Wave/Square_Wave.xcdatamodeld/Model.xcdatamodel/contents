@@ -27,8 +27,10 @@
     <entity name="Track" representedClassName=".Track" syncable="YES" codeGenerationType="class">
         <attribute name="favourite" optional="YES" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES"/>
         <attribute name="id" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
+        <attribute name="introLength" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="isNowPlaying" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
         <attribute name="length" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="loopLength" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="name" optional="YES" attributeType="String"/>
         <attribute name="trackNum" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="url" optional="YES" attributeType="String"/>
@@ -42,6 +44,6 @@
         <element name="Game" positionX="-169.92578125" positionY="-188.78125" width="128" height="118"/>
         <element name="Playlist" positionX="225.78515625" positionY="-158.91796875" width="128" height="103"/>
         <element name="System" positionX="-170.546875" positionY="-79.578125" width="128" height="103"/>
-        <element name="Track" positionX="36" positionY="-234" width="128" height="208"/>
+        <element name="Track" positionX="36" positionY="-234" width="128" height="238"/>
     </elements>
 </model>

@@ -34,6 +34,12 @@ typedef enum {
     NSF
 } FILE_TYPE;
 
+/**
+ * addFile
+ * @brief Adds a file to the local container and database
+ * @param [in]url URL to external file
+ * @return NO for failure, YES for success
+*/
 + (BOOL)addFile:(NSURL *)url {
     // Determine file type
     NSFileManager * defaultManager = [NSFileManager defaultManager];
@@ -115,6 +121,11 @@ typedef enum {
     return YES;
 }
 
+/**
+ * getMusicDirectory
+ * @brief Get the current music directory in the container
+ * @return Absolute path of music directory
+*/
 + (NSString *)getMusicDirectory {
     NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
     NSString *documentsDirectory = [paths objectAtIndex:0];
@@ -266,7 +277,10 @@ typedef enum {
     
     return YES;
 }
-
+/**
+ * refreshDatabase
+ * @brief Clears database and readds all files
+ */
 + (void)refreshDatabase {
     [FileEngine clearDatabase];
     // TODO: Implement
@@ -274,6 +288,11 @@ typedef enum {
     // Readd them one by one
 }
 
+/**
+ * clearAll
+ * @brief Clears database and deletes all local files
+ * @return NO for failure, YES for success
+ */
 + (BOOL)clearAll {
     BOOL ret = YES;
     if (![FileEngine clearDatabase]) {
@@ -285,6 +304,11 @@ typedef enum {
     return ret;
 }
 
+/**
+ * clearFiles
+ * @brief Deletes all local files
+ * @return NO for failure, YES for success
+ */
 + (BOOL)clearFiles {
     BOOL isDirectory = NO;
     NSString *directory = [FileEngine getMusicDirectory];
@@ -306,6 +330,11 @@ typedef enum {
     return YES;
 }
 
+/**
+ * clearDatabase
+ * @brief Clears database
+ * @return NO for failure, YES for success
+ */
 + (BOOL)clearDatabase {
     BOOL ret = YES;
     AppDelegate *delegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
@@ -318,6 +347,12 @@ typedef enum {
     return ret;
 }
 
+/**
+ * deleteEntity
+ * @brief Deletes all records of a given entity
+ * @param [in]entity Entity to delete
+ * @return NO for failure, YES for success
+ */
 + (BOOL)deleteEntity:(NSString *)entity {
     NSFetchRequest *req = [[NSFetchRequest alloc] initWithEntityName:entity];
     NSBatchDeleteRequest *delReq = [[NSBatchDeleteRequest alloc] initWithFetchRequest:req];
@@ -356,6 +391,8 @@ typedef enum {
         NSString *gameName   = strlen(gameInfo->game)   > 0 ? [NSString stringWithUTF8String:gameInfo->game]   : @"No Game";
         NSString *systemName = strlen(gme_type_system(gme_type(emu))) > 0 ? [NSString stringWithUTF8String:gme_type_system(gme_type(emu))] : @"No System";
         int trackLength = gameInfo->play_length;
+        int loopLength = gameInfo->loop_length;
+        int introLength = gameInfo->intro_length;
         
         NSPredicate *predicate = [NSPredicate predicateWithFormat:@"name == %@ AND artist.name == %@ AND game.name == %@ AND system.name == %@", trackName, artistName, gameName, systemName];
         [request setPredicate:predicate];
@@ -377,6 +414,8 @@ typedef enum {
         [trackMO setTrackNum:i];
         [trackMO setUrl:relativePath];
         [trackMO setLength:trackLength];
+        [trackMO setIntroLength:introLength];
+        [trackMO setLoopLength:loopLength];
         
         // Look up other attributes, if they don't exist, create them.
         
@@ -422,6 +461,13 @@ typedef enum {
     }
 }
 
+/**
+ * getObjectsByName
+ * @brief Gets an array of objects where the name field matches the given name, of a given entity
+ * @param [in]name Name of object to get
+ * @param [in]entity Entity of object to get
+ * @return Array of objects matching the given criteria
+*/
 + (NSArray *)getObjectsByName:(NSString *)name entity:(NSString *)entity {
     NSError *error = nil;
     NSArray *ret = nil;

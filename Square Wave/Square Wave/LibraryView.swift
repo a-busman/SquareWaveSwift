@@ -37,44 +37,41 @@ struct LibraryView: View {
                         
                     }
                         .navigationBarTitle(Text("Library"))
-                        .actionSheet(isPresented: self.$showingSheet) {
-                            ActionSheet(title: Text("Add Music"), buttons: [
-                                .default(Text("From Folder...")) {
-                                    self.fromFolder = true
-                                    self.showingDocumentPicker = true
-                                },
-                                .default(Text("From Files...")) {
-                                    self.fromFolder = false
-                                    self.showingDocumentPicker = true
-                                },
-                                .cancel()])
-                    }
-                        .sheet(isPresented: self.$showingDocumentPicker) {
-                            FilePicker(files: self.$inputFiles, folderType: self.fromFolder)
-                    }
-                    
-
                         .navigationBarItems(leading:
                             Button(action: {
                                 self.showingSettings = true
                             }) {
                                 Text("Settings")
-                            }.sheet(isPresented: self.$showingSettings) {
-                                SettingsView()
+                            }.sheet(isPresented: self.$showingSettings, onDismiss: {self.showingSettings = false}) {
+                                SettingsView(isDisplayed: self.$showingSettings)
                             },
                             trailing:
                                 Button(action: {
                                     self.showingSheet = true
                                 }) {
                                     Text("Add")
-                                }
+                                }.actionSheet(isPresented: self.$showingSheet) {
+                                    ActionSheet(title: Text("Add Music"), buttons: [
+                                        .default(Text("From Folder...")) {
+                                            self.fromFolder = true
+                                            self.showingDocumentPicker = true
+                                        },
+                                        .default(Text("From Files...")) {
+                                            self.fromFolder = false
+                                            self.showingDocumentPicker = true
+                                        },
+                                        .cancel()])
+                                    }
+                                .sheet(isPresented: self.$showingDocumentPicker, onDismiss: {self.showingDocumentPicker = false}) {
+                                    FilePicker(files: self.$inputFiles, folderType: self.fromFolder)
+                            }
                         )
                 }
 
                 NowPlayingMiniView(nowPlayingTapped: self.$nowPlayingShowing)
                     .frame(width: geometry.size.width, height: self.position + (UIScreen.main.bounds.height - geometry.size.height))
                     .offset(y:geometry.size.height - self.position)
-            }.sheet(isPresented: self.$nowPlayingShowing) {
+            }.sheet(isPresented: self.$nowPlayingShowing, onDismiss: {self.nowPlayingShowing = false}) {
                 NowPlayingView().environmentObject(self.playbackState)
             }
         }
