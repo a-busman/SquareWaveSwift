@@ -15,8 +15,8 @@ struct PlatformsView: View {
         List {
             Section(footer: Text("Total Platforms: \(platforms.count)")
                 .foregroundColor(Color(.tertiaryLabel))) {
-                if platforms.count > 0 {
-                    ForEach(platforms, id: \.self) { (platform: System) in
+                    if self.platforms.count > 0 {
+                        ForEach(self.platforms, id: \.self) { (platform: System) in
                         NavigationLink(destination: SongsView(title: platform.name ?? "Songs", predicate: NSPredicate(format: "system.id == %@", platform.id! as CVarArg))) {
                             HStack {
                                 ListArtView(animationSettings: AnimationSettings(), albumArt: platform.name ?? "")

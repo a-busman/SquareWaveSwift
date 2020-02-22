@@ -16,7 +16,8 @@ struct LibraryView: View {
     @State private var fromFolder = false
     @State private var nowPlayingShowing = false
     @EnvironmentObject var playbackState: PlaybackState
-    private let position: CGFloat = 75.0
+    static let miniViewPosition: CGFloat = 75.0
+    static var miniViewHeight: CGFloat = 0.0
     var body: some View {
         GeometryReader { geometry in
             ZStack(alignment: .topLeading) {
@@ -67,14 +68,18 @@ struct LibraryView: View {
                             }
                         )
                 }
-
                 NowPlayingMiniView(nowPlayingTapped: self.$nowPlayingShowing)
-                    .frame(width: geometry.size.width, height: self.position + (UIScreen.main.bounds.height - geometry.size.height))
-                    .offset(y:geometry.size.height - self.position)
+                    .frame(width: geometry.size.width, height: LibraryView.getHeight(geometry.size.height))
+                    .offset(y:geometry.size.height - LibraryView.miniViewPosition)
             }.sheet(isPresented: self.$nowPlayingShowing, onDismiss: {self.nowPlayingShowing = false}) {
                 NowPlayingView().environmentObject(self.playbackState)
             }
         }
+    }
+    
+    static func getHeight(_ geometryHeight: CGFloat) -> CGFloat {
+        LibraryView.miniViewHeight = LibraryView.miniViewPosition + (UIScreen.main.bounds.height - geometryHeight)
+        return LibraryView.miniViewHeight
     }
 }
 

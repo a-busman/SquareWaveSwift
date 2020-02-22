@@ -8,6 +8,8 @@
 
 /* Begin PBXBuildFile section */
 		480E72E84A0CBAA5AD24BA45 /* Pods_Square_Wave.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DF4AB5F6BE0BBA54DAEDCB14 /* Pods_Square_Wave.framework */; };
+		FA2D8853240075140058713E /* PlaylistView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA2D8852240075140058713E /* PlaylistView.swift */; };
+		FA2D8855240089D30058713E /* VisualEffectView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA2D8854240089D30058713E /* VisualEffectView.swift */; };
 		FA5A25C923F5BEF400D4C28A /* LibraryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA5A25C823F5BEF400D4C28A /* LibraryView.swift */; };
 		FA5A25CB23F5BF4A00D4C28A /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA5A25CA23F5BF4A00D4C28A /* SettingsView.swift */; };
 		FA5A25CD23F5C6F800D4C28A /* PlaylistsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA5A25CC23F5C6F800D4C28A /* PlaylistsView.swift */; };
@@ -100,6 +102,8 @@
 		9C6E19E4B9251F53C80CCB17 /* Pods-Square Wave.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Square Wave.debug.xcconfig"; path = "Target Support Files/Pods-Square Wave/Pods-Square Wave.debug.xcconfig"; sourceTree = "<group>"; };
 		D421A424018349B9CFDDCF29 /* Pods-Square Wave.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Square Wave.release.xcconfig"; path = "Target Support Files/Pods-Square Wave/Pods-Square Wave.release.xcconfig"; sourceTree = "<group>"; };
 		DF4AB5F6BE0BBA54DAEDCB14 /* Pods_Square_Wave.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Square_Wave.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		FA2D8852240075140058713E /* PlaylistView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaylistView.swift; sourceTree = "<group>"; };
+		FA2D8854240089D30058713E /* VisualEffectView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VisualEffectView.swift; sourceTree = "<group>"; };
 		FA5A25C823F5BEF400D4C28A /* LibraryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LibraryView.swift; sourceTree = "<group>"; };
 		FA5A25CA23F5BF4A00D4C28A /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		FA5A25CC23F5C6F800D4C28A /* PlaylistsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaylistsView.swift; sourceTree = "<group>"; };
@@ -317,9 +321,11 @@
 				FA822D4023F1F81E005FCFB3 /* Preview Content */,
 				FA5A25C823F5BEF400D4C28A /* LibraryView.swift */,
 				FAC00FA223F729660072F78C /* BlurView.swift */,
+				FA2D8852240075140058713E /* PlaylistView.swift */,
 				FA5A25CA23F5BF4A00D4C28A /* SettingsView.swift */,
 				FA5A25CC23F5C6F800D4C28A /* PlaylistsView.swift */,
 				FAC00FA023F728F00072F78C /* NowPlayingMiniView.swift */,
+				FA2D8854240089D30058713E /* VisualEffectView.swift */,
 				FA5A25CE23F5C74200D4C28A /* PlatformsView.swift */,
 				FA5A25D023F5C75000D4C28A /* GamesView.swift */,
 				FA5A25D323F5C76400D4C28A /* SongsView.swift */,
@@ -682,6 +688,7 @@
 				FAC0770E23F513E30096B786 /* Gb_Cpu.cpp in Sources */,
 				FA5A25D123F5C75000D4C28A /* GamesView.swift in Sources */,
 				FAC0771423F513E30096B786 /* Data_Reader.cpp in Sources */,
+				FA2D8853240075140058713E /* PlaylistView.swift in Sources */,
 				FAC0771A23F513E30096B786 /* Sap_Emu.cpp in Sources */,
 				FAC076FF23F513E30096B786 /* Ay_Emu.cpp in Sources */,
 				FAC0770823F513E30096B786 /* Gb_Oscs.cpp in Sources */,
@@ -705,6 +712,7 @@
 				FAC00FA523F887530072F78C /* PlaybackState.swift in Sources */,
 				FAC0771323F513E30096B786 /* Spc_Filter.cpp in Sources */,
 				FAC0771223F513E30096B786 /* Vgm_Emu_Impl.cpp in Sources */,
+				FA2D8855240089D30058713E /* VisualEffectView.swift in Sources */,
 				FAC00FA323F729660072F78C /* BlurView.swift in Sources */,
 				FAC0770523F513E30096B786 /* Nsf_Emu.cpp in Sources */,
 				FA5A25CF23F5C74200D4C28A /* PlatformsView.swift in Sources */,

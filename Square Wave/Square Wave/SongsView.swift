@@ -21,6 +21,8 @@ struct SongsView: View {
         self.predicate = predicate
         self.tracksRequest = FetchRequest(entity: Track.entity(), sortDescriptors: [], predicate: predicate)
         self.title = title
+        
+        UITableView.appearance().insetsLayoutMarginsFromSafeArea = false
     }
     
     private func shouldDisplayAnimation(_ track: Track) -> Bool {
@@ -106,12 +108,13 @@ struct SongsView: View {
                         }
                     }
                 }
+                Spacer()
+                    .frame(height: LibraryView.miniViewPosition)
             } else {
                 Text("Add games to your Library")
             }
             
         }.navigationBarTitle(Text(self.title), displayMode: .inline)
-            .padding(EdgeInsets(top: 0.0, leading: 0.0, bottom: 75.0, trailing: 0.0))
             .navigationBarItems(trailing: Button(action: {
                 self.sortSheetShowing = true
             }) {

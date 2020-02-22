@@ -23,10 +23,7 @@ struct NowPlayingMiniView: View {
     }
 
     var body: some View {
-        ZStack(alignment: .top) {
-            Rectangle()
-                .background(BlurView())
-                .foregroundColor(.clear)
+        VStack {
             HStack {
                 Image(uiImage: ListArtView.getImage(for: self.playbackState.nowPlayingTrack?.system?.name ?? "") ?? UIImage(named: "placeholder-art")!)
                     .resizable()
@@ -66,9 +63,11 @@ struct NowPlayingMiniView: View {
                     .padding()
                 }.foregroundColor(Color(.label))
             }
+            Spacer()
         }.onTapGesture {
             self.nowPlayingTapped = true
-        }.gesture(swipe)
+        }.gesture(self.swipe)
+            .background(BlurView(style: .systemUltraThinMaterial))
     }
 }
 

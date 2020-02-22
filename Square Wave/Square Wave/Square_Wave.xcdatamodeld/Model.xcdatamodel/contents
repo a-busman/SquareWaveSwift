@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="15702" systemVersion="19C57" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="15702" systemVersion="18G2022" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
     <entity name="Artist" representedClassName=".Artist" syncable="YES" codeGenerationType="class">
         <attribute name="id" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
         <attribute name="name" optional="YES" attributeType="String"/>
@@ -13,6 +13,7 @@
         <relationship name="tracks" optional="YES" toMany="YES" deletionRule="Nullify" ordered="YES" destinationEntity="Track" inverseName="game" inverseEntity="Track"/>
     </entity>
     <entity name="Playlist" representedClassName=".Playlist" syncable="YES" codeGenerationType="class">
+        <attribute name="art" optional="YES" attributeType="URI"/>
         <attribute name="id" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
         <attribute name="isNowPlaying" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
         <attribute name="name" optional="YES" attributeType="String"/>
@@ -42,7 +43,7 @@
     <elements>
         <element name="Artist" positionX="-171" positionY="-282" width="128" height="88"/>
         <element name="Game" positionX="-169.92578125" positionY="-188.78125" width="128" height="118"/>
-        <element name="Playlist" positionX="225.78515625" positionY="-158.91796875" width="128" height="103"/>
+        <element name="Playlist" positionX="225.78515625" positionY="-158.91796875" width="128" height="118"/>
         <element name="System" positionX="-170.546875" positionY="-79.578125" width="128" height="103"/>
         <element name="Track" positionX="36" positionY="-234" width="128" height="238"/>
     </elements>
