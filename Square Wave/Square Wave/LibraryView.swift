@@ -44,7 +44,7 @@ struct LibraryView: View {
                             }) {
                                 Text("Settings")
                             }.sheet(isPresented: self.$showingSettings, onDismiss: {self.showingSettings = false}) {
-                                SettingsView(isDisplayed: self.$showingSettings)
+                                SettingsView(isDisplayed: self.$showingSettings).environmentObject(self.playbackState)
                             },
                             trailing:
                                 Button(action: {
@@ -69,17 +69,12 @@ struct LibraryView: View {
                         )
                 }
                 NowPlayingMiniView(nowPlayingTapped: self.$nowPlayingShowing)
-                    .frame(width: geometry.size.width, height: LibraryView.getHeight(geometry.size.height))
+                    .frame(width: geometry.size.width, height: LibraryView.miniViewPosition + (UIScreen.main.bounds.height - geometry.size.height))
                     .offset(y:geometry.size.height - LibraryView.miniViewPosition)
             }.sheet(isPresented: self.$nowPlayingShowing, onDismiss: {self.nowPlayingShowing = false}) {
                 NowPlayingView().environmentObject(self.playbackState)
             }
         }
-    }
-    
-    static func getHeight(_ geometryHeight: CGFloat) -> CGFloat {
-        LibraryView.miniViewHeight = LibraryView.miniViewPosition + (UIScreen.main.bounds.height - geometryHeight)
-        return LibraryView.miniViewHeight
     }
 }
 

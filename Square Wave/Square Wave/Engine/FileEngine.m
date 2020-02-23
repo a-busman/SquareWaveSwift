@@ -338,33 +338,15 @@ typedef enum {
 + (BOOL)clearDatabase {
     BOOL ret = YES;
     AppDelegate *delegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
-    NSManagedObjectModel *model = [[delegate persistentContainer] managedObjectModel];
-    for (id entity in [model entities]) {
-        if (![FileEngine deleteEntity:[entity name]]) {
-            ret = NO;
-        }
+    NSURL *url = [[[[delegate persistentContainer] persistentStoreDescriptions] firstObject] URL];
+    ret = [[[delegate persistentContainer] persistentStoreCoordinator] destroyPersistentStoreAtURL: url withType: NSSQLiteStoreType options:NULL error:NULL];
+    if (ret == NO) {
+        return ret;
     }
+    
+    ret = [[[delegate persistentContainer] persistentStoreCoordinator] addPersistentStoreWithType:NSSQLiteStoreType configuration:NULL URL:url options:NULL error:NULL];
+    
     return ret;
-}
-
-/**
- * deleteEntity
- * @brief Deletes all records of a given entity
- * @param [in]entity Entity to delete
- * @return NO for failure, YES for success
- */
-+ (BOOL)deleteEntity:(NSString *)entity {
-    NSFetchRequest *req = [[NSFetchRequest alloc] initWithEntityName:entity];
-    NSBatchDeleteRequest *delReq = [[NSBatchDeleteRequest alloc] initWithFetchRequest:req];
-    AppDelegate *delegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
-    NSManagedObjectContext *context = [[delegate persistentContainer] viewContext];
-    NSError *error = NULL;
-    [context executeRequest:delReq error:&error];
-    if (error != NULL) {
-        NSLog(@"Error clearing database of Tracks %@", error.localizedDescription);
-        return NO;
-    }
-    return YES;
 }
 
 /**
@@ -390,7 +372,7 @@ typedef enum {
         NSString *artistName = strlen(gameInfo->author) > 0 ? [NSString stringWithUTF8String:gameInfo->author] : @"No Artist";
         NSString *gameName   = strlen(gameInfo->game)   > 0 ? [NSString stringWithUTF8String:gameInfo->game]   : @"No Game";
         NSString *systemName = strlen(gme_type_system(gme_type(emu))) > 0 ? [NSString stringWithUTF8String:gme_type_system(gme_type(emu))] : @"No System";
-        int trackLength = gameInfo->play_length;
+        int trackLength = gameInfo->length;
         int loopLength = gameInfo->loop_length;
         int introLength = gameInfo->intro_length;
         

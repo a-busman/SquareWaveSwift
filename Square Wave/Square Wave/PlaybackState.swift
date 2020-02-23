@@ -11,6 +11,71 @@ import CoreData
 import UIKit
 import MediaPlayer
 
+enum PlaybackStateProperty: String {
+    case lastPlayedTrack    = "lastPlayedTrack"
+    case lastPlayedTracknum = "lastPlayedTracknum"
+    case loopTrack          = "loopTrack"
+    case shuffleTracks      = "shuffleTracks"
+    case trackLength        = "trackLength"
+    case loopCount          = "loopCount"
+
+    func getProperty<T>() -> T? {
+        switch(self) {
+        case .lastPlayedTrack:
+            if let id = UserDefaults.standard.string(forKey: self.rawValue) {
+                let delegate = UIApplication.shared.delegate as! AppDelegate
+                let context = delegate.persistentContainer.viewContext
+                let request = NSFetchRequest<Track>(entityName: "Track")
+                request.predicate = NSPredicate(format: "id == %@", (UUID(uuidString: id) ?? UUID()) as CVarArg)
+                request.returnsObjectsAsFaults = false
+                do {
+                    let results = try context.fetch(request)
+                    return results.first as? T
+                } catch {
+                    NSLog("Could not get last played track: %s", error.localizedDescription)
+                }
+            }
+            return nil
+        case .lastPlayedTracknum:
+            fallthrough
+        case .loopCount:
+            fallthrough
+        case .trackLength:
+            return UserDefaults.standard.integer(forKey: self.rawValue) as? T
+        case .loopTrack:
+            fallthrough
+        case .shuffleTracks:
+            return UserDefaults.standard.bool(forKey: self.rawValue) as? T
+        }
+    }
+    
+    func setProperty(newValue: Any?) {
+        switch(self) {
+        case .lastPlayedTrack:
+            if let uuid = newValue as? UUID {
+                UserDefaults.standard.set(uuid.uuidString, forKey: self.rawValue)
+            } else {
+                UserDefaults.standard.removeObject(forKey: self.rawValue)
+            }
+        case .lastPlayedTracknum:
+            fallthrough
+        case .loopCount:
+            fallthrough
+        case .trackLength:
+            if let num = newValue as? Int {
+                UserDefaults.standard.set(num, forKey: self.rawValue)
+            }
+        case .loopTrack:
+            fallthrough
+        case .shuffleTracks:
+            if let val = newValue as? Bool {
+                UserDefaults.standard.set(val, forKey: self.rawValue)
+            }
+        }
+    }
+}
+
+// MARK: -
 class PlaybackState: ObservableObject {
     @Published var isNowPlaying = false {
         didSet {
@@ -40,16 +105,15 @@ class PlaybackState: ObservableObject {
 
     @Published var nowPlayingTrack:  Track? {
         didSet {
-            if nowPlayingTrack != nil {
-                UserDefaults.standard.set(self.nowPlayingTrack!.id!.uuidString, forKey: "lastPlayedTrack")
-            } else {
-                UserDefaults.standard.removeObject(forKey: "lastPlayedTrack")
-            }
+            PlaybackStateProperty.lastPlayedTrack.setProperty(newValue: self.nowPlayingTrack?.id)
         }
     }
     private var nowPlayingPlaylist: Playlist?
     @Published var currentTracklist: [Track] = [] {
         didSet {
+            if self.currentTracklist.count == 0 {
+                return
+            }
             if self.nowPlayingPlaylist == nil {
                 self.getNowPlayingPlaylist()
             }
@@ -64,7 +128,7 @@ class PlaybackState: ObservableObject {
     private var originalTrackList: [Track] = []
     @Published var trackNum = 0 {
         didSet {
-            UserDefaults.standard.set(self.trackNum, forKey: "lastPlayedTracknum")
+            PlaybackStateProperty.lastPlayedTracknum.setProperty(newValue: self.trackNum)
         }
     }
     @Published var elapsedTime   = 0
@@ -143,26 +207,15 @@ class PlaybackState: ObservableObject {
             return .success
         }
  */
-        self.loopTrack = UserDefaults.standard.bool(forKey: "loopTrack")
-        self.shuffleTracks = UserDefaults.standard.bool(forKey: "shuffleTracks")
+        self.loopTrack = PlaybackStateProperty.loopTrack.getProperty() ?? false
+        self.shuffleTracks = PlaybackStateProperty.shuffleTracks.getProperty() ?? false
         self.getNowPlayingPlaylist()
         self.currentTracklist = self.nowPlayingPlaylist?.tracks?.array as? [Track] ?? []
         self.originalTrackList = self.currentTracklist
-        if let lastPlayingID = UserDefaults.standard.string(forKey: "lastPlayedTrack") {
-            let delegate = UIApplication.shared.delegate as! AppDelegate
-            let context = delegate.persistentContainer.viewContext
-            let request = NSFetchRequest<Track>(entityName: "Track")
-            request.predicate = NSPredicate(format: "id == %@", (UUID(uuidString: lastPlayingID) ?? UUID()) as CVarArg)
-            request.returnsObjectsAsFaults = false
-            do {
-                let results = try context.fetch(request)
-                self.nowPlayingTrack = results.first
-                if !self.shuffleTracks {
-                    self.trackNum = UserDefaults.standard.integer(forKey: "lastPlayedTracknum")
-                }
-            } catch {
-                NSLog("Could not get last played track: %s", error.localizedDescription)
-            }
+        self.nowPlayingTrack = PlaybackStateProperty.lastPlayedTrack.getProperty()
+
+        if !self.shuffleTracks {
+            self.trackNum = PlaybackStateProperty.lastPlayedTracknum.getProperty() ?? 0
         }
         
         if self.trackNum < self.currentTracklist.count {
@@ -193,11 +246,22 @@ class PlaybackState: ObservableObject {
             self.nowPlayingPlaylist = results.first
             if self.nowPlayingPlaylist == nil {
                 self.nowPlayingPlaylist = Playlist(context: context)
+                try context.save()
                 self.nowPlayingPlaylist?.isNowPlaying = true
             }
         } catch {
             NSLog("Could not get now playing playlist: \(error.localizedDescription)")
         }
+    }
+    
+    func clearCurrentPlaybackState() {
+        self.stop()
+        self.nowPlayingTrack = nil
+        self.currentTracklist = []
+        self.originalTrackList = []
+        self.nowPlayingPlaylist = nil
+        self.trackNum = 0
+        self.elapsedTime = 0
     }
     
     // MARK: - Playback Modifiers
@@ -208,7 +272,7 @@ class PlaybackState: ObservableObject {
             self.shuffle(false)
         }
         self.shuffleTracks.toggle()
-        UserDefaults.standard.set(self.shuffleTracks, forKey: "shuffleTracks")
+        PlaybackStateProperty.shuffleTracks.setProperty(newValue: self.shuffleTracks)
     }
     
     func shuffle(_ enabled: Bool) {
@@ -236,14 +300,21 @@ class PlaybackState: ObservableObject {
             self.setFade()
         }
         self.loopTrack.toggle()
-        UserDefaults.standard.set(self.loopTrack, forKey: "loopTrack")
+        PlaybackStateProperty.loopTrack.setProperty(newValue: self.loopTrack)
     }
     
     func setFade() {
         if self.loopTrack {
             AudioEngine.sharedInstance()?.resetFadeTime()
         } else {
-            AudioEngine.sharedInstance()?.fadeOutCurrentTrack()
+            if self.nowPlayingTrack?.loopLength ?? 0 > 0 {
+                let loopCount = PlaybackStateProperty.loopCount.getProperty() ?? 2
+                let loopLength = Int32(loopCount) * self.nowPlayingTrack!.loopLength
+                let fadeOutTime = self.nowPlayingTrack!.introLength + loopLength
+                AudioEngine.sharedInstance()?.setFadeTime(fadeOutTime)
+            } else {
+                AudioEngine.sharedInstance()?.setFadeTime(PlaybackStateProperty.trackLength.getProperty() ?? 150000)
+            }
         }
     }
     
@@ -261,7 +332,15 @@ class PlaybackState: ObservableObject {
             }
         })
         self.nowPlayingInfo[MPMediaItemPropertyArtwork] = mediaArtwork
-        self.nowPlayingInfo[MPMediaItemPropertyPlaybackDuration] = (self.nowPlayingTrack?.length ?? 0) / 1000
+        if self.nowPlayingTrack?.loopLength ?? 0 > 0 {
+            let loopCount = PlaybackStateProperty.loopCount.getProperty() ?? 2
+            let loopLength = self.nowPlayingTrack!.loopLength * Int32(loopCount)
+            self.nowPlayingInfo[MPMediaItemPropertyPlaybackDuration] = (self.nowPlayingTrack!.introLength + loopLength) / 1000
+        } else if self.nowPlayingTrack?.length ?? 0 > 0 {
+            self.nowPlayingInfo[MPMediaItemPropertyPlaybackDuration] = Int(self.nowPlayingTrack!.length) / 1000
+        } else {
+            self.nowPlayingInfo[MPMediaItemPropertyPlaybackDuration] = (PlaybackStateProperty.trackLength.getProperty() ?? 150000) / 1000
+        }
         self.updateNowPlayingElapsed()
     }
     

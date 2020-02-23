@@ -72,34 +72,19 @@ struct PickerView: UIViewRepresentable {
 
 struct SettingsView: View {
     @Environment(\.presentationMode) var presentationMode
-    @State var loopCount = 2 {
-        didSet {
-            UserDefaults.standard.set(self.loopCount, forKey: "loopCount")
-        }
-    }
+    @EnvironmentObject var playbackState: PlaybackState
+    @State var loopCount = PlaybackStateProperty.loopCount.getProperty() ?? 2
     var timesToChoose: [[String]] = [
         Array(0...20).map { "\($0)"},
         ["min"],
         Array(0...59).map { "\($0)"},
         ["sec"]
     ]
-    @State var trackLength: [Int] = [2, 0, 30, 0] {
-        didSet {
-            let lengthInMs = 60000 * self.trackLength[0] + 1000 * self.trackLength[2]
-            UserDefaults.standard.set(lengthInMs, forKey: "trackLength")
-        }
-    }
+    @State var trackLength: [Int] = SettingsView.getTrackLength(from: PlaybackStateProperty.trackLength.getProperty() ?? 150000)
     @State var isShowingPicker = false
     @Binding var isDisplayed: Bool
     
-    init(isDisplayed: Binding<Bool>) {
-        self._isDisplayed = isDisplayed
-        self.loopCount = UserDefaults.standard.integer(forKey: "loopCount")
-        self.trackLength = self.getTrackLength(from: UserDefaults.standard.integer(forKey: "trackLength"))
-
-    }
-    
-    private func getTrackLength(from ms: Int) -> [Int] {
+    static func getTrackLength(from ms: Int) -> [Int] {
         var ret: [Int] = []
         
         ret.append(ms / 60000)
@@ -122,12 +107,26 @@ struct SettingsView: View {
                         }
                     }.foregroundColor(Color(.label))
                     if self.isShowingPicker {
-                        PickerView(data: self.timesToChoose, selections: self.$trackLength)
+                        PickerView(data: self.timesToChoose, selections: Binding(
+                            get: {
+                                self.trackLength
+                            }, set: { (newValue) in
+                                self.trackLength = newValue
+                                let value = (newValue[0] * 60000) + (newValue[2] * 1000)
+                                PlaybackStateProperty.trackLength.setProperty(newValue: value)
+                            }
+                        ))
                     }
                 }
                 Section(footer: Text("For tracks with loop information, you can choose how many times you want the track to loop before moving on to the next track.")) {
                     HStack {
-                        Stepper(value: self.$loopCount, in: 0...20) {
+                        Stepper(value: Binding(
+                            get: {
+                                self.loopCount
+                            }, set: { (newValue) in
+                                self.loopCount = newValue
+                                PlaybackStateProperty.loopCount.setProperty(newValue: newValue)
+                            }), in: 0...20) {
                             HStack {
                                 Text("Loop Count")
                                 Spacer()
@@ -138,6 +137,7 @@ struct SettingsView: View {
                 }
                 Section {
                     Button(action: {
+                        self.playbackState.clearCurrentPlaybackState()
                         FileEngine.clearAll()
                     }) {
                         Text("Delete All")

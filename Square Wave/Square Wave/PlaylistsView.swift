@@ -65,7 +65,7 @@ struct PlaylistsView: View {
             }
             Spacer()
                 .frame(height: LibraryView.miniViewPosition)
-        }
+        }.navigationBarTitle(Text("Playlists"))
     }
     
     func getPlaylistImage(_ playlist: Playlist) -> UIImage {
