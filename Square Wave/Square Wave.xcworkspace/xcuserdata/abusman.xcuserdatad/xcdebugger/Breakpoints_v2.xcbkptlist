@@ -14,8 +14,8 @@
             filePath = "Square Wave/NowPlayingView.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "238"
-            endingLineNumber = "238"
+            startingLineNumber = "249"
+            endingLineNumber = "249"
             landmarkName = "body"
             landmarkType = "24">
          </BreakpointContent>
@@ -23,49 +23,49 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "244CD0C6-A959-41FA-9926-397CFC2C8CD0"
+            uuid = "C42DA30C-E1FE-4C16-89EB-452A5310A99D"
             shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Square Wave/PlaybackState.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "226"
-            endingLineNumber = "226"
-            landmarkName = "shuffle(_:)"
-            landmarkType = "7">
+            startingLineNumber = "275"
+            endingLineNumber = "275"
+            landmarkName = "unknown"
+            landmarkType = "0">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "D73EB50E-C8B3-4404-93C1-D19728137713"
+            uuid = "CA6BFA86-73E2-4575-9B2E-3FF2C6FB874E"
             shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Square Wave/PlaybackState.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "213"
-            endingLineNumber = "213"
-            landmarkName = "PlaybackState"
-            landmarkType = "3">
+            startingLineNumber = "205"
+            endingLineNumber = "205"
+            landmarkName = "unknown"
+            landmarkType = "0">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "2F2745E8-27B7-4F5D-8C38-BA370B366741"
+            uuid = "8AF0D264-6F4C-467C-836D-64E5D4768BF5"
             shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "Square Wave/PlaybackState.swift"
+            filePath = "Square Wave/SongsView.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "134"
-            endingLineNumber = "134"
-            landmarkName = "init()"
-            landmarkType = "7">
+            startingLineNumber = "91"
+            endingLineNumber = "91"
+            landmarkName = "body"
+            landmarkType = "24">
          </BreakpointContent>
       </BreakpointProxy>
    </Breakpoints>

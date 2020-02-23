@@ -72,16 +72,44 @@ struct PickerView: UIViewRepresentable {
 
 struct SettingsView: View {
     @Environment(\.presentationMode) var presentationMode
-    @State var loopCount = 2
+    @State var loopCount = 2 {
+        didSet {
+            UserDefaults.standard.set(self.loopCount, forKey: "loopCount")
+        }
+    }
     var timesToChoose: [[String]] = [
         Array(0...20).map { "\($0)"},
         ["min"],
         Array(0...59).map { "\($0)"},
         ["sec"]
     ]
-    @State var trackLength: [Int] = [2, 0, 30, 0]
+    @State var trackLength: [Int] = [2, 0, 30, 0] {
+        didSet {
+            let lengthInMs = 60000 * self.trackLength[0] + 1000 * self.trackLength[2]
+            UserDefaults.standard.set(lengthInMs, forKey: "trackLength")
+        }
+    }
     @State var isShowingPicker = false
     @Binding var isDisplayed: Bool
+    
+    init(isDisplayed: Binding<Bool>) {
+        self._isDisplayed = isDisplayed
+        self.loopCount = UserDefaults.standard.integer(forKey: "loopCount")
+        self.trackLength = self.getTrackLength(from: UserDefaults.standard.integer(forKey: "trackLength"))
+
+    }
+    
+    private func getTrackLength(from ms: Int) -> [Int] {
+        var ret: [Int] = []
+        
+        ret.append(ms / 60000)
+        ret.append(0)
+        ret.append((ms / 1000) % 60)
+        ret.append(0)
+        
+        return ret
+    }
+    
     var body: some View {
         NavigationView {
             Form {
