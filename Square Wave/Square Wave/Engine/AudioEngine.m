@@ -175,6 +175,24 @@ const int kBufferCount = 3;
     }
 }
 
+- (int)getVoiceCount {
+    @synchronized (self) {
+        if (_mEmu == NULL) {
+            return 0;
+        }
+        return gme_voice_count(_mEmu);
+    }
+}
+
+- (const char *)getVoiceName:(int)index {
+    @synchronized (self) {
+        if (_mEmu == NULL) {
+            return NULL;
+        }
+        return gme_voice_name(_mEmu, index);
+    }
+}
+
 // MARK: - Track Properties
 - (BOOL)getTrackEnded {
     @synchronized (self) {

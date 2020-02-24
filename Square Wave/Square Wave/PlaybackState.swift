@@ -185,6 +185,8 @@ class PlaybackState: ObservableObject {
     /// Info for MPNowPlayingInfoCenter
     private var nowPlayingInfo = [String : Any]()
     
+    var muteMask: Int = 0
+    
     // MARK: - Initialization
     /**
      Initializes a new Playback State, and sets up MPRemoteCommandCenter
@@ -468,6 +470,7 @@ class PlaybackState: ObservableObject {
         }
         DispatchQueue.global().async {
             AudioEngine.sharedInstance()?.setTempo(self.currentTempo)
+            AudioEngine.sharedInstance()?.setMuteVoices(Int32(self.muteMask))
             AudioEngine.sharedInstance()?.play()
             self.setFade()
         }
@@ -515,6 +518,7 @@ class PlaybackState: ObservableObject {
             AudioEngine.sharedInstance()?.setFileName(path)
             AudioEngine.sharedInstance()?.setTrack(Int32(track.trackNum))
             AudioEngine.sharedInstance()?.setTempo(self.currentTempo)
+            AudioEngine.sharedInstance()?.setMuteVoices(Int32(self.muteMask))
             AudioEngine.sharedInstance()?.play()
             self.setFade()
 

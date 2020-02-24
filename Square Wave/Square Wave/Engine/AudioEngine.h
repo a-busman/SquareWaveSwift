@@ -31,6 +31,8 @@
 - (void)setFileName:(NSString *)fileName;
 - (void)setTrack:(int)track;
 - (void)setMuteVoices:(int)mask;
+- (int)getVoiceCount;
+- (const char *)getVoiceName:(int)index;
 - (void)play;
 - (void)pause;
 - (void)stop;

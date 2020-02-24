@@ -190,6 +190,29 @@ struct NowPlayingView: View {
                     ), in: 0...4, step: 1.0)
                         .accentColor(Color(.label))
                         .padding(.horizontal)
+                    Text("Enabled Voices")
+                        .font(.callout)
+                        .foregroundColor(Color(.tertiaryLabel))
+                    List {
+                        ForEach(0..<(AudioEngine.sharedInstance()?.getVoiceCount() ?? 0), id: \.self) { index in
+                            Button(action: {
+                                if (self.playbackState.muteMask & (1 << index)) == 0 {
+                                    self.playbackState.muteMask |= (1 << index)
+                                } else {
+                                    self.playbackState.muteMask &= ~(1 << index)
+                                }
+                                AudioEngine.sharedInstance()?.setMuteVoices(Int32(self.playbackState.muteMask))
+                            }) {
+                                HStack {
+                                    Text(String(cString: (AudioEngine.sharedInstance()!.getVoiceName(index as Int32))))
+                                    Spacer()
+                                    if (self.playbackState.muteMask & (1 << index)) == 0 {
+                                        Image(systemName: "checkmark")
+                                    }
+                                }
+                            }
+                        }
+                    }
                 }.padding()
                 Spacer()
                 
