@@ -202,6 +202,13 @@ const int kBufferCount = 3;
     }
 }
 
+- (void)setTempo:(double)tempo {
+    @synchronized (self) {
+        CHECK_EMU_AND_RETURN();
+        gme_set_tempo(_mEmu, tempo);
+    }
+}
+
 - (void)resetFadeTime {
     @synchronized (self) {
         CHECK_EMU_AND_RETURN();

@@ -41,6 +41,7 @@
 - (BOOL)getTrackEnded;
 - (void)fadeOutCurrentTrack;
 - (void)setFadeTime:(int)msec;
+- (void)setTempo:(double)tempo;
 - (void)resetFadeTime;
 
 @end

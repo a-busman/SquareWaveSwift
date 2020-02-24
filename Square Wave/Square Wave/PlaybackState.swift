@@ -26,6 +26,8 @@ enum PlaybackStateProperty: String {
     case trackLength        = "trackLength"
     /// User specified amount of loops for tracks with loop information
     case loopCount          = "loopCount"
+    /// User specified playback speed
+    case tempo              = "tempo"
 
     /**
      Gets a property from userdefaults, or initializes a new value.
@@ -68,6 +70,8 @@ enum PlaybackStateProperty: String {
             fallthrough
         case .shuffleTracks:
             return UserDefaults.standard.bool(forKey: self.rawValue) as? T ?? false as! T
+        case .tempo:
+            return UserDefaults.standard.double(forKey: self.rawValue) as? T ?? 1.0 as! T
         }
     }
     
@@ -97,6 +101,10 @@ enum PlaybackStateProperty: String {
             if let val = newValue as? Bool {
                 UserDefaults.standard.set(val, forKey: self.rawValue)
             }
+        case .tempo:
+            if let val = newValue as? Double {
+                UserDefaults.standard.set(val, forKey: self.rawValue)
+            }
         }
     }
 }
@@ -109,7 +117,7 @@ class PlaybackState: ObservableObject {
         didSet {
             if self.isNowPlaying {
                 self.playTimer = Timer.scheduledTimer(withTimeInterval: 0.5, repeats: true) { _ in
-                    self.elapsedTime = Int(AudioEngine.sharedInstance()?.getElapsedTime() ?? 0)
+                    self.elapsedTime = Int(Double(AudioEngine.sharedInstance()?.getElapsedTime() ?? 0) * self.currentTempo)
                     self.updateNowPlayingElapsed()
                     if let didEnd = AudioEngine.sharedInstance()?.getTrackEnded() {
                         if didEnd && !self.loopTrack && !self.trackEnded {
@@ -168,6 +176,8 @@ class PlaybackState: ObservableObject {
     @Published var loopTrack     = false
     /// Whether or not to play the current track list in a random order.
     @Published var shuffleTracks = false
+    /// Current tempo of playing track
+    @Published var currentTempo  = 1.0
     /// Whether or not the current track has finished playing.
     private var trackEnded: Bool = false
     /// Timer used to update track information and determine if track has ended
@@ -260,6 +270,7 @@ class PlaybackState: ObservableObject {
         if self.shuffleTracks {
             self.shuffle(true)
         }
+        self.currentTempo = PlaybackStateProperty.tempo.getProperty()
     }
     
     /**
@@ -380,14 +391,26 @@ class PlaybackState: ObservableObject {
                 let loopCount: Int = PlaybackStateProperty.loopCount.getProperty()
                 let loopLength = Int32(loopCount) * self.nowPlayingTrack!.loopLength
                 let fadeOutTime = self.nowPlayingTrack!.introLength + loopLength
-                AudioEngine.sharedInstance()?.setFadeTime(fadeOutTime)
+                AudioEngine.sharedInstance()?.setFadeTime(Int32(Double(fadeOutTime) / self.currentTempo))
             } else {
                 let fadeTime: Int = PlaybackStateProperty.trackLength.getProperty()
-                AudioEngine.sharedInstance()?.setFadeTime(Int32(fadeTime))
+                AudioEngine.sharedInstance()?.setFadeTime(Int32(Double(fadeTime) / self.currentTempo))
             }
         }
     }
     
+    /**
+     Sets the playback rate of current tracks.
+     - Parameter tempo: Tempo to set.
+     */
+    func set(tempo: Double) {
+        self.currentTempo = tempo
+        self.setFade()
+        self.updateNowPlayingInfoCenter()
+        AudioEngine.sharedInstance()?.setTempo(tempo)
+        PlaybackStateProperty.tempo.setProperty(newValue: tempo)
+    }
+
     // MARK: - Now Playing Info Center
     /**
      Updates all of the MPNowPlayingInfoCenter
@@ -417,6 +440,7 @@ class PlaybackState: ObservableObject {
                 self.nowPlayingInfo[MPMediaItemPropertyPlaybackDuration] = trackLength / 1000
             }
             self.nowPlayingInfo[MPNowPlayingInfoPropertyIsLiveStream] = false
+            self.nowPlayingInfo[MPNowPlayingInfoPropertyPlaybackRate] = self.currentTempo
         } else {
             self.nowPlayingInfo[MPNowPlayingInfoPropertyIsLiveStream] = true
         }
@@ -443,11 +467,12 @@ class PlaybackState: ObservableObject {
             return
         }
         DispatchQueue.global().async {
+            AudioEngine.sharedInstance()?.setTempo(self.currentTempo)
             AudioEngine.sharedInstance()?.play()
             self.setFade()
         }
         self.isNowPlaying = true
-        self.nowPlayingInfo[MPNowPlayingInfoPropertyPlaybackRate] = 1.0
+        self.nowPlayingInfo[MPNowPlayingInfoPropertyPlaybackRate] = self.currentTempo
         self.updateNowPlayingInfoCenter()
         
     }
@@ -489,6 +514,7 @@ class PlaybackState: ObservableObject {
             AudioEngine.sharedInstance()?.stop()
             AudioEngine.sharedInstance()?.setFileName(path)
             AudioEngine.sharedInstance()?.setTrack(Int32(track.trackNum))
+            AudioEngine.sharedInstance()?.setTempo(self.currentTempo)
             AudioEngine.sharedInstance()?.play()
             self.setFade()
 

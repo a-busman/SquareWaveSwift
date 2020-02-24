@@ -101,150 +101,231 @@ struct NowPlayingView: View {
     @State var remainingTime: Int = 0
     @State var elapsedString: String = "--:--"
     @State var remainingString: String = "--:--"
+    @State var optionsShowing: Bool = false
+    @State var playbackRate: Double = 2
     var body: some View {
         VStack {
             // MARK: - Drag Handle
             RoundedRectangle(cornerRadius: 2.5)
                 .frame(width: 40.0, height: 5.0)
                 .foregroundColor(Color(.systemGray3))
-                .padding()
+                .padding(.top)
             // MARK: - Album Art
-            Image(uiImage: ListArtView.getImage(for: self.playbackState.nowPlayingTrack?.system?.name ?? "") ?? UIImage(named: "placeholder-art")!)
-                .resizable()
-                .aspectRatio(contentMode: .fill)
-                .frame(width: 256, height: 256)
-                .cornerRadius(10.0)
-                .overlay(RoundedRectangle(cornerRadius: 10.0).stroke(Color(.systemGray4), lineWidth: 0.5))
-            // MARK: - Track Info
+            //Spacer()
             HStack {
-                VStack(alignment: .leading) {
-                    Text(self.playbackState.nowPlayingTrack?.name ?? "Not Playing")
-                        .font(.system(size: 24.0, weight: .bold, design: .default))
-                    Text(self.playbackState.nowPlayingTrack?.game?.name ?? " ")
-                        .font(.system(size: 24.0))
-                }
-                Spacer()
-                if self.playbackState.nowPlayingTrack != nil {
-                    Button(action: {
-                        
-                    }) {
-                        Image(systemName: "ellipsis")
-                    }
-                    .frame(width: 30, height: 30)
-                    .background(Color(.systemGray5))
-                    .cornerRadius(15.0)
-                }
-            }.padding()
-            // MARK: - Scrub Bar
-            VStack {
-                ScrubBarView(value: self.$scrubTime)
-                    .disabled(true)
-
-                HStack {
-                    Text(self.elapsedString)
+                Image(uiImage: ListArtView.getImage(for: self.playbackState.nowPlayingTrack?.system?.name ?? "") ?? UIImage(named: "placeholder-art")!)
+                    .resizable()
+                    .aspectRatio(contentMode: .fill)
+                    .frame(width: self.optionsShowing ? 64 : 256, height: self.optionsShowing ? 64 : 256)
+                    .cornerRadius(10.0)
+                    .overlay(RoundedRectangle(cornerRadius: 10.0).stroke(Color(.systemGray4), lineWidth: 0.5))
+                    .padding(.top)
+                if self.optionsShowing {
+                    VStack(alignment: .leading) {
+                        Text(self.playbackState.nowPlayingTrack?.name ?? "Not Playing")
+                            .font(.system(size: 20.0, weight: .bold, design: .default))
+                        Text(self.playbackState.nowPlayingTrack?.game?.name ?? " ")
+                            .font(.system(size: 20.0))
+                    }.padding(.top)
                     Spacer()
-                    Text(self.remainingString)
-                }
-            }
-            .padding(Edge.Set(arrayLiteral: .bottom, .horizontal))
-            // MARK: - Playback Controls
-            HStack {
-                Spacer()
-                Button(action: {
-                    self.playbackState.prevTrack()
-                }) {
-                    Image(systemName: "backward.end.fill")
-                        .resizable()
-                        .aspectRatio(contentMode: .fit)
-                        .frame(height: 30.0)
-                }
-                .padding()
-                Spacer()
-                Button(action: {
-                    if !self.playbackState.isNowPlaying {
-                        self.playbackState.play()
-                    } else {
-                        self.playbackState.pause()
-                    }
-                }) {
-                    Image(systemName: self.playbackState.isNowPlaying ? "pause.fill" : "play.fill")
-                        .resizable()
-                        .aspectRatio(contentMode: .fit)
-                        .frame(width: 42.0, height: 42.0)
-                }
-                .padding()
-                Spacer()
-                Button(action: {
-                    self.playbackState.nextTrack()
-                }) {
-                    Image(systemName: "forward.end.fill")
-                        .resizable()
-                        .aspectRatio(contentMode: .fit)
-                        .frame(height: 30.0)
-                }
-                .padding()
-                Spacer()
-            }
-            .foregroundColor(Color(.label))
-            .padding(.bottom)
-            // MARK: - Volume Controls
-            HStack(alignment: .top) {
-                Image(systemName: "speaker.fill")
-                    .resizable()
-                    .aspectRatio(contentMode: .fit)
-                    .frame(height: 10.0)
-                    .foregroundColor(Color(.systemGray))
-                    .offset(x: 0.0, y: 4.0)
-                VolumeView()
-                Image(systemName: "speaker.3.fill")
-                    .resizable()
-                    .aspectRatio(contentMode: .fit)
-                    .frame(height: 10.0)
-                    .foregroundColor(Color(.systemGray))
-                    .offset(x: 0.0, y: 4.0)
-            }.padding()
-            // MARK: - Playback Modifiers
-            HStack {
-                Spacer()
-                Button(action: {
-                    self.playbackState.loop()
-                }) {
-                    ZStack {
-                        if self.playbackState.loopTrack {
-                            RoundedRectangle(cornerRadius: 25.0)
-                                .foregroundColor(Color(.systemGray4))
+                    if self.playbackState.nowPlayingTrack != nil {
+                        Button(action: {
+                            withAnimation {
+                                self.optionsShowing.toggle()
+                            }
+                        }) {
+                            Image(systemName: "ellipsis")
                         }
-                        Image(systemName: "repeat")
+                        .frame(width: 30, height: 30)
+                        .background(Color(.systemGray5))
+                        .cornerRadius(15.0)
+                        .padding(.top)
+                    }
+                }
+            }.padding(.horizontal)
+            if self.optionsShowing {
+                VStack {
+                    Text("Playback Rate")
+                        .font(.callout)
+                        .foregroundColor(Color(.tertiaryLabel))
+                    Text(self.getPlaybackRateText())
+                        .padding()
+                    Slider(value: Binding(
+                    get: {
+                        switch self.playbackState.currentTempo {
+                        case 0.5:
+                            return 0.0
+                        case 0.75:
+                            return 1.0
+                        case 1.0:
+                            return 2.0
+                        case 1.5:
+                            return 3.0
+                        case 2.0:
+                            return 4.0
+                        default:
+                            return 2.0
+                        }
+                    }, set: { (newValue) in
+                        if self.playbackRate != newValue {
+                            UISelectionFeedbackGenerator().selectionChanged()
+                            self.playbackRate = newValue
+                            switch newValue {
+                            case 0.0:
+                                self.playbackState.set(tempo: 0.5)
+                            case 1.0:
+                                self.playbackState.set(tempo: 0.75)
+                            case 2.0:
+                                self.playbackState.set(tempo: 1.0)
+                            case 3.0:
+                                self.playbackState.set(tempo: 1.5)
+                            case 4.0:
+                                self.playbackState.set(tempo: 2.0)
+                            default:
+                                self.playbackState.set(tempo: 1.0)
+                            }
+                        }
+
+                    }
+                    ), in: 0...4, step: 1.0)
+                        .accentColor(Color(.label))
+                        .padding(.horizontal)
+                }.padding()
+                Spacer()
+                
+            // MARK: - Track Info
+            } else {
+                HStack {
+                    VStack(alignment: .leading) {
+                        Text(self.playbackState.nowPlayingTrack?.name ?? "Not Playing")
+                            .font(.system(size: 24.0, weight: .bold, design: .default))
+                        Text(self.playbackState.nowPlayingTrack?.game?.name ?? " ")
+                            .font(.system(size: 24.0))
+                    }
+                    Spacer()
+                    if self.playbackState.nowPlayingTrack != nil {
+                        Button(action: {
+                            withAnimation {
+                                self.optionsShowing.toggle()
+                            }
+                        }) {
+                            Image(systemName: "ellipsis")
+                        }
+                        .frame(width: 30, height: 30)
+                        .background(Color(.systemGray5))
+                        .cornerRadius(15.0)
+                    }
+                }.padding()
+                // MARK: - Scrub Bar
+                VStack {
+                    ScrubBarView(value: self.$scrubTime)
+                        .disabled(true)
+
+                    HStack {
+                        Text(self.elapsedString)
+                        Spacer()
+                        Text(self.remainingString)
+                    }
+                }
+                .padding(.horizontal)
+                // MARK: - Playback Controls
+                HStack {
+                    Spacer()
+                    Button(action: {
+                        self.playbackState.prevTrack()
+                    }) {
+                        Image(systemName: "backward.end.fill")
                             .resizable()
                             .aspectRatio(contentMode: .fit)
-                            .frame(height: 20.0)
-                            .foregroundColor(self.playbackState.loopTrack ? Color(.label) : Color(.systemGray))
+                            .frame(height: 30.0)
                     }
-                }
-                    .frame(width: 50.0, height: 50.0)
                     .padding()
-                AirplayView()
-                    .frame(height: 30.0)
-                    .padding()
-                Button(action: {
-                    self.playbackState.shuffle()
-                }) {
-                    ZStack {
-                        if self.playbackState.shuffleTracks {
-                            RoundedRectangle(cornerRadius: 25.0)
-                                .foregroundColor(Color(.systemGray4))
+                    Spacer()
+                    Button(action: {
+                        if !self.playbackState.isNowPlaying {
+                            self.playbackState.play()
+                        } else {
+                            self.playbackState.pause()
                         }
-                        Image(systemName: "shuffle")
+                    }) {
+                        Image(systemName: self.playbackState.isNowPlaying ? "pause.fill" : "play.fill")
                             .resizable()
                             .aspectRatio(contentMode: .fit)
-                            .frame(height: 20.0)
-                            .foregroundColor(self.playbackState.shuffleTracks ? Color(.label) : Color(.systemGray))
+                            .frame(width: 42.0, height: 42.0)
                     }
-                }
-                    .frame(width: 50.0, height: 50.0)
                     .padding()
-                Spacer()
-            }.padding()
+                    Spacer()
+                    Button(action: {
+                        self.playbackState.nextTrack()
+                    }) {
+                        Image(systemName: "forward.end.fill")
+                            .resizable()
+                            .aspectRatio(contentMode: .fit)
+                            .frame(height: 30.0)
+                    }
+                    .padding()
+                    Spacer()
+                }
+                .foregroundColor(Color(.label))
+                .padding(.bottom)
+                // MARK: - Volume Controls
+                HStack(alignment: .top) {
+                    Image(systemName: "speaker.fill")
+                        .resizable()
+                        .aspectRatio(contentMode: .fit)
+                        .frame(height: 10.0)
+                        .foregroundColor(Color(.systemGray))
+                        .offset(x: 0.0, y: 4.0)
+                    VolumeView()
+                    Image(systemName: "speaker.3.fill")
+                        .resizable()
+                        .aspectRatio(contentMode: .fit)
+                        .frame(height: 10.0)
+                        .foregroundColor(Color(.systemGray))
+                        .offset(x: 0.0, y: 4.0)
+                }.padding()
+                // MARK: - Playback Modifiers
+                HStack {
+                    Spacer()
+                    Button(action: {
+                        self.playbackState.loop()
+                    }) {
+                        ZStack {
+                            if self.playbackState.loopTrack {
+                                RoundedRectangle(cornerRadius: 25.0)
+                                    .foregroundColor(Color(.systemGray4))
+                            }
+                            Image(systemName: "repeat")
+                                .resizable()
+                                .aspectRatio(contentMode: .fit)
+                                .frame(height: 20.0)
+                                .foregroundColor(self.playbackState.loopTrack ? Color(.label) : Color(.systemGray))
+                        }
+                    }
+                        .frame(width: 50.0, height: 50.0)
+                        .padding()
+                    AirplayView()
+                        .frame(height: 30.0)
+                        .padding()
+                    Button(action: {
+                        self.playbackState.shuffle()
+                    }) {
+                        ZStack {
+                            if self.playbackState.shuffleTracks {
+                                RoundedRectangle(cornerRadius: 25.0)
+                                    .foregroundColor(Color(.systemGray4))
+                            }
+                            Image(systemName: "shuffle")
+                                .resizable()
+                                .aspectRatio(contentMode: .fit)
+                                .frame(height: 20.0)
+                                .foregroundColor(self.playbackState.shuffleTracks ? Color(.label) : Color(.systemGray))
+                        }
+                    }
+                        .frame(width: 50.0, height: 50.0)
+                        .padding()
+                }.padding()
+            }
         }.onReceive(self.playbackState.objectWillChange) {
             self.elapsedTime = self.playbackState.elapsedTime
             if self.playbackState.nowPlayingTrack?.loopLength ?? 0 > 0 {
@@ -266,6 +347,23 @@ struct NowPlayingView: View {
                 self.elapsedString = "∞"
                 self.remainingString = "-∞"
             }
+        }
+    }
+    
+    func getPlaybackRateText() -> String {
+        switch self.playbackState.currentTempo {
+        case 0.5:
+            return "½×"
+        case 0.75:
+            return "¾×"
+        case 1.0:
+            return "1×"
+        case 1.5:
+            return "1½×"
+        case 2.0:
+            return "2×"
+        default:
+            return "1×"
         }
     }
 }
