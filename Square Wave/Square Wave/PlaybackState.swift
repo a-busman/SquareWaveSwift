@@ -11,14 +11,26 @@ import CoreData
 import UIKit
 import MediaPlayer
 
+
+///Playback State Properties. This is an enum that maps directly to user defaults.
 enum PlaybackStateProperty: String {
+    /// UUID of last played track
     case lastPlayedTrack    = "lastPlayedTrack"
+    /// Last played track number in a "now playing" playlist
     case lastPlayedTracknum = "lastPlayedTracknum"
+    /// Whether or not to loop an individual track
     case loopTrack          = "loopTrack"
+    /// Whether or not the playlist should be shuffled
     case shuffleTracks      = "shuffleTracks"
+    /// User specified length of track for tracks without loop information
     case trackLength        = "trackLength"
+    /// User specified amount of loops for tracks with loop information
     case loopCount          = "loopCount"
 
+    /**
+     Gets a property from userdefaults, or initializes a new value.
+     - Returns: The property to get as the called type.
+     */
     func getProperty<T>() -> T {
         switch(self) {
         case .lastPlayedTrack:
@@ -59,6 +71,10 @@ enum PlaybackStateProperty: String {
         }
     }
     
+    /**
+     Sets a property in userdefaults
+     - Parameter newValue: The value to set to the given property.
+     */
     func setProperty(newValue: Any?) {
         switch(self) {
         case .lastPlayedTrack:
@@ -86,7 +102,9 @@ enum PlaybackStateProperty: String {
 }
 
 // MARK: -
+/// Overall playback state of the app.
 class PlaybackState: ObservableObject {
+    /// Whether or not the audio engine is currently playing.
     @Published var isNowPlaying = false {
         didSet {
             if self.isNowPlaying {
@@ -113,12 +131,15 @@ class PlaybackState: ObservableObject {
         }
     }
 
+    /// What the current track is that is playing, or will be played
     @Published var nowPlayingTrack:  Track? {
         didSet {
             PlaybackStateProperty.lastPlayedTrack.setProperty(newValue: self.nowPlayingTrack?.id)
         }
     }
+    /// Playlist representing the track list that is now playing. Used primariy for saving to coredata
     private var nowPlayingPlaylist: Playlist?
+    /// List of tracks to go through when progressing through tracks
     @Published var currentTracklist: [Track] = [] {
         didSet {
             if self.currentTracklist.count == 0 {
@@ -134,23 +155,31 @@ class PlaybackState: ObservableObject {
             delegate.saveContext()
         }
     }
-    
+    /// List of tracks to go through in the original order in case a shuffle occurs.
     private var originalTrackList: [Track] = []
     @Published var trackNum = 0 {
         didSet {
             PlaybackStateProperty.lastPlayedTracknum.setProperty(newValue: self.trackNum)
         }
     }
+    /// Time in ms the currently playing track has progressed.
     @Published var elapsedTime   = 0
+    /// Whether or not to keep looping the current track.
     @Published var loopTrack     = false
+    /// Whether or not to play the current track list in a random order.
     @Published var shuffleTracks = false
+    /// Whether or not the current track has finished playing.
     private var trackEnded: Bool = false
-    
+    /// Timer used to update track information and determine if track has ended
     private var playTimer: Timer?
-    
+    /// Info for MPNowPlayingInfoCenter
     private var nowPlayingInfo = [String : Any]()
     
     // MARK: - Initialization
+    /**
+     Initializes a new Playback State, and sets up MPRemoteCommandCenter
+     - Returns: New playback state
+     */
     init() {
         UIApplication.shared.beginReceivingRemoteControlEvents()
         let commandCenter = MPRemoteCommandCenter.shared()
@@ -233,6 +262,9 @@ class PlaybackState: ObservableObject {
         }
     }
     
+    /**
+     Sets up the audio engine to get ready to play the current playing track.
+     */
     private func setupAudioEngine() {
         let path = URL(fileURLWithPath: FileEngine.getMusicDirectory()).appendingPathComponent(self.nowPlayingTrack?.url ?? "").path
 
@@ -241,6 +273,9 @@ class PlaybackState: ObservableObject {
         AudioEngine.sharedInstance()?.setTrack(Int32(self.nowPlayingTrack?.trackNum ?? 0))
     }
     
+    /**
+     Gets the now playing playlist from coredata
+     */
     func getNowPlayingPlaylist() {
         let delegate = UIApplication.shared.delegate as! AppDelegate
         let context  = delegate.persistentContainer.viewContext
@@ -260,6 +295,26 @@ class PlaybackState: ObservableObject {
         }
     }
     
+    /**
+     Populates the current track list with all tracks from coredata
+     */
+    func populateTrackList() {
+        let delegate = UIApplication.shared.delegate as! AppDelegate
+        let context  = delegate.persistentContainer.viewContext
+        let request = NSFetchRequest<Track>(entityName: "Track")
+        request.returnsObjectsAsFaults = false
+        do {
+            let results = try context.fetch(request)
+            self.currentTracklist = results
+        } catch {
+            NSLog("Could not get tracks: \(error.localizedDescription)")
+        }
+        
+    }
+    
+    /**
+     Resets states to initial values
+     */
     func clearCurrentPlaybackState() {
         self.stop()
         self.nowPlayingTrack = nil
@@ -271,12 +326,19 @@ class PlaybackState: ObservableObject {
     }
     
     // MARK: - Playback Modifiers
+    /**
+     Toggles shuffling of the current track list.
+     */
     func shuffle() {
         self.shuffleTracks.toggle()
         PlaybackStateProperty.shuffleTracks.setProperty(newValue: self.shuffleTracks)
         self.shuffle(self.shuffleTracks)
     }
     
+    /**
+     Utility function to shuffle current track list, given whether or not it is enabled
+     - Parameter enabled: Whether or not to enable shuffle
+     */
     func shuffle(_ enabled: Bool) {
         if enabled {
             self.originalTrackList = self.currentTracklist
@@ -297,6 +359,9 @@ class PlaybackState: ObservableObject {
         }
     }
     
+    /**
+     Toggles infinite looping of now playing tracks
+     */
     func loop() {
         self.loopTrack.toggle()
         PlaybackStateProperty.loopTrack.setProperty(newValue: self.loopTrack)
@@ -304,6 +369,9 @@ class PlaybackState: ObservableObject {
         self.updateNowPlayingInfoCenter()
     }
     
+    /**
+     Sets the fade out time of the currently playing track
+     */
     func setFade() {
         if self.loopTrack {
             AudioEngine.sharedInstance()?.resetFadeTime()
@@ -321,6 +389,9 @@ class PlaybackState: ObservableObject {
     }
     
     // MARK: - Now Playing Info Center
+    /**
+     Updates all of the MPNowPlayingInfoCenter
+     */
     func updateNowPlayingInfoCenter() {
         self.nowPlayingInfo[MPMediaItemPropertyTitle] = self.nowPlayingTrack?.name ?? ""
         self.nowPlayingInfo[MPMediaItemPropertyArtist] = self.nowPlayingTrack?.game?.name ?? ""
@@ -352,12 +423,19 @@ class PlaybackState: ObservableObject {
         self.updateNowPlayingElapsed()
     }
     
+    /**
+     Updates the elapsed time of the MPNowPlayingInfoCenter
+     */
     func updateNowPlayingElapsed() {
         self.nowPlayingInfo[MPNowPlayingInfoPropertyElapsedPlaybackTime] = self.elapsedTime / 1000
         MPNowPlayingInfoCenter.default().nowPlayingInfo = self.nowPlayingInfo
     }
     
     // MARK: - Playback
+    /**
+     Plays the current track. If there is no current track, it will populate the track list with all tracks, and begin playing at the beginning.
+     Also updates MPNowPlayingInfoCenter
+     */
     func play() {
         guard self.currentTracklist.count > 0 else {
             self.populateTrackList()
@@ -373,21 +451,9 @@ class PlaybackState: ObservableObject {
         self.updateNowPlayingInfoCenter()
         
     }
-    
-    func populateTrackList() {
-        let delegate = UIApplication.shared.delegate as! AppDelegate
-        let context  = delegate.persistentContainer.viewContext
-        let request = NSFetchRequest<Track>(entityName: "Track")
-        request.returnsObjectsAsFaults = false
-        do {
-            let results = try context.fetch(request)
-            self.currentTracklist = results
-        } catch {
-            NSLog("Could not get tracks: \(error.localizedDescription)")
-        }
-        
-    }
-    
+    /**
+     Pauses the currently playing track, and updates MPNowPlayingInfoCenter
+     */
     func pause() {
         DispatchQueue.global().async {
             AudioEngine.sharedInstance()?.pause()
@@ -397,6 +463,10 @@ class PlaybackState: ObservableObject {
         MPNowPlayingInfoCenter.default().nowPlayingInfo = self.nowPlayingInfo
     }
     
+    /**
+     Plays a given index in the current track list
+     - Parameter index: Index to play
+     */
     func play(index: Int) {
         guard index < self.currentTracklist.count else { return }
         let track = self.currentTracklist[index]
@@ -408,6 +478,10 @@ class PlaybackState: ObservableObject {
         self.play(track)
     }
     
+    /**
+     Plays a given track.
+     - Parameter track: Track to play.
+     */
     private func play(_ track: Track) {
         DispatchQueue.global().async {
             let path = URL(fileURLWithPath: FileEngine.getMusicDirectory()).appendingPathComponent(track.url!).path
@@ -426,6 +500,9 @@ class PlaybackState: ObservableObject {
         self.isNowPlaying = true
     }
     
+    /**
+     Stops the audio engine and updates MPNowPlayingInfoCenter
+     */
     func stop() {
         self.isNowPlaying = false
         AudioEngine.sharedInstance()?.stop()
@@ -433,6 +510,9 @@ class PlaybackState: ObservableObject {
         MPNowPlayingInfoCenter.default().nowPlayingInfo = self.nowPlayingInfo
     }
     
+    /**
+     If another track is available in the current track list, play the next track
+     */
     func nextTrack() {
         guard (self.trackNum + 1) < self.currentTracklist.count else { return }
         self.trackNum += 1
@@ -440,6 +520,9 @@ class PlaybackState: ObservableObject {
         self.play(nextTrack)
     }
     
+    /**
+     If we aren't already at the first track in the track list, play the previous track. Will restart current track if over 3 seconds of playback has occurred on current track.
+     */
     func prevTrack() {
         guard ((self.trackNum - 1) >= 0 && self.elapsedTime < 3000) else {
             self.stop()
@@ -454,6 +537,11 @@ class PlaybackState: ObservableObject {
 
 // MARK: -
 extension UIImage {
+    /**
+     Resize an image, and return a new UIImage
+     - Parameter size: Size to scale image to
+     - Returns: New UIImage, or nil if UIGraphicsGetImageFromCurrentImageContext fails.
+     */
     func image(with size:CGSize) -> UIImage?
     {
         var scaledImageRect = CGRect.zero;
