@@ -210,13 +210,15 @@ struct NowPlayingView: View {
                     self.playbackState.loop()
                 }) {
                     ZStack {
-                        RoundedRectangle(cornerRadius: 25.0)
-                            .foregroundColor(Color(.systemGray4))
+                        if self.playbackState.loopTrack {
+                            RoundedRectangle(cornerRadius: 25.0)
+                                .foregroundColor(Color(.systemGray4))
+                        }
                         Image(systemName: "repeat")
                             .resizable()
                             .aspectRatio(contentMode: .fit)
                             .frame(height: 20.0)
-                            .foregroundColor(Color(.label))
+                            .foregroundColor(self.playbackState.loopTrack ? Color(.label) : Color(.systemGray))
                     }
                 }
                     .frame(width: 50.0, height: 50.0)
@@ -246,18 +248,24 @@ struct NowPlayingView: View {
         }.onReceive(self.playbackState.objectWillChange) {
             self.elapsedTime = self.playbackState.elapsedTime
             if self.playbackState.nowPlayingTrack?.loopLength ?? 0 > 0 {
-                let loopCount = PlaybackStateProperty.loopCount.getProperty() ?? 2
+                let loopCount: Int = PlaybackStateProperty.loopCount.getProperty()
                 let loopLength = self.playbackState.nowPlayingTrack!.loopLength * Int32(loopCount)
                 self.totalTime = Int(self.playbackState.nowPlayingTrack!.introLength + loopLength)
             } else if self.playbackState.nowPlayingTrack?.length ?? 0 > 0 {
                 self.totalTime = Int(self.playbackState.nowPlayingTrack!.length)
             } else {
-                self.totalTime = (PlaybackStateProperty.trackLength.getProperty() ?? 150000)
+                self.totalTime = PlaybackStateProperty.trackLength.getProperty()
             }
             self.remainingTime = self.totalTime - self.elapsedTime
-            self.scrubTime = Float(self.elapsedTime) / Float(self.totalTime)
-            self.elapsedString = String(format: "%02d:%02d", (self.elapsedTime / 1000) / 60, (self.elapsedTime / 1000) % 60)
-            self.remainingString = String(format: "-%02d:%02d", (self.remainingTime / 1000) / 60, max(((self.remainingTime / 1000) % 60), 0))
+            if !self.playbackState.loopTrack {
+                self.scrubTime = Float(self.elapsedTime) / Float(self.totalTime)
+                self.elapsedString = String(format: "%02d:%02d", (self.elapsedTime / 1000) / 60, (self.elapsedTime / 1000) % 60)
+                self.remainingString = String(format: "-%02d:%02d", (self.remainingTime / 1000) / 60, max(((self.remainingTime / 1000) % 60), 0))
+            } else {
+                self.scrubTime = 0.0
+                self.elapsedString = "∞"
+                self.remainingString = "-∞"
+            }
         }
     }
 }

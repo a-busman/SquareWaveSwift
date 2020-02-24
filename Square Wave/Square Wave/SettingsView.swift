@@ -30,7 +30,7 @@ struct PickerView: UIViewRepresentable {
     //updateUIView(_:context:)
     func updateUIView(_ view: UIPickerView, context: UIViewRepresentableContext<PickerView>) {
         for i in 0...(self.selections.count - 1) {
-            view.selectRow(self.selections[i], inComponent: i, animated: false)
+            view.selectRow(self.selections[i], inComponent: i, animated: true)
         }
     }
 
@@ -55,7 +55,13 @@ struct PickerView: UIViewRepresentable {
 
         //pickerView(_:didSelectRow:inComponent:)
         func pickerView(_ pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
-            self.parent.selections[component] = row
+            if !((self.parent.selections[0] == 0 && row == 0 && component == 2) || (self.parent.selections[2] == 0 && row == 0 && component == 0)) {
+                self.parent.selections[component] = row
+            } else {
+                self.parent.selections[0] = 0
+                self.parent.selections[2] = 2
+                self.parent.selections[2] = 1
+            }
         }
         
         func pickerView(_ pickerView: UIPickerView, attributedTitleForRow row: Int, forComponent component: Int) -> NSAttributedString? {
@@ -71,18 +77,17 @@ struct PickerView: UIViewRepresentable {
 }
 
 struct SettingsView: View {
-    @Environment(\.presentationMode) var presentationMode
     @EnvironmentObject var playbackState: PlaybackState
-    @State var loopCount = PlaybackStateProperty.loopCount.getProperty() ?? 2
+    @State var loopCount: Int = PlaybackStateProperty.loopCount.getProperty()
     var timesToChoose: [[String]] = [
         Array(0...20).map { "\($0)"},
         ["min"],
         Array(0...59).map { "\($0)"},
         ["sec"]
     ]
-    @State var trackLength: [Int] = SettingsView.getTrackLength(from: PlaybackStateProperty.trackLength.getProperty() ?? 150000)
+    @State var trackLength: [Int] = SettingsView.getTrackLength(from: PlaybackStateProperty.trackLength.getProperty())
     @State var isShowingPicker = false
-    @Binding var isDisplayed: Bool
+    @Binding var isShowing: Bool
     
     static func getTrackLength(from ms: Int) -> [Int] {
         var ret: [Int] = []
@@ -126,7 +131,7 @@ struct SettingsView: View {
                             }, set: { (newValue) in
                                 self.loopCount = newValue
                                 PlaybackStateProperty.loopCount.setProperty(newValue: newValue)
-                            }), in: 0...20) {
+                            }), in: 1...20) {
                             HStack {
                                 Text("Loop Count")
                                 Spacer()
@@ -144,9 +149,9 @@ struct SettingsView: View {
                     }.foregroundColor(.red)
                 }.navigationBarTitle("Settings", displayMode: .inline)
                     .navigationBarItems(trailing: Button(action: {
-                        self.presentationMode.wrappedValue.dismiss()
+                        self.isShowing = false
                     }) {
-                        Text("Done")
+                        Text("Done").bold()
                 })
             }
         }
@@ -155,6 +160,6 @@ struct SettingsView: View {
 
 struct SettingsView_Previews: PreviewProvider {
     static var previews: some View {
-        SettingsView(isDisplayed: .constant(true))
+        SettingsView(isShowing: .constant(true))
     }
 }

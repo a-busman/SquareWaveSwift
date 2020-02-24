@@ -9,12 +9,21 @@
 import SwiftUI
 
 struct LibraryView: View {
+    enum SheetType {
+        case none
+        case settings
+        case folder
+        case file
+        case nowPlaying
+    }
     @State private var showingDocumentPicker = false
     @State private var showingSheet = false
+    @State private var showingActionSheet = false
     @State private var showingSettings = false
     @State private var inputFiles: [URL]? 
     @State private var fromFolder = false
     @State private var nowPlayingShowing = false
+    @State private var sheetSelection: SheetType = .none
     @EnvironmentObject var playbackState: PlaybackState
     static let miniViewPosition: CGFloat = 75.0
     static var miniViewHeight: CGFloat = 0.0
@@ -40,39 +49,53 @@ struct LibraryView: View {
                         .navigationBarTitle(Text("Library"))
                         .navigationBarItems(leading:
                             Button(action: {
-                                self.showingSettings = true
+                                self.sheetSelection = .settings
+                                self.showingSheet.toggle()
                             }) {
                                 Text("Settings")
-                            }.sheet(isPresented: self.$showingSettings, onDismiss: {self.showingSettings = false}) {
-                                SettingsView(isDisplayed: self.$showingSettings).environmentObject(self.playbackState)
                             },
                             trailing:
                                 Button(action: {
-                                    self.showingSheet = true
+                                    self.showingActionSheet.toggle()
                                 }) {
-                                    Text("Add")
-                                }.actionSheet(isPresented: self.$showingSheet) {
-                                    ActionSheet(title: Text("Add Music"), buttons: [
-                                        .default(Text("From Folder...")) {
-                                            self.fromFolder = true
-                                            self.showingDocumentPicker = true
-                                        },
-                                        .default(Text("From Files...")) {
-                                            self.fromFolder = false
-                                            self.showingDocumentPicker = true
-                                        },
-                                        .cancel()])
-                                    }
-                                .sheet(isPresented: self.$showingDocumentPicker, onDismiss: {self.showingDocumentPicker = false}) {
-                                    FilePicker(files: self.$inputFiles, folderType: self.fromFolder)
-                            }
+                                    Text("Add").bold()
+                                }
                         )
+
                 }
-                NowPlayingMiniView(nowPlayingTapped: self.$nowPlayingShowing)
-                    .frame(width: geometry.size.width, height: LibraryView.miniViewPosition + (UIScreen.main.bounds.height - geometry.size.height))
-                    .offset(y:geometry.size.height - LibraryView.miniViewPosition)
-            }.sheet(isPresented: self.$nowPlayingShowing, onDismiss: {self.nowPlayingShowing = false}) {
-                NowPlayingView().environmentObject(self.playbackState)
+                NowPlayingMiniView(nowPlayingTapped: Binding(
+                    get: {
+                        self.showingSheet
+                }, set: { (newValue) in
+                    self.sheetSelection = .nowPlaying
+                    self.showingSheet.toggle()
+                }
+                ))
+                .frame(width: geometry.size.width, height: LibraryView.miniViewPosition + (UIScreen.main.bounds.height - geometry.size.height))
+                .offset(y:geometry.size.height - LibraryView.miniViewPosition)
+
+                
+            }.sheet(isPresented: self.$showingSheet) {
+                if self.sheetSelection == .file {
+                    FilePicker(files: self.$inputFiles, folderType: false)
+                } else if self.sheetSelection == .folder {
+                    FilePicker(files: self.$inputFiles, folderType: true)
+                } else if self.sheetSelection == .settings {
+                    SettingsView(isShowing: self.$showingSheet).environmentObject(self.playbackState)
+                } else if self.sheetSelection == .nowPlaying {
+                    NowPlayingView().environmentObject(self.playbackState)
+                }
+            }.actionSheet(isPresented: self.$showingActionSheet) {
+            ActionSheet(title: Text("Add Music"), buttons: [
+                .default(Text("From Folder...")) {
+                    self.sheetSelection = .folder
+                    self.showingSheet.toggle()
+                },
+                .default(Text("From Files...")) {
+                    self.sheetSelection = .file
+                    self.showingSheet.toggle()
+                },
+                .cancel()])
             }
         }
     }
