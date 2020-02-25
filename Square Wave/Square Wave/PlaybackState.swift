@@ -184,7 +184,7 @@ class PlaybackState: ObservableObject {
     private var playTimer: Timer?
     /// Info for MPNowPlayingInfoCenter
     private var nowPlayingInfo = [String : Any]()
-    
+    /// Mask of which voices to mute.
     var muteMask: Int = 0
     
     // MARK: - Initialization
@@ -253,6 +253,9 @@ class PlaybackState: ObservableObject {
             }
             return .success
         }
+        
+        NotificationCenter.default.addObserver(self, selector: #selector(self.handleAudioInterruption), name: .AVCaptureSessionWasInterrupted, object: AVAudioSession.sharedInstance())
+        NotificationCenter.default.addObserver(self, selector: #selector(self.handleAudioInterruption), name: .AVCaptureSessionInterruptionEnded, object: AVAudioSession.sharedInstance())
  
         self.loopTrack = PlaybackStateProperty.loopTrack.getProperty()
         self.shuffleTracks = PlaybackStateProperty.shuffleTracks.getProperty()
@@ -273,6 +276,30 @@ class PlaybackState: ObservableObject {
             self.shuffle(true)
         }
         self.currentTempo = PlaybackStateProperty.tempo.getProperty()
+    }
+    /**
+     Handles any audio interruption by pausing when interruption began, and playing when it ended
+     - Parameter notification: The interruption notification.
+     */
+    @objc private func handleAudioInterruption(_ notification: Notification) {
+        guard let info = notification.userInfo,
+              let typeValue = info[AVAudioSessionInterruptionTypeKey] as? UInt,
+              let type = AVAudioSession.InterruptionType(rawValue: typeValue) else {
+                return
+        }
+        
+        if type == .began {
+            self.pause()
+        }
+        else if type == .ended {
+            guard let optionsValue = info[AVAudioSessionInterruptionOptionKey] as? UInt else {
+                return
+            }
+            let options = AVAudioSession.InterruptionOptions(rawValue: optionsValue)
+            if options.contains(.shouldResume) {
+                self.play()
+            }
+        }
     }
     
     /**
@@ -394,6 +421,9 @@ class PlaybackState: ObservableObject {
                 let loopLength = Int32(loopCount) * self.nowPlayingTrack!.loopLength
                 let fadeOutTime = self.nowPlayingTrack!.introLength + loopLength
                 AudioEngine.sharedInstance()?.setFadeTime(Int32(Double(fadeOutTime) / self.currentTempo))
+            } else if self.nowPlayingTrack?.length ?? 0 > 0 {
+                let fadeTime = self.nowPlayingTrack!.length
+                AudioEngine.sharedInstance()?.setFadeTime(Int32(Double(fadeTime) / self.currentTempo))
             } else {
                 let fadeTime: Int = PlaybackStateProperty.trackLength.getProperty()
                 AudioEngine.sharedInstance()?.setFadeTime(Int32(Double(fadeTime) / self.currentTempo))

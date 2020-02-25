@@ -110,23 +110,24 @@ struct NowPlayingView: View {
                 .frame(width: 40.0, height: 5.0)
                 .foregroundColor(Color(.systemGray3))
                 .padding(.top)
+            Spacer()
             // MARK: - Album Art
-            //Spacer()
             HStack {
                 Image(uiImage: ListArtView.getImage(for: self.playbackState.nowPlayingTrack?.system?.name ?? "") ?? UIImage(named: "placeholder-art")!)
                     .resizable()
                     .aspectRatio(contentMode: .fill)
-                    .frame(width: self.optionsShowing ? 64 : 256, height: self.optionsShowing ? 64 : 256)
+                    .frame(width: self.getArtSize(), height: self.getArtSize())
                     .cornerRadius(10.0)
                     .overlay(RoundedRectangle(cornerRadius: 10.0).stroke(Color(.systemGray4), lineWidth: 0.5))
-                    .padding(.top)
+                    .shadow(radius: 5.0)
+                    .animation(.spring())
                 if self.optionsShowing {
                     VStack(alignment: .leading) {
                         Text(self.playbackState.nowPlayingTrack?.name ?? "Not Playing")
                             .font(.system(size: 20.0, weight: .bold, design: .default))
                         Text(self.playbackState.nowPlayingTrack?.game?.name ?? " ")
                             .font(.system(size: 20.0))
-                    }.padding(.top)
+                    }.padding(.vertical)
                     Spacer()
                     if self.playbackState.nowPlayingTrack != nil {
                         Button(action: {
@@ -144,12 +145,16 @@ struct NowPlayingView: View {
                 }
             }.padding(.horizontal)
             if self.optionsShowing {
-                VStack {
+                // MARK: - Playback options
+                Divider()
+                VStack(alignment: .leading) {
                     Text("Playback Rate")
                         .font(.callout)
                         .foregroundColor(Color(.tertiaryLabel))
+                        .padding(.vertical)
                     Text(self.getPlaybackRateText())
-                        .padding()
+                        .padding(.horizontal)
+                        .frame(maxWidth: .infinity, alignment: .center)
                     Slider(value: Binding(
                     get: {
                         switch self.playbackState.currentTempo {
@@ -190,7 +195,7 @@ struct NowPlayingView: View {
                     ), in: 0...4, step: 1.0)
                         .accentColor(Color(.label))
                         .padding(.horizontal)
-                    Text("Enabled Voices")
+                    Text("Voices")
                         .font(.callout)
                         .foregroundColor(Color(.tertiaryLabel))
                     List {
@@ -213,17 +218,20 @@ struct NowPlayingView: View {
                             }
                         }
                     }
-                }.padding()
+                }.padding(.horizontal)
                 Spacer()
                 
             // MARK: - Track Info
             } else {
+                Spacer()
                 HStack {
                     VStack(alignment: .leading) {
                         Text(self.playbackState.nowPlayingTrack?.name ?? "Not Playing")
                             .font(.system(size: 24.0, weight: .bold, design: .default))
+                            .lineLimit(1)
                         Text(self.playbackState.nowPlayingTrack?.game?.name ?? " ")
                             .font(.system(size: 24.0))
+                            .lineLimit(1)
                     }
                     Spacer()
                     if self.playbackState.nowPlayingTrack != nil {
@@ -243,12 +251,16 @@ struct NowPlayingView: View {
                 VStack {
                     ScrubBarView(value: self.$scrubTime)
                         .disabled(true)
+                        .frame(height: 10.0)
 
                     HStack {
                         Text(self.elapsedString)
                         Spacer()
                         Text(self.remainingString)
                     }
+                    .font(.system(size: 14.0, weight: .semibold, design: .default))
+                    .foregroundColor(Color(.systemGray3))
+
                 }
                 .padding(.horizontal)
                 // MARK: - Playback Controls
@@ -262,7 +274,7 @@ struct NowPlayingView: View {
                             .aspectRatio(contentMode: .fit)
                             .frame(height: 30.0)
                     }
-                    .padding()
+                    .padding(.horizontal)
                     Spacer()
                     Button(action: {
                         if !self.playbackState.isNowPlaying {
@@ -276,7 +288,7 @@ struct NowPlayingView: View {
                             .aspectRatio(contentMode: .fit)
                             .frame(width: 42.0, height: 42.0)
                     }
-                    .padding()
+                    .padding(.horizontal)
                     Spacer()
                     Button(action: {
                         self.playbackState.nextTrack()
@@ -286,11 +298,11 @@ struct NowPlayingView: View {
                             .aspectRatio(contentMode: .fit)
                             .frame(height: 30.0)
                     }
-                    .padding()
+                    .padding(.horizontal)
                     Spacer()
                 }
                 .foregroundColor(Color(.label))
-                .padding(.bottom)
+                .padding(.vertical)
                 // MARK: - Volume Controls
                 HStack(alignment: .top) {
                     Image(systemName: "speaker.fill")
@@ -300,6 +312,7 @@ struct NowPlayingView: View {
                         .foregroundColor(Color(.systemGray))
                         .offset(x: 0.0, y: 4.0)
                     VolumeView()
+                        .frame(height: 10.0)
                     Image(systemName: "speaker.3.fill")
                         .resizable()
                         .aspectRatio(contentMode: .fit)
@@ -347,7 +360,7 @@ struct NowPlayingView: View {
                     }
                         .frame(width: 50.0, height: 50.0)
                         .padding()
-                }.padding()
+                }.padding(Edge.Set(arrayLiteral: [.bottom, .horizontal]))
             }
         }.onReceive(self.playbackState.objectWillChange) {
             self.elapsedTime = self.playbackState.elapsedTime
@@ -363,8 +376,8 @@ struct NowPlayingView: View {
             self.remainingTime = self.totalTime - self.elapsedTime
             if !self.playbackState.loopTrack {
                 self.scrubTime = Float(self.elapsedTime) / Float(self.totalTime)
-                self.elapsedString = String(format: "%02d:%02d", (self.elapsedTime / 1000) / 60, (self.elapsedTime / 1000) % 60)
-                self.remainingString = String(format: "-%02d:%02d", (self.remainingTime / 1000) / 60, max(((self.remainingTime / 1000) % 60), 0))
+                self.elapsedString = String(format: "%d:%02d", (self.elapsedTime / 1000) / 60, (self.elapsedTime / 1000) % 60)
+                self.remainingString = String(format: "-%d:%02d", (self.remainingTime / 1000) / 60, max(((self.remainingTime / 1000) % 60), 0))
             } else {
                 self.scrubTime = 0.0
                 self.elapsedString = "∞"
@@ -387,6 +400,16 @@ struct NowPlayingView: View {
             return "2×"
         default:
             return "1×"
+        }
+    }
+    
+    func getArtSize() -> CGFloat {
+        if self.optionsShowing {
+            return 64.0
+        } else if self.playbackState.isNowPlaying {
+            return 288.0
+        } else {
+            return 256.0
         }
     }
 }

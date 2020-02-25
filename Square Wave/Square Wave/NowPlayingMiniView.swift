@@ -31,13 +31,16 @@ struct NowPlayingMiniView: View {
                     .frame(height: 50.0)
                     .cornerRadius(6.0)
                     .overlay(RoundedRectangle(cornerRadius: 6.0).stroke(Color(.systemGray4), lineWidth: 0.5))
+                    .shadow(radius: 5.0)
                     .padding()
                 VStack(alignment: .leading) {
                     Text(self.playbackState.nowPlayingTrack?.name ?? "Not Playing")
                         .foregroundColor(Color(.label))
+                        .lineLimit(1)
                     if (self.playbackState.nowPlayingTrack?.game?.name?.count ?? 0) > 0 {
                         Text(self.playbackState.nowPlayingTrack?.game?.name ?? "")
                             .foregroundColor(Color(.secondaryLabel))
+                        .lineLimit(1)
                     }
                 }
                 Spacer()
