@@ -17,10 +17,8 @@
 		FA1586F02404C74A00F48261 /* Nes_Oscs.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FA1586862404C74A00F48261 /* Nes_Oscs.cpp */; };
 		FA1586F12404C74A00F48261 /* M3u_Playlist.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FA1586882404C74A00F48261 /* M3u_Playlist.cpp */; };
 		FA1586F22404C74A00F48261 /* Snes_Spc.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FA15868F2404C74A00F48261 /* Snes_Spc.cpp */; };
-		FA1586F32404C74A00F48261 /* CMakeLists.txt in Resources */ = {isa = PBXBuildFile; fileRef = FA1586902404C74A00F48261 /* CMakeLists.txt */; };
 		FA1586F42404C74A00F48261 /* Multi_Buffer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FA1586912404C74A00F48261 /* Multi_Buffer.cpp */; };
 		FA1586F52404C74A00F48261 /* Ay_Emu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FA1586922404C74A00F48261 /* Ay_Emu.cpp */; };
-		FA1586F62404C74A00F48261 /* gme_types.h.in in Resources */ = {isa = PBXBuildFile; fileRef = FA1586962404C74A00F48261 /* gme_types.h.in */; };
 		FA1586F72404C74A00F48261 /* Sms_Apu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FA1586982404C74A00F48261 /* Sms_Apu.cpp */; };
 		FA1586F82404C74A00F48261 /* Effects_Buffer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FA15869B2404C74A00F48261 /* Effects_Buffer.cpp */; };
 		FA1586F92404C74A00F48261 /* gme.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FA15869C2404C74A00F48261 /* gme.cpp */; };
@@ -51,7 +49,6 @@
 		FA1587122404C74A00F48261 /* Kss_Emu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FA1586C42404C74A00F48261 /* Kss_Emu.cpp */; };
 		FA1587132404C74A00F48261 /* Gme_File.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FA1586CC2404C74A00F48261 /* Gme_File.cpp */; };
 		FA1587142404C74A00F48261 /* Music_Emu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FA1586CF2404C74A00F48261 /* Music_Emu.cpp */; };
-		FA1587152404C74A00F48261 /* libgme.pc.in in Resources */ = {isa = PBXBuildFile; fileRef = FA1586DB2404C74A00F48261 /* libgme.pc.in */; };
 		FA1587162404C74A00F48261 /* Spc_Dsp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FA1586DF2404C74A00F48261 /* Spc_Dsp.cpp */; };
 		FA1587172404C74A00F48261 /* Ym2612_Nuked.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FA1586E02404C74A00F48261 /* Ym2612_Nuked.cpp */; };
 		FA1587182404C74A00F48261 /* Nsfe_Emu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FA1586E32404C74A00F48261 /* Nsfe_Emu.cpp */; };
@@ -127,13 +124,11 @@
 		FA15868D2404C74A00F48261 /* Spc_Cpu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Spc_Cpu.h; sourceTree = "<group>"; };
 		FA15868E2404C74A00F48261 /* nes_cpu_io.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = nes_cpu_io.h; sourceTree = "<group>"; };
 		FA15868F2404C74A00F48261 /* Snes_Spc.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Snes_Spc.cpp; sourceTree = "<group>"; };
-		FA1586902404C74A00F48261 /* CMakeLists.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = CMakeLists.txt; sourceTree = "<group>"; };
 		FA1586912404C74A00F48261 /* Multi_Buffer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Multi_Buffer.cpp; sourceTree = "<group>"; };
 		FA1586922404C74A00F48261 /* Ay_Emu.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Ay_Emu.cpp; sourceTree = "<group>"; };
 		FA1586932404C74A00F48261 /* Ym2612_GENS.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Ym2612_GENS.h; sourceTree = "<group>"; };
 		FA1586942404C74A00F48261 /* Spc_Emu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Spc_Emu.h; sourceTree = "<group>"; };
 		FA1586952404C74A00F48261 /* Dual_Resampler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Dual_Resampler.h; sourceTree = "<group>"; };
-		FA1586962404C74A00F48261 /* gme_types.h.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = gme_types.h.in; sourceTree = "<group>"; };
 		FA1586972404C74A00F48261 /* Spc_Filter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Spc_Filter.h; sourceTree = "<group>"; };
 		FA1586982404C74A00F48261 /* Sms_Apu.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Sms_Apu.cpp; sourceTree = "<group>"; };
 		FA1586992404C74A00F48261 /* Vgm_Emu_Impl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Vgm_Emu_Impl.h; sourceTree = "<group>"; };
@@ -202,7 +197,6 @@
 		FA1586D82404C74A00F48261 /* Blip_Buffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Blip_Buffer.h; sourceTree = "<group>"; };
 		FA1586D92404C74A00F48261 /* Kss_Cpu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Kss_Cpu.h; sourceTree = "<group>"; };
 		FA1586DA2404C74A00F48261 /* Gme_File.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Gme_File.h; sourceTree = "<group>"; };
-		FA1586DB2404C74A00F48261 /* libgme.pc.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = libgme.pc.in; sourceTree = "<group>"; };
 		FA1586DC2404C74A00F48261 /* Ym2612_Emu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Ym2612_Emu.h; sourceTree = "<group>"; };
 		FA1586DD2404C74A00F48261 /* Ay_Apu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Ay_Apu.h; sourceTree = "<group>"; };
 		FA1586DE2404C74A00F48261 /* blargg_source.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = blargg_source.h; sourceTree = "<group>"; };
@@ -320,13 +314,11 @@
 				FA15868D2404C74A00F48261 /* Spc_Cpu.h */,
 				FA15868E2404C74A00F48261 /* nes_cpu_io.h */,
 				FA15868F2404C74A00F48261 /* Snes_Spc.cpp */,
-				FA1586902404C74A00F48261 /* CMakeLists.txt */,
 				FA1586912404C74A00F48261 /* Multi_Buffer.cpp */,
 				FA1586922404C74A00F48261 /* Ay_Emu.cpp */,
 				FA1586932404C74A00F48261 /* Ym2612_GENS.h */,
 				FA1586942404C74A00F48261 /* Spc_Emu.h */,
 				FA1586952404C74A00F48261 /* Dual_Resampler.h */,
-				FA1586962404C74A00F48261 /* gme_types.h.in */,
 				FA1586972404C74A00F48261 /* Spc_Filter.h */,
 				FA1586982404C74A00F48261 /* Sms_Apu.cpp */,
 				FA1586992404C74A00F48261 /* Vgm_Emu_Impl.h */,
@@ -395,7 +387,6 @@
 				FA1586D82404C74A00F48261 /* Blip_Buffer.h */,
 				FA1586D92404C74A00F48261 /* Kss_Cpu.h */,
 				FA1586DA2404C74A00F48261 /* Gme_File.h */,
-				FA1586DB2404C74A00F48261 /* libgme.pc.in */,
 				FA1586DC2404C74A00F48261 /* Ym2612_Emu.h */,
 				FA1586DD2404C74A00F48261 /* Ay_Apu.h */,
 				FA1586DE2404C74A00F48261 /* blargg_source.h */,
@@ -615,11 +606,8 @@
 			files = (
 				FA822D4523F1F81E005FCFB3 /* LaunchScreen.storyboard in Resources */,
 				FA822D4223F1F81E005FCFB3 /* Preview Assets.xcassets in Resources */,
-				FA1586F62404C74A00F48261 /* gme_types.h.in in Resources */,
 				FAC0772423F5142F0096B786 /* Podfile in Resources */,
-				FA1587152404C74A00F48261 /* libgme.pc.in in Resources */,
 				FA822D3F23F1F81E005FCFB3 /* Assets.xcassets in Resources */,
-				FA1586F32404C74A00F48261 /* CMakeLists.txt in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
