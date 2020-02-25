@@ -1,4 +1,4 @@
-// Game_Music_Emu 0.6.0. http://www.slack.net/~ant/
+// Game_Music_Emu https://bitbucket.org/mpyne/game-music-emu/
 
 #include "Classic_Emu.h"
 
@@ -52,6 +52,12 @@ blargg_err_t Classic_Emu::set_sample_rate_( long rate )
 		buf = stereo_buffer;
 	}
 	return buf->set_sample_rate( rate, 1000 / 20 );
+}
+
+blargg_err_t Classic_Emu::set_multi_channel ( bool is_enabled )
+{
+        RETURN_ERR( Music_Emu::set_multi_channel_( is_enabled ) );
+        return 0;
 }
 
 void Classic_Emu::mute_voices_( int mask )
@@ -173,7 +179,7 @@ void Rom_Data_::set_addr_( long addr, int unit )
 		addr = 0;
 	size_ = rounded;
 	if ( rom.resize( rounded - rom_addr + pad_extra ) ) { } // OK if shrink fails
-
+#ifndef NDEBUG
 	if ( 0 )
 	{
 		debug_printf( "addr: %X\n", addr );
@@ -181,4 +187,5 @@ void Rom_Data_::set_addr_( long addr, int unit )
 		debug_printf( "rounded: %d\n", rounded );
 		debug_printf( "mask: $%X\n", mask );
 	}
+#endif
 }

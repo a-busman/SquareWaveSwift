@@ -17,5 +17,6 @@
 #define USE_GME_SPC
 /* VGM and VGZ are a package deal */
 #define USE_GME_VGM
+#define VGM_YM2612_GENS
 
 #endif /* GME_TYPES_H */

@@ -1,10 +1,11 @@
-// Game_Music_Emu 0.6.0. http://www.slack.net/~ant/
+// Game_Music_Emu https://bitbucket.org/mpyne/game-music-emu/
 
 #include "Spc_Emu.h"
 
 #include "blargg_endian.h"
 #include <stdlib.h>
 #include <string.h>
+#include <algorithm>
 
 /* Copyright (C) 2004-2006 Shay Green. This module is free software; you
 can redistribute it and/or modify it under the terms of the GNU Lesser
@@ -18,6 +19,9 @@ License along with this module; if not, write to the Free Software Foundation,
 Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA */
 
 #include "blargg_source.h"
+
+using std::min;
+using std::max;
 
 // TODO: support Spc_Filter's bass
 
@@ -56,7 +60,9 @@ static void get_spc_xid6( byte const* begin, long size, track_info_t* out )
 	byte const* in = begin + 8; 
 	if ( end - in > info_size )
 	{
+#ifndef NDEBUG
 		debug_printf( "Extra data after SPC xid6 info\n" );
+#endif
 		end = in + info_size;
 	}
 	
@@ -114,9 +120,11 @@ static void get_spc_xid6( byte const* begin, long size, track_info_t* out )
 				break;
 			
 			default:
+#ifndef NDEBUG
 				if ( id < 0x01 || (id > 0x07 && id < 0x10) ||
 						(id > 0x14 && id < 0x30) || id > 0x36 )
 					debug_printf( "Unknown SPC xid6 block: %X\n", (int) id );
+#endif
 				break;
 		}
 		if ( field )
@@ -136,7 +144,9 @@ static void get_spc_xid6( byte const* begin, long size, track_info_t* out )
 			{
 				// ...but some files have no padding
 				in = unaligned;
+#ifndef NDEBUG
 				debug_printf( "SPC info tag wasn't properly padded to align\n" );
+#endif
 				break;
 			}
 		}
@@ -244,7 +254,7 @@ static Music_Emu* new_spc_emu () { return BLARGG_NEW Spc_Emu ; }
 static Music_Emu* new_spc_file() { return BLARGG_NEW Spc_File; }
 
 static gme_type_t_ const gme_spc_type_ = { "Super Nintendo", 1, &new_spc_emu, &new_spc_file, "SPC", 0 };
-gme_type_t const gme_spc_type = &gme_spc_type_;
+extern gme_type_t const gme_spc_type = &gme_spc_type_;
 
 
 // Setup
@@ -299,6 +309,12 @@ blargg_err_t Spc_Emu::start_track_( int track )
 	RETURN_ERR( apu.load_spc( file_data, file_size ) );
 	filter.set_gain( (int) (gain() * SPC_Filter::gain_unit) );
 	apu.clear_echo();
+	track_info_t spc_info;
+	RETURN_ERR( track_info_( &spc_info, track ) );
+
+	// Set a default track length, need a non-zero fadeout
+	if ( autoload_playback_limit() && ( spc_info.length > 0 ) )
+		set_fade ( spc_info.length, 50 );
 	return 0;
 }
 

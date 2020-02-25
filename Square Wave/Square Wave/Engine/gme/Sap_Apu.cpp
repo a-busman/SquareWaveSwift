@@ -1,4 +1,4 @@
-// Game_Music_Emu 0.6.0. http://www.slack.net/~ant/
+// Game_Music_Emu https://bitbucket.org/mpyne/game-music-emu/
 
 #include "Sap_Apu.h"
 
@@ -66,7 +66,9 @@ Sap_Apu_Impl::Sap_Apu_Impl()
 		blargg_ulong rev = n & 1;
 		for ( int i = 1; i < poly5_len; i++ )
 			rev |= (n >> i & 1) << (poly5_len - i);
+#ifndef NDEBUG
 		debug_printf( "poly5: 0x%08lX\n", rev );
+#endif
 	}
 }
 
@@ -112,9 +114,10 @@ inline void Sap_Apu::calc_periods()
 				period = osc_reload * 0x100L + osc [-1].regs [0] + 7;
 				if ( !(this->control & fast_bits [i - 1]) )
 					period = (period - 6) * divider;
-				
+#ifndef NDEBUG
 				if ( (osc [-1].regs [1] & 0x1F) > 0x10 )
 					debug_printf( "Use of slave channel in 16-bit mode not supported\n" );
+#endif
 			}
 		}
 		osc->period = period;

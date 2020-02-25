@@ -1,9 +1,10 @@
-// Game_Music_Emu 0.6.0. http://www.slack.net/~ant/
+// Game_Music_Emu https://bitbucket.org/mpyne/game-music-emu/
 
 #include "Kss_Emu.h"
 
 #include "blargg_endian.h"
 #include <string.h>
+#include <algorithm>
 
 /* Copyright (C) 2006 Shay Green. This module is free software; you
 can redistribute it and/or modify it under the terms of the GNU Lesser
@@ -20,6 +21,9 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA */
 
 long const clock_rate = 3579545;
 int const osc_count = Ay_Apu::osc_count + Scc_Apu::osc_count;
+
+using std::min;
+using std::max;
 
 Kss_Emu::Kss_Emu()
 {
@@ -102,7 +106,7 @@ static Music_Emu* new_kss_emu () { return BLARGG_NEW Kss_Emu ; }
 static Music_Emu* new_kss_file() { return BLARGG_NEW Kss_File; }
 
 static gme_type_t_ const gme_kss_type_ = { "MSX", 256, &new_kss_emu, &new_kss_file, "KSS", 0x03 };
-gme_type_t const gme_kss_type = &gme_kss_type_;
+extern gme_type_t const gme_kss_type = &gme_kss_type_;
 
 
 // Setup
@@ -300,8 +304,9 @@ void Kss_Emu::cpu_write( unsigned addr, int data )
 		scc.write( time(), scc_addr, data );
 		return;
 	}
-	
+#ifndef NDEBUG
 	debug_printf( "LD ($%04X),$%02X\n", addr, data );
+#endif
 }
 
 void kss_cpu_write( Kss_Cpu* cpu, unsigned addr, int data )
@@ -357,8 +362,9 @@ void kss_cpu_out( Kss_Cpu* cpu, cpu_time_t time, unsigned addr, int data )
 		return;
 	#endif
 	}
-	
+#ifndef NDEBUG
 	debug_printf( "OUT $%04X,$%02X\n", addr, data );
+#endif
 }
 
 int kss_cpu_in( Kss_Cpu*, cpu_time_t, unsigned addr )
@@ -367,8 +373,9 @@ int kss_cpu_in( Kss_Cpu*, cpu_time_t, unsigned addr )
 	//switch ( addr & 0xFF )
 	//{
 	//}
-	
+#ifndef NDEBUG
 	debug_printf( "IN $%04X\n", addr );
+#endif
 	return 0;
 }
 

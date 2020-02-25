@@ -1,4 +1,4 @@
-// Game_Music_Emu 0.6.0. http://www.slack.net/~ant/
+// Game_Music_Emu https://bitbucket.org/mpyne/game-music-emu/
 
 #include "Hes_Apu.h"
 
@@ -292,10 +292,11 @@ void Hes_Apu::write_data( blip_time_t time, int addr, int data )
 		 	if ( &osc >= &oscs [4] )
 		 		osc.noise = data;
 		 	break;
-		 
+#ifndef NDEBUG
 		 case 0x809:
 		 	if ( !(data & 0x80) && (data & 0x03) != 0 )
 		 		debug_printf( "HES LFO not supported\n" );
+#endif
 		}
 	}
 }

@@ -1,9 +1,10 @@
-// Game_Music_Emu 0.6.0. http://www.slack.net/~ant/
+// Game_Music_Emu https://bitbucket.org/mpyne/game-music-emu/
 
 #include "Hes_Emu.h"
 
 #include "blargg_endian.h"
 #include <string.h>
+#include <algorithm>
 
 /* Copyright (C) 2006 Shay Green. This module is free software; you
 can redistribute it and/or modify it under the terms of the GNU Lesser
@@ -24,6 +25,9 @@ int const i_flag_mask = 0x04;
 int const unmapped    = 0xFF;
 
 long const period_60hz = 262 * 455L; // scanlines * clocks per scanline
+
+using std::min;
+using std::max;
 
 Hes_Emu::Hes_Emu()
 {
@@ -133,7 +137,7 @@ static Music_Emu* new_hes_emu () { return BLARGG_NEW Hes_Emu ; }
 static Music_Emu* new_hes_file() { return BLARGG_NEW Hes_File; }
 
 static gme_type_t_ const gme_hes_type_ = { "PC Engine", 256, &new_hes_emu, &new_hes_file, "HES", 1 };
-gme_type_t const gme_hes_type = &gme_hes_type_;
+extern gme_type_t const gme_hes_type = &gme_hes_type_;
 
 
 // Setup
@@ -271,15 +275,18 @@ void Hes_Emu::cpu_write_vdp( int addr, int data )
 			vdp.control = data;
 			irq_changed();
 		}
+#ifndef NDEBUG
 		else
 		{
 			debug_printf( "VDP not supported: $%02X <- $%02X\n", vdp.latch, data );
 		}
+#endif
 		break;
-	
+#ifndef NDEBUG
 	case 3:
 		debug_printf( "VDP MSB not supported: $%02X <- $%02X\n", vdp.latch, data );
 		break;
+#endif
 	}
 }
 
@@ -324,8 +331,10 @@ void Hes_Emu::cpu_write_( hes_addr_t addr, int data )
 	case 0x1402:
 		run_until( time );
 		irq.disables = data;
+#ifndef NDEBUG
 		if ( (data & 0xF8) && (data & 0xF8) != 0xF8 ) // flag questionable values
 			debug_printf( "Int mask: $%02X\n", data );
+#endif
 		break;
 	
 	case 0x1403:
@@ -368,14 +377,18 @@ int Hes_Emu::cpu_read_( hes_addr_t addr )
 		
 	case 0x0002:
 	case 0x0003:
+#ifndef NDEBUG
 		debug_printf( "VDP read not supported: %d\n", addr );
+#endif
 		return 0;
 	
 	case 0x0C01:
 		//return timer.enabled; // TODO: remove?
 	case 0x0C00:
 		run_until( time );
+#ifndef NDEBUG
 		debug_printf( "Timer count read\n" );
+#endif
 		return (unsigned) (timer.count - 1) / timer_base;
 	
 	case 0x1402:

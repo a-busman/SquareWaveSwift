@@ -1,9 +1,10 @@
-// Game_Music_Emu 0.6.0. http://www.slack.net/~ant/
+// Game_Music_Emu https://bitbucket.org/mpyne/game-music-emu/
 
 #include "Sap_Emu.h"
 
 #include "blargg_endian.h"
 #include <string.h>
+#include <algorithm>
 
 /* Copyright (C) 2006 Shay Green. This module is free software; you
 can redistribute it and/or modify it under the terms of the GNU Lesser
@@ -19,6 +20,9 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA */
 #include "blargg_source.h"
 
 long const base_scanline_period = 114;
+
+using std::min;
+using std::max;
 
 Sap_Emu::Sap_Emu()
 {
@@ -236,8 +240,7 @@ static Music_Emu* new_sap_emu () { return BLARGG_NEW Sap_Emu ; }
 static Music_Emu* new_sap_file() { return BLARGG_NEW Sap_File; }
 
 static gme_type_t_ const gme_sap_type_ = { "Atari XL", 0, &new_sap_emu, &new_sap_file, "SAP", 1 };
-gme_type_t const gme_sap_type = &gme_sap_type_;
-
+extern gme_type_t const gme_sap_type = &gme_sap_type_;
 
 // Setup
 
@@ -388,9 +391,10 @@ void Sap_Emu::cpu_write_( sap_addr_t addr, int data )
 		apu2.write_data( time() & time_mask, addr ^ 0x10, data );
 		return;
 	}
-
+#ifndef NDEBUG
 	if ( (addr & ~0x0010) != 0xD20F || data != 0x03 )
 		debug_printf( "Unmapped write $%04X <- $%02X\n", addr, data );
+#endif
 }
 
 inline void Sap_Emu::call_play()
