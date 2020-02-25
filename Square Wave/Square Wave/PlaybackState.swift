@@ -36,20 +36,24 @@ enum PlaybackStateProperty: String {
     func getProperty<T>() -> T {
         switch(self) {
         case .lastPlayedTrack:
+            let delegate = UIApplication.shared.delegate as! AppDelegate
+            let context = delegate.persistentContainer.viewContext
             if let id = UserDefaults.standard.string(forKey: self.rawValue) {
-                let delegate = UIApplication.shared.delegate as! AppDelegate
-                let context = delegate.persistentContainer.viewContext
                 let request = NSFetchRequest<Track>(entityName: "Track")
                 request.predicate = NSPredicate(format: "id == %@", (UUID(uuidString: id) ?? UUID()) as CVarArg)
                 request.returnsObjectsAsFaults = false
                 do {
                     let results = try context.fetch(request)
-                    return results.first as? T ?? Track() as! T
+                    if let track = results.first as? T {
+                        return track
+                    } else {
+                        return Track(context: context) as! T
+                    }
                 } catch {
                     NSLog("Could not get last played track: %s", error.localizedDescription)
                 }
             }
-            return Track() as! T
+            return Track(context: context) as! T
         case .lastPlayedTracknum:
             return UserDefaults.standard.integer(forKey: self.rawValue) as! T
         case .loopCount:
@@ -395,7 +399,11 @@ class PlaybackState: ObservableObject {
             self.trackNum = 0
         } else {
             self.currentTracklist = self.originalTrackList
-            self.trackNum = self.currentTracklist.firstIndex(of: self.nowPlayingTrack ?? Track()) ?? 0
+            if let track = self.nowPlayingTrack {
+                self.trackNum = self.currentTracklist.firstIndex(of: track) ?? 0
+            } else {
+                self.trackNum = 0
+            }
         }
     }
     
