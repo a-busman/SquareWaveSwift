@@ -77,17 +77,18 @@ struct PickerView: UIViewRepresentable {
 }
 
 struct SettingsView: View {
+    var dismiss: (() -> Void)
     @EnvironmentObject var playbackState: PlaybackState
-    @State var loopCount: Int = PlaybackStateProperty.loopCount.getProperty()
+    @State var loopCount: Int = PlaybackStateProperty.loopCount.getProperty() ?? 2
+    @Environment(\.presentationMode) var presentationMode: Binding<PresentationMode>
     var timesToChoose: [[String]] = [
         Array(0...20).map { "\($0)"},
         ["min"],
         Array(0...59).map { "\($0)"},
         ["sec"]
     ]
-    @State var trackLength: [Int] = SettingsView.getTrackLength(from: PlaybackStateProperty.trackLength.getProperty())
+    @State var trackLength: [Int] = SettingsView.getTrackLength(from: PlaybackStateProperty.trackLength.getProperty() ?? 150000)
     @State var isShowingPicker = false
-    @Binding var isShowing: Bool
     
     static func getTrackLength(from ms: Int) -> [Int] {
         var ret: [Int] = []
@@ -148,9 +149,7 @@ struct SettingsView: View {
                         Text("Delete All")
                     }.foregroundColor(.red)
                 }.navigationBarTitle("Settings", displayMode: .inline)
-                    .navigationBarItems(trailing: Button(action: {
-                        self.isShowing = false
-                    }) {
+                    .navigationBarItems(trailing: Button(action: self.dismiss) {
                         Text("Done").bold()
                 })
             }
@@ -160,6 +159,6 @@ struct SettingsView: View {
 
 struct SettingsView_Previews: PreviewProvider {
     static var previews: some View {
-        SettingsView(isShowing: .constant(true))
+        SettingsView(dismiss: {})
     }
 }

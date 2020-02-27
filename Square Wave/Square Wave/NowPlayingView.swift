@@ -365,13 +365,13 @@ struct NowPlayingView: View {
         }.onReceive(self.playbackState.objectWillChange) {
             self.elapsedTime = self.playbackState.elapsedTime
             if self.playbackState.nowPlayingTrack?.loopLength ?? 0 > 0 {
-                let loopCount: Int = PlaybackStateProperty.loopCount.getProperty()
+                let loopCount: Int = PlaybackStateProperty.loopCount.getProperty() ?? 2
                 let loopLength = self.playbackState.nowPlayingTrack!.loopLength * Int32(loopCount)
                 self.totalTime = Int(self.playbackState.nowPlayingTrack!.introLength + loopLength)
             } else if self.playbackState.nowPlayingTrack?.length ?? 0 > 0 {
                 self.totalTime = Int(self.playbackState.nowPlayingTrack!.length)
             } else {
-                self.totalTime = PlaybackStateProperty.trackLength.getProperty()
+                self.totalTime = PlaybackStateProperty.trackLength.getProperty() ?? 150000
             }
             self.remainingTime = self.totalTime - self.elapsedTime
             if !self.playbackState.loopTrack {

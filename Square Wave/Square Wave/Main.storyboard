@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="15705" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="Eda-T7-l9u">
+    <device id="retina6_1" orientation="portrait" appearance="light"/>
+    <dependencies>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="15706"/>
+        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <scenes>
+        <!--Root View Controller-->
+        <scene sceneID="MAe-0Q-NCh">
+            <objects>
+                <viewController id="Eda-T7-l9u" customClass="RootViewController" customModule="Square_Wave" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="1Dk-s0-a0G">
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <containerView opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="VW4-WR-qDr" userLabel="Now Playing Mini Container">
+                                <rect key="frame" x="0.0" y="787" width="414" height="110"/>
+                                <connections>
+                                    <segue destination="Gg2-Bi-J7b" kind="embed" identifier="ShowNowPlayingMiniView" destinationCreationSelector="addSwiftUIViewWithCoder:" id="t5G-Wh-2Bk"/>
+                                </connections>
+                            </containerView>
+                        </subviews>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
+                        <constraints>
+                            <constraint firstItem="VW4-WR-qDr" firstAttribute="trailing" secondItem="V7I-u6-LZZ" secondAttribute="trailing" id="3I0-FZ-PWF"/>
+                            <constraint firstItem="VW4-WR-qDr" firstAttribute="bottom" secondItem="1Dk-s0-a0G" secondAttribute="bottom" constant="1" id="Fod-29-JPL"/>
+                            <constraint firstItem="VW4-WR-qDr" firstAttribute="top" secondItem="V7I-u6-LZZ" secondAttribute="bottom" constant="-75" id="J8A-7U-6Sr"/>
+                            <constraint firstItem="VW4-WR-qDr" firstAttribute="leading" secondItem="V7I-u6-LZZ" secondAttribute="leading" id="Y7p-Ff-ZIr"/>
+                        </constraints>
+                        <viewLayoutGuide key="safeArea" id="V7I-u6-LZZ"/>
+                    </view>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="7aE-pq-D3a" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="44.927536231884062" y="140.625"/>
+        </scene>
+        <!--Hosting Controller-->
+        <scene sceneID="Q00-gM-Wyq">
+            <objects>
+                <hostingController id="Gg2-Bi-J7b" sceneMemberID="viewController"/>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="5wV-Tb-TUz" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="-988" y="198"/>
+        </scene>
+    </scenes>
+</document>

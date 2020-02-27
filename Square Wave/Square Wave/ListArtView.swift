@@ -203,7 +203,7 @@ struct ListArtView: View {
             ZStack(alignment: .leading) {
                 Image(uiImage: ListArtView.getImage(for: self.albumArt) ?? UIImage())
                     .resizable()
-                    .aspectRatio(contentMode: .fit)
+                    .aspectRatio(contentMode: .fill)
                     .cornerRadius(4.0)
                     .overlay(RoundedRectangle(cornerRadius: self.cornerRadius).stroke(Color(.lightGray), lineWidth: 0.5))
                 if (self.animationSettings.isDisplayed) {

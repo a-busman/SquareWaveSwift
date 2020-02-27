@@ -56,6 +56,10 @@
 		FA15871A2404C74A00F48261 /* Ym2413_Emu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FA1586E62404C74A00F48261 /* Ym2413_Emu.cpp */; };
 		FA15871B2404C74A00F48261 /* Spc_Emu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FA1586E82404C74A00F48261 /* Spc_Emu.cpp */; };
 		FA15871C2404C74A00F48261 /* Hes_Emu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FA1586E92404C74A00F48261 /* Hes_Emu.cpp */; };
+		FA15872024056D3500F48261 /* RootViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA15871F24056D3500F48261 /* RootViewController.swift */; };
+		FA1587472406E36900F48261 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = FA1587462406E36900F48261 /* Main.storyboard */; };
+		FA15875D240752CD00F48261 /* ListSectionIndexView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA15875C240752CD00F48261 /* ListSectionIndexView.swift */; };
+		FA244AF42407764C0086DD77 /* UIListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA244AF32407764C0086DD77 /* UIListView.swift */; };
 		FA2D8853240075140058713E /* PlaylistView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA2D8852240075140058713E /* PlaylistView.swift */; };
 		FA2D8855240089D30058713E /* VisualEffectView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA2D8854240089D30058713E /* VisualEffectView.swift */; };
 		FA5A25C923F5BEF400D4C28A /* LibraryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA5A25C823F5BEF400D4C28A /* LibraryView.swift */; };
@@ -211,6 +215,10 @@
 		FA1586E72404C74A00F48261 /* hes_cpu_io.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = hes_cpu_io.h; sourceTree = "<group>"; };
 		FA1586E82404C74A00F48261 /* Spc_Emu.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Spc_Emu.cpp; sourceTree = "<group>"; };
 		FA1586E92404C74A00F48261 /* Hes_Emu.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Hes_Emu.cpp; sourceTree = "<group>"; };
+		FA15871F24056D3500F48261 /* RootViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootViewController.swift; sourceTree = "<group>"; };
+		FA1587462406E36900F48261 /* Main.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = Main.storyboard; sourceTree = "<group>"; };
+		FA15875C240752CD00F48261 /* ListSectionIndexView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ListSectionIndexView.swift; path = "../../../../Library/Mobile Documents/com~apple~CloudDocs/.Trash/ListSectionIndexView.swift"; sourceTree = "<group>"; };
+		FA244AF32407764C0086DD77 /* UIListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIListView.swift; sourceTree = "<group>"; };
 		FA2D8852240075140058713E /* PlaylistView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaylistView.swift; sourceTree = "<group>"; };
 		FA2D8854240089D30058713E /* VisualEffectView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VisualEffectView.swift; sourceTree = "<group>"; };
 		FA5A25C823F5BEF400D4C28A /* LibraryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LibraryView.swift; sourceTree = "<group>"; };
@@ -448,12 +456,16 @@
 				FAC00FA023F728F00072F78C /* NowPlayingMiniView.swift */,
 				FA2D8854240089D30058713E /* VisualEffectView.swift */,
 				FA5A25CE23F5C74200D4C28A /* PlatformsView.swift */,
+				FA15875C240752CD00F48261 /* ListSectionIndexView.swift */,
 				FA5A25D023F5C75000D4C28A /* GamesView.swift */,
 				FA5A25D323F5C76400D4C28A /* SongsView.swift */,
+				FA244AF32407764C0086DD77 /* UIListView.swift */,
 				FAC00F9C23F61F3E0072F78C /* FilePicker.swift */,
 				FAC00F9E23F718870072F78C /* NowPlayingView.swift */,
 				FAC00FA423F887530072F78C /* PlaybackState.swift */,
 				FAA4083023F8B55100E3F2A4 /* ListArtView.swift */,
+				FA15871F24056D3500F48261 /* RootViewController.swift */,
+				FA1587462406E36900F48261 /* Main.storyboard */,
 			);
 			path = "Square Wave";
 			sourceTree = "<group>";
@@ -605,6 +617,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				FA822D4523F1F81E005FCFB3 /* LaunchScreen.storyboard in Resources */,
+				FA1587472406E36900F48261 /* Main.storyboard in Resources */,
 				FA822D4223F1F81E005FCFB3 /* Preview Assets.xcassets in Resources */,
 				FAC0772423F5142F0096B786 /* Podfile in Resources */,
 				FA822D3F23F1F81E005FCFB3 /* Assets.xcassets in Resources */,
@@ -692,9 +705,11 @@
 				FA15870D2404C74A00F48261 /* Nes_Vrc6_Apu.cpp in Sources */,
 				FA822D3623F1F81C005FCFB3 /* AppDelegate.swift in Sources */,
 				FA1586EB2404C74A00F48261 /* Kss_Cpu.cpp in Sources */,
+				FA15872024056D3500F48261 /* RootViewController.swift in Sources */,
 				FA1586F92404C74A00F48261 /* gme.cpp in Sources */,
 				FAA4083123F8B55100E3F2A4 /* ListArtView.swift in Sources */,
 				FA1587102404C74A00F48261 /* Nes_Namco_Apu.cpp in Sources */,
+				FA15875D240752CD00F48261 /* ListSectionIndexView.swift in Sources */,
 				FA1586FD2404C74A00F48261 /* Hes_Cpu.cpp in Sources */,
 				FA15870A2404C74A00F48261 /* Spc_Filter.cpp in Sources */,
 				FA1586EE2404C74A00F48261 /* Classic_Emu.cpp in Sources */,
@@ -718,6 +733,7 @@
 				FA1587042404C74A00F48261 /* Nes_Apu.cpp in Sources */,
 				FA5A25CD23F5C6F800D4C28A /* PlaylistsView.swift in Sources */,
 				FA5A25DA23F5E05C00D4C28A /* Square_Wave.xcdatamodeld in Sources */,
+				FA244AF42407764C0086DD77 /* UIListView.swift in Sources */,
 				FA15870E2404C74A00F48261 /* Gym_Emu.cpp in Sources */,
 				FA15871B2404C74A00F48261 /* Spc_Emu.cpp in Sources */,
 				FA1586F42404C74A00F48261 /* Multi_Buffer.cpp in Sources */,

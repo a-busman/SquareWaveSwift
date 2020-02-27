@@ -11,7 +11,6 @@ import MobileCoreServices
 
 struct FilePicker: UIViewControllerRepresentable {
     @Environment(\.presentationMode) var presentationMode
-    @Binding var files: [URL]?
     
     var folderType: Bool
     
@@ -44,8 +43,6 @@ struct FilePicker: UIViewControllerRepresentable {
         }
         
         func documentPicker(_ controller: UIDocumentPickerViewController, didPickDocumentsAt urls: [URL]) {
-            parent.files = urls
-            
             for file in urls {
                 FileEngine.addFile(file)
             }

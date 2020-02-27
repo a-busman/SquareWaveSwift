@@ -33,7 +33,7 @@ enum PlaybackStateProperty: String {
      Gets a property from userdefaults, or initializes a new value.
      - Returns: The property to get as the called type.
      */
-    func getProperty<T>() -> T {
+    func getProperty<T>() -> T? {
         switch(self) {
         case .lastPlayedTrack:
             let delegate = UIApplication.shared.delegate as! AppDelegate
@@ -46,36 +46,27 @@ enum PlaybackStateProperty: String {
                     let results = try context.fetch(request)
                     if let track = results.first as? T {
                         return track
-                    } else {
-                        return Track(context: context) as! T
                     }
                 } catch {
                     NSLog("Could not get last played track: %s", error.localizedDescription)
                 }
             }
-            return Track(context: context) as! T
+            return nil
         case .lastPlayedTracknum:
-            return UserDefaults.standard.integer(forKey: self.rawValue) as! T
+            return UserDefaults.standard.integer(forKey: self.rawValue) as? T
         case .loopCount:
             let loopCount = UserDefaults.standard.integer(forKey: self.rawValue)
-            if loopCount == 0 {
-                return 2 as! T
-            } else {
-                return loopCount as! T
-            }
+            return loopCount == 0 ? 2 as? T : loopCount as? T
         case .trackLength:
             let trackLength = UserDefaults.standard.integer(forKey: self.rawValue)
-            if trackLength == 0 {
-                return 150000 as! T
-            } else {
-                return trackLength as! T
-            }
+            return trackLength == 0 ? 150000 as? T : trackLength as? T
         case .loopTrack:
             fallthrough
         case .shuffleTracks:
-            return UserDefaults.standard.bool(forKey: self.rawValue) as? T ?? false as! T
+            return UserDefaults.standard.bool(forKey: self.rawValue) as? T
         case .tempo:
-            return UserDefaults.standard.double(forKey: self.rawValue) as? T ?? 1.0 as! T
+            let value = UserDefaults.standard.double(forKey: self.rawValue)
+            return value == 0.0 ? 1.0 as? T : value as? T
         }
     }
     
@@ -261,15 +252,14 @@ class PlaybackState: ObservableObject {
         NotificationCenter.default.addObserver(self, selector: #selector(self.handleAudioInterruption), name: .AVCaptureSessionWasInterrupted, object: AVAudioSession.sharedInstance())
         NotificationCenter.default.addObserver(self, selector: #selector(self.handleAudioInterruption), name: .AVCaptureSessionInterruptionEnded, object: AVAudioSession.sharedInstance())
  
-        self.loopTrack = PlaybackStateProperty.loopTrack.getProperty()
-        self.shuffleTracks = PlaybackStateProperty.shuffleTracks.getProperty()
+        self.loopTrack = PlaybackStateProperty.loopTrack.getProperty() ?? false
+        self.shuffleTracks = PlaybackStateProperty.shuffleTracks.getProperty() ?? false
         self.getNowPlayingPlaylist()
         self.currentTracklist = self.nowPlayingPlaylist?.tracks?.array as? [Track] ?? []
         self.originalTrackList = self.currentTracklist
         self.nowPlayingTrack = PlaybackStateProperty.lastPlayedTrack.getProperty()
-
         if !self.shuffleTracks {
-            self.trackNum = PlaybackStateProperty.lastPlayedTracknum.getProperty()
+            self.trackNum = PlaybackStateProperty.lastPlayedTracknum.getProperty() ?? 0
         }
         
         if self.trackNum < self.currentTracklist.count {
@@ -279,7 +269,7 @@ class PlaybackState: ObservableObject {
         if self.shuffleTracks {
             self.shuffle(true)
         }
-        self.currentTempo = PlaybackStateProperty.tempo.getProperty()
+        self.currentTempo = PlaybackStateProperty.tempo.getProperty() ?? 1.0
     }
     /**
      Handles any audio interruption by pausing when interruption began, and playing when it ended
@@ -425,7 +415,7 @@ class PlaybackState: ObservableObject {
             AudioEngine.sharedInstance()?.resetFadeTime()
         } else {
             if self.nowPlayingTrack?.loopLength ?? 0 > 0 {
-                let loopCount: Int = PlaybackStateProperty.loopCount.getProperty()
+                let loopCount: Int = PlaybackStateProperty.loopCount.getProperty() ?? 2
                 let loopLength = Int32(loopCount) * self.nowPlayingTrack!.loopLength
                 let fadeOutTime = self.nowPlayingTrack!.introLength + loopLength
                 AudioEngine.sharedInstance()?.setFadeTime(Int32(Double(fadeOutTime) / self.currentTempo))
@@ -433,7 +423,7 @@ class PlaybackState: ObservableObject {
                 let fadeTime = self.nowPlayingTrack!.length
                 AudioEngine.sharedInstance()?.setFadeTime(Int32(Double(fadeTime) / self.currentTempo))
             } else {
-                let fadeTime: Int = PlaybackStateProperty.trackLength.getProperty()
+                let fadeTime: Int = PlaybackStateProperty.trackLength.getProperty() ?? 150000
                 AudioEngine.sharedInstance()?.setFadeTime(Int32(Double(fadeTime) / self.currentTempo))
             }
         }
@@ -470,13 +460,13 @@ class PlaybackState: ObservableObject {
         self.nowPlayingInfo[MPMediaItemPropertyArtwork] = mediaArtwork
         if !self.loopTrack {
             if self.nowPlayingTrack?.loopLength ?? 0 > 0 {
-                let loopCount: Int = PlaybackStateProperty.loopCount.getProperty()
+                let loopCount: Int = PlaybackStateProperty.loopCount.getProperty() ?? 2
                 let loopLength = self.nowPlayingTrack!.loopLength * Int32(loopCount)
                 self.nowPlayingInfo[MPMediaItemPropertyPlaybackDuration] = (self.nowPlayingTrack!.introLength + loopLength) / 1000
             } else if self.nowPlayingTrack?.length ?? 0 > 0 {
                 self.nowPlayingInfo[MPMediaItemPropertyPlaybackDuration] = Int(self.nowPlayingTrack!.length) / 1000
             } else {
-                let trackLength: Int = PlaybackStateProperty.trackLength.getProperty()
+                let trackLength: Int = PlaybackStateProperty.trackLength.getProperty() ?? 150000
                 self.nowPlayingInfo[MPMediaItemPropertyPlaybackDuration] = trackLength / 1000
             }
             self.nowPlayingInfo[MPNowPlayingInfoPropertyIsLiveStream] = false
@@ -503,7 +493,9 @@ class PlaybackState: ObservableObject {
     func play() {
         guard self.currentTracklist.count > 0 else {
             self.populateTrackList()
-            self.play(index: 0)
+            if (self.currentTracklist.count > 0) {
+                self.play(index: 0)
+            }
             return
         }
         DispatchQueue.global().async {

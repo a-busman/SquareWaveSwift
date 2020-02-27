@@ -7,17 +7,34 @@
 //
 
 import SwiftUI
+import Combine
+
+class NowPlayingMiniViewDelegate: ObservableObject {
+    var willChange = PassthroughSubject<NowPlayingMiniViewDelegate, Never>()
+    var didChange  = PassthroughSubject<NowPlayingMiniViewDelegate, Never>()
+    
+    var didTap: Bool = false {
+        willSet {
+            willChange.send(self)
+        }
+        
+        didSet {
+            didChange.send(self)
+        }
+    }
+}
 
 struct NowPlayingMiniView: View {
-    @Binding var nowPlayingTapped: Bool
     @State var playButtonImage = "play.fill"
     @EnvironmentObject var playbackState: PlaybackState
+    
+    @ObservedObject var delegate: NowPlayingMiniViewDelegate
     
     var swipe: some Gesture {
         DragGesture()
             .onChanged({ value in
                 if value.predictedEndLocation.y < -20.0 {
-                    self.nowPlayingTapped = true
+                    self.delegate.didTap = true
                 }
             })
     }
@@ -67,8 +84,9 @@ struct NowPlayingMiniView: View {
                 }.foregroundColor(Color(.label))
             }
             Spacer()
-        }.onTapGesture {
-            self.nowPlayingTapped = true
+            }.contentShape(Rectangle())
+        .onTapGesture {
+            self.delegate.didTap = true
         }.gesture(self.swipe)
             .background(BlurView(style: .systemUltraThinMaterial))
     }
@@ -76,7 +94,7 @@ struct NowPlayingMiniView: View {
 
 struct NowPlayingMiniView_Previews: PreviewProvider {
     static var previews: some View {
-        NowPlayingMiniView(nowPlayingTapped: .constant(false))
+        NowPlayingMiniView(delegate: NowPlayingMiniViewDelegate())
             .frame(width: UIScreen.main.bounds.width, height: 75.0)
     }
 }
