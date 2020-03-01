@@ -63,7 +63,6 @@ struct UIListView: UIViewRepresentable {
     @Binding var rows: [NSManagedObject]
     @Binding var sortType: Int
     var rowType: NSManagedObject.Type
-    var navController: UINavigationController?
     var keypaths: UIListViewCellKeypaths
     var showSections = true
     
@@ -103,6 +102,7 @@ struct UIListView: UIViewRepresentable {
         collectionView.register(UINib(nibName: "SongTableViewCell", bundle: nil), forCellReuseIdentifier: "Song")
         collectionView.tableHeaderView?.frame.size = CGSize(width: collectionView.tableHeaderView!.frame.width, height: 75.0)
         collectionView.tableFooterView = UIView(frame: .zero)
+
         return collectionView
     }
 
@@ -145,19 +145,31 @@ struct UIListView: UIViewRepresentable {
         self.playbackState.play(index: index)
     }
 
-    class Coordinator: NSObject, UITableViewDataSource, UITableViewDelegate {
+    class Coordinator: NSObject, UITableViewDataSource, UITableViewDelegate, UISearchResultsUpdating {
 
         var parent: UIListView
         var rows: [NSManagedObject]
+        var filteredRows: [NSManagedObject]
         var sortType: Int
         var showSections: Bool
         var sectionTitles: [String] = []
         var rowsDict: [String : [NSManagedObject]] = [:]
         var rowType: NSManagedObject.Type
         var keypaths: UIListViewCellKeypaths
+        var tableView: UITableView? {
+            didSet {
+                self.tableViewController = self.tableView?.findViewController()
+                self.tableViewController?.navigationItem.searchController = self.searchController
+                self.tableViewController?.navigationItem.hidesSearchBarWhenScrolling = false
+            }
+        }
+        var tableViewController: UIViewController?
+        let searchController = UISearchController(searchResultsController: nil)
+        let navController = (UIApplication.shared.windows.first!.rootViewController as? RootViewController)?.navController
 
         init(rows: [NSManagedObject], parent: UIListView, sortType: Int, showSections: Bool, rowType: NSManagedObject.Type, keypaths: UIListViewCellKeypaths) {
             self.rows = rows
+            self.filteredRows = rows
             self.parent = parent
             self.sortType = sortType
             self.showSections = showSections
@@ -165,14 +177,39 @@ struct UIListView: UIViewRepresentable {
             self.keypaths = keypaths
             super.init()
             
+            self.searchController.searchBar.placeholder = "Search"
+            self.searchController.obscuresBackgroundDuringPresentation = false
+            self.searchController.searchResultsUpdater = self
+
             if showSections {
                 self.updateSectionTitles()
             }
         }
         
+        // MARK: - UISearchResultsUpdating Delegate
+        func updateSearchResults(for searchController: UISearchController) {
+            self.filterContentForSearchText(searchController.searchBar.text!)
+        }
+        
+        func filterContentForSearchText(_ searchText: String, scope: String = "All") {
+            if searchText == "" {
+                self.filteredRows = self.rows
+            } else {
+                self.filteredRows = self.rows.filter({(item) -> Bool in
+                    if self.rowType == Track.self || self.rowType == Game.self {
+                        return (((item[keyPath: self.keypaths.title] as! String).lowercased().contains(searchText.lowercased())) || (item[keyPath: self.keypaths.desc!] as! String).lowercased().contains(searchText.lowercased()))
+                    } else {
+                        return (item[keyPath: self.keypaths.title] as! String).lowercased().contains(searchText.lowercased())
+                    }
+                })
+            }
+            self.updateSectionTitles()
+            self.tableView?.reloadData()
+        }
+        
         func updateSectionTitles() {
             self.rowsDict = [:]
-            for object in self.rows {
+            for object in self.filteredRows {
                 var key = ""
                 if self.sortType == SortType.title.rawValue || self.rowType != Track.self {
                     if let track = object as? Track {
@@ -209,6 +246,9 @@ struct UIListView: UIViewRepresentable {
         }
 
         func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+            if self.tableView == nil {
+                self.tableView = tableView
+            }
             if self.showSections {
                 let key = self.sectionTitles[section]
             
@@ -216,12 +256,15 @@ struct UIListView: UIViewRepresentable {
                     return values.count
                 }
             } else {
-                return self.rows.count
+                return self.filteredRows.count
             }
             return 0
         }
         
         func numberOfSections(in tableView: UITableView) -> Int {
+            if self.tableView == nil {
+                self.tableView = tableView
+            }
             if self.showSections {
                 return self.sectionTitles.count
             } else {
@@ -230,13 +273,19 @@ struct UIListView: UIViewRepresentable {
         }
         
         func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+            if self.tableView == nil {
+                self.tableView = tableView
+            }
             guard let cell = tableView.cellForRow(at: indexPath) as? SongTableViewCell else { return }
+
             if self.rowType == Track.self,
                 let track = cell.info as? Track {
                 self.parent.didTapRow(track: track)
                 tableView.reloadData()
             } else {
-                guard let navController = (UIApplication.shared.windows.first!.rootViewController as? RootViewController)?.navController else { return }
+                if self.navController == nil {
+                    return
+                }
 
                 var predicate: NSPredicate!
                 var title = "Songs"
@@ -252,15 +301,21 @@ struct UIListView: UIViewRepresentable {
                 let delegate = UIApplication.shared.delegate as! AppDelegate
                 let context = delegate.persistentContainer.viewContext
                 let songController = UIHostingController(rootView: SongsView(title: title, predicate: predicate).environment(\.managedObjectContext, context).environmentObject(AppDelegate.playbackState))
-                navController.pushViewController(songController, animated: true)
+                self.navController?.pushViewController(songController, animated: true)
             }
         }
 
         func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+            if self.tableView == nil {
+                self.tableView = tableView
+            }
             return 50.0
         }
         
         func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
+            if self.tableView == nil {
+                self.tableView = tableView
+            }
             if self.showSections {
                 return self.sectionTitles[section]
             }
@@ -268,6 +323,9 @@ struct UIListView: UIViewRepresentable {
         }
         
         func sectionIndexTitles(for tableView: UITableView) -> [String]? {
+            if self.tableView == nil {
+                self.tableView = tableView
+            }
             if self.sectionTitles.count > 10 {
                 return self.sectionTitles
             }
@@ -275,7 +333,9 @@ struct UIListView: UIViewRepresentable {
         }
         
         func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-
+            if self.tableView == nil {
+                self.tableView = tableView
+            }
             guard let tableViewCell = tableView.dequeueReusableCell(withIdentifier: "Song", for: indexPath) as? SongTableViewCell else { return UITableViewCell() }
             var info: NSManagedObject!
 
@@ -285,9 +345,11 @@ struct UIListView: UIViewRepresentable {
                     info = values[indexPath.row]
                 }
             } else {
-                info = self.rows[indexPath.row]
+                info = self.filteredRows[indexPath.row]
             }
-            
+            if info == nil {
+                return UITableViewCell()
+            }
             tableViewCell.info = info
 
             tableViewCell.albumArtImage?.image = ListArtView.getImage(for: info[keyPath: self.keypaths.art] as? String ?? "")
@@ -320,3 +382,15 @@ struct UIListView_Previews: PreviewProvider {
     }
 }
 */
+
+extension UIView {
+    func findViewController() -> UIViewController? {
+        if let nextResponder = self.next as? UIViewController {
+            return nextResponder
+        } else if let nextResponder = self.next as? UIView {
+            return nextResponder.findViewController()
+        } else {
+            return nil
+        }
+    }
+}
