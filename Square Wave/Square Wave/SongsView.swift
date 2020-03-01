@@ -95,6 +95,7 @@ struct SongsView: View {
             }.onAppear(perform: {
                 self.updateSettings()
                 })
+                .edgesIgnoringSafeArea(Edge.Set(arrayLiteral: [.bottom, .top]))
         }
     }
 }

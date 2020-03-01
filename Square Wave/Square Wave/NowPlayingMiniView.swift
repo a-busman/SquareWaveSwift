@@ -41,6 +41,8 @@ struct NowPlayingMiniView: View {
 
     var body: some View {
         VStack {
+            Divider().background(Color(.white))
+                .offset(y: 12)
             HStack {
                 Image(uiImage: ListArtView.getImage(for: self.playbackState.nowPlayingTrack?.system?.name ?? "") ?? UIImage(named: "placeholder-art")!)
                     .resizable()
