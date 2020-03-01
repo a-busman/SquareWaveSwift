@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import CoreData
 
 class SongTableViewCell: UITableViewCell {
     
@@ -22,14 +23,14 @@ class SongTableViewCell: UITableViewCell {
 
     var disliked: Bool = false
     
-    var track: Track?
+    var info: NSManagedObject?
     
     var animating = false
 
     override func awakeFromNib() {
         super.awakeFromNib()
         self.stop()
-        self.separatorInset = UIEdgeInsets(top: 0.0, left: 44.0, bottom: 0.0, right: 0.0)
+        self.separatorInset = UIEdgeInsets(top: 0.0, left: 60.0, bottom: 0.0, right: 0.0)
         self.generateShapes(withAnimation: false)
         self.firstBar? .strokeEnd = 0.1
         self.secondBar?.strokeEnd = 0.1

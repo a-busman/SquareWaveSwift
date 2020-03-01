@@ -7,6 +7,7 @@
 //
 
 import SwiftUI
+import CoreData
 
 class HeaderCell: UIView {
     var host: UIHostingController<AnyView>?
@@ -51,10 +52,19 @@ enum SortType: Int {
     case game
 }
 
+struct UIListViewCellKeypaths {
+    var art:   AnyKeyPath
+    var title: AnyKeyPath
+    var desc:  AnyKeyPath?
+}
+
 struct UIListView: UIViewRepresentable {
     @EnvironmentObject var playbackState: PlaybackState
-    @Binding var rows: [Track]
+    @Binding var rows: [NSManagedObject]
     @Binding var sortType: Int
+    var rowType: NSManagedObject.Type
+    var navController: UINavigationController?
+    var keypaths: UIListViewCellKeypaths
     var showSections = true
     
     // Hack to call updateUIView on playbackState change.
@@ -62,32 +72,37 @@ struct UIListView: UIViewRepresentable {
     let x = RandomClass()
 
     func makeUIView(context: Context) -> UITableView {
-        
-        let headerController = UIHostingController(rootView: HeaderView(didTapPlay: Binding(get: {
-            false
-        }, set: { newValue in
-            self.playbackState.currentTracklist = Array(self.rows)
-            self.playbackState.shuffleTracks = false
-            self.playbackState.play(index: 0)
-        }),
-        didTapShuffle: Binding(get: {
-            false
-        }, set: { newValue in
-            self.playbackState.currentTracklist = Array(self.rows)
-            self.playbackState.nowPlayingTrack = nil
-            self.playbackState.shuffleTracks = true
-            self.playbackState.shuffle(true)
-            self.playbackState.play(index: 0)
-        })).frame(height: 75.0))
         let collectionView = UITableView(frame: .zero, style: .plain)
+
+        if self.rowType == Track.self,
+            let trackRows = self.rows as? [Track] {
+            let headerController = UIHostingController(rootView: HeaderView(didTapPlay: Binding(get: {
+                false
+            }, set: { newValue in
+                self.playbackState.currentTracklist = Array(trackRows)
+                self.playbackState.shuffleTracks = false
+                self.playbackState.play(index: 0)
+            }),
+            didTapShuffle: Binding(get: {
+                false
+            }, set: { newValue in
+                self.playbackState.currentTracklist = Array(trackRows)
+                self.playbackState.nowPlayingTrack = nil
+                self.playbackState.shuffleTracks = true
+                self.playbackState.shuffle(true)
+                self.playbackState.play(index: 0)
+            })).frame(height: 75.0))
+            
+            collectionView.tableHeaderView = headerController.view
+        }
         collectionView.contentInset = UIEdgeInsets(top: 0.0, left: 0.0, bottom: LibraryView.miniViewPosition, right: 0.0)
         collectionView.scrollIndicatorInsets = UIEdgeInsets(top: 0.0, left: 0.0, bottom: LibraryView.miniViewPosition, right: 0.0)
         collectionView.translatesAutoresizingMaskIntoConstraints = false
         collectionView.dataSource = context.coordinator
         collectionView.delegate = context.coordinator
         collectionView.register(UINib(nibName: "SongTableViewCell", bundle: nil), forCellReuseIdentifier: "Song")
-        collectionView.tableHeaderView = headerController.view
         collectionView.tableHeaderView?.frame.size = CGSize(width: collectionView.tableHeaderView!.frame.width, height: 75.0)
+        collectionView.tableFooterView = UIView(frame: .zero)
         return collectionView
     }
 
@@ -95,35 +110,37 @@ struct UIListView: UIViewRepresentable {
         guard let _ = uiView.window else {
             return
         }
-        if self.sortType != context.coordinator.sortType {
-            context.coordinator.sortType = self.sortType
-            context.coordinator.rows = self.rows
-            context.coordinator.updateSectionTitles()
-            uiView.reloadData()
-        }
-        for cell in uiView.visibleCells {
-            if let songCell = cell as? SongTableViewCell {
-                if songCell.track == self.playbackState.nowPlayingTrack {
-                    if self.playbackState.isNowPlaying {
-                        if !songCell.animating {
-                            songCell.play()
+        if self.rowType == Track.self {
+            if self.sortType != context.coordinator.sortType {
+                context.coordinator.sortType = self.sortType
+                context.coordinator.rows = self.rows
+                context.coordinator.updateSectionTitles()
+                uiView.reloadData()
+            }
+            for cell in uiView.visibleCells {
+                if let songCell = cell as? SongTableViewCell {
+                    if songCell.info == self.playbackState.nowPlayingTrack {
+                        if self.playbackState.isNowPlaying {
+                            if !songCell.animating {
+                                songCell.play()
+                            }
+                        } else {
+                            songCell.pause()
                         }
                     } else {
-                        songCell.pause()
+                        songCell.stop()
                     }
-                } else {
-                    songCell.stop()
                 }
             }
         }
     }
 
     func makeCoordinator() -> Coordinator {
-        Coordinator(rows: self.rows, parent: self, sortType: self.sortType, showSections: self.showSections)
+        Coordinator(rows: self.rows, parent: self, sortType: self.sortType, showSections: self.showSections, rowType: self.rowType, keypaths: self.keypaths)
     }
     
     func didTapRow(track: Track) {
-        self.playbackState.currentTracklist = self.rows
+        self.playbackState.currentTracklist = self.rows as! [Track]
         let index = self.rows.firstIndex(of: track) ?? 0
         self.playbackState.play(index: index)
     }
@@ -131,17 +148,21 @@ struct UIListView: UIViewRepresentable {
     class Coordinator: NSObject, UITableViewDataSource, UITableViewDelegate {
 
         var parent: UIListView
-        var rows: [Track]
+        var rows: [NSManagedObject]
         var sortType: Int
         var showSections: Bool
         var sectionTitles: [String] = []
-        var rowsDict: [String : [Track]] = [:]
+        var rowsDict: [String : [NSManagedObject]] = [:]
+        var rowType: NSManagedObject.Type
+        var keypaths: UIListViewCellKeypaths
 
-        init(rows: [Track], parent: UIListView, sortType: Int, showSections: Bool) {
+        init(rows: [NSManagedObject], parent: UIListView, sortType: Int, showSections: Bool, rowType: NSManagedObject.Type, keypaths: UIListViewCellKeypaths) {
             self.rows = rows
             self.parent = parent
             self.sortType = sortType
             self.showSections = showSections
+            self.rowType = rowType
+            self.keypaths = keypaths
             super.init()
             
             if showSections {
@@ -151,18 +172,26 @@ struct UIListView: UIViewRepresentable {
         
         func updateSectionTitles() {
             self.rowsDict = [:]
-            for track in self.rows {
+            for object in self.rows {
                 var key = ""
-                if self.sortType == SortType.title.rawValue {
-                    key = String(track.name?.prefix(1) ?? "")
-                } else {
-                    key = String(track.game?.name?.prefix(1) ?? "")
+                if self.sortType == SortType.title.rawValue || self.rowType != Track.self {
+                    if let track = object as? Track {
+                        key = String(track.name?.prefix(1) ?? "")
+                    } else if let platform = object as? System {
+                        key = String(platform.name?.prefix(1) ?? "")
+                    } else if let game = object as? Game {
+                        key = String(game.name?.prefix(1) ?? "")
+                    }
+                } else if self.rowType == Track.self {
+                    if let track = object as? Track {
+                        key = String(track.game?.name?.prefix(1) ?? "")
+                    }
                 }
                 if var values = self.rowsDict[key] {
-                    values.append(track)
+                    values.append(object)
                     self.rowsDict[key] = values
                 } else {
-                    self.rowsDict[key] = [track]
+                    self.rowsDict[key] = [object]
                 }
             }
             self.sectionTitles = [String](self.rowsDict.keys)
@@ -201,10 +230,29 @@ struct UIListView: UIViewRepresentable {
         }
         
         func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-            if let cell = tableView.cellForRow(at: indexPath) as? SongTableViewCell,
-                let track = cell.track {
+            guard let cell = tableView.cellForRow(at: indexPath) as? SongTableViewCell else { return }
+            if self.rowType == Track.self,
+                let track = cell.info as? Track {
                 self.parent.didTapRow(track: track)
                 tableView.reloadData()
+            } else {
+                guard let navController = (UIApplication.shared.windows.first!.rootViewController as? RootViewController)?.navController else { return }
+
+                var predicate: NSPredicate!
+                var title = "Songs"
+                if self.rowType == System.self,
+                    let platform = cell.info as? System {
+                    predicate = NSPredicate(format: "system.id == %@", platform.id! as CVarArg)
+                    title = platform.name ?? "Songs"
+                } else if self.rowType == Game.self,
+                    let game = cell.info as? Game {
+                    predicate = NSPredicate(format: "game.id == %@", game.id! as CVarArg)
+                    title = game.name ?? "Songs"
+                }
+                let delegate = UIApplication.shared.delegate as! AppDelegate
+                let context = delegate.persistentContainer.viewContext
+                let songController = UIHostingController(rootView: SongsView(title: title, predicate: predicate).environment(\.managedObjectContext, context).environmentObject(AppDelegate.playbackState))
+                navController.pushViewController(songController, animated: true)
             }
         }
 
@@ -229,37 +277,46 @@ struct UIListView: UIViewRepresentable {
         func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
 
             guard let tableViewCell = tableView.dequeueReusableCell(withIdentifier: "Song", for: indexPath) as? SongTableViewCell else { return UITableViewCell() }
-            var track: Track!
+            var info: NSManagedObject!
 
             if self.showSections {
                 let key = self.sectionTitles[indexPath.section]
                 if let values = self.rowsDict[key] {
-                    track = values[indexPath.row]
+                    info = values[indexPath.row]
                 }
             } else {
-                track = self.rows[indexPath.row]
+                info = self.rows[indexPath.row]
             }
             
-            tableViewCell.track = track
+            tableViewCell.info = info
 
-            tableViewCell.albumArtImage?.image = ListArtView.getImage(for: track.system?.name ?? "")
-            tableViewCell.titleLabel?.text = track.name
-            tableViewCell.artistLabel?.text = track.game?.name
-            
-            if self.shouldAnimate(track) {
-                tableViewCell.play()
-            } else if self.shouldDisplayAnimation(track) {
-                tableViewCell.pause()
+            tableViewCell.albumArtImage?.image = ListArtView.getImage(for: info[keyPath: self.keypaths.art] as? String ?? "")
+            tableViewCell.titleLabel?.text = info[keyPath: self.keypaths.title] as? String
+            if self.keypaths.desc != nil {
+                tableViewCell.artistLabel?.text = info[keyPath: self.keypaths.desc!] as? String
             } else {
-                tableViewCell.stop()
+                tableViewCell.artistLabel?.text = nil
+            }
+            
+            if self.rowType == Track.self,
+                let track = info as? Track {
+                if self.shouldAnimate(track) {
+                    tableViewCell.play()
+                } else if self.shouldDisplayAnimation(track) {
+                    tableViewCell.pause()
+                } else {
+                    tableViewCell.stop()
+                }
             }
             return tableViewCell
         }
     }
 }
 
+/*
 struct UIListView_Previews: PreviewProvider {
     static var previews: some View {
         UIListView(rows: .constant([]), sortType: .constant(SortType.title.rawValue))
     }
 }
+*/

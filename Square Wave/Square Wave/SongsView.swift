@@ -71,7 +71,7 @@ struct SongsView: View {
                 }
             }, set: { _ in
                 
-            }), sortType: self.$sortType, showSections: self.predicate == nil )
+            }), sortType: self.$sortType,  rowType: Track.self, keypaths: UIListViewCellKeypaths(art: \Track.system?.name, title: \Track.name, desc: \Track.game?.name), showSections: self.predicate == nil)
                 .navigationBarTitle(Text(self.title), displayMode: .inline)
                 .navigationBarItems(trailing: Button(action: {
                     self.sortSheetShowing = true
@@ -95,7 +95,7 @@ struct SongsView: View {
             }.onAppear(perform: {
                 self.updateSettings()
                 })
-                .edgesIgnoringSafeArea(Edge.Set(arrayLiteral: [.bottom, .top]))
+                .edgesIgnoringSafeArea(.vertical)
         }
     }
 }
