@@ -21,6 +21,7 @@ struct SongsView: View {
     @State private var sortSheetShowing = false
     @State private var animationSettings: [Track : AnimationSettings] = [:]
     @State private var selectedIndex = ""
+    @State private var sortType = PlaybackStateProperty.sortType.getProperty() ?? 0
     
     init(title: String = "Songs", predicate: NSPredicate?) {
         self.predicate = predicate
@@ -61,92 +62,39 @@ struct SongsView: View {
     
     var body: some View {
         ZStack(alignment: .trailing) {
-            List {
-                if tracks.count > 0 {
-                    HStack {
-                        ZStack {
-                            RoundedRectangle(cornerRadius: 5.0)
-                                .foregroundColor(Color(.systemGray6))
-                            HStack {
-                                Image(systemName: "play.fill")
-                                Text("Play")
-                            }
-                        }
-                            .onTapGesture {
-                                self.playbackState.currentTracklist = Array(self.tracks)
-                                self.playbackState.shuffleTracks = false
-                                self.playbackState.play(index: 0)
-                        }
-                        Spacer()
-                        ZStack {
-                            RoundedRectangle(cornerRadius: 5.0)
-                            .foregroundColor(Color(.systemGray6))
-                            HStack {
-                                Image(systemName: "shuffle")
-                                Text("Shuffle")
-                            }
-                        }.onTapGesture {
-                            self.playbackState.currentTracklist = Array(self.tracks)
-                            self.playbackState.nowPlayingTrack = nil
-                            self.playbackState.shuffleTracks = true
-                            self.playbackState.shuffle(true)
-                            self.playbackState.play(index: 0)
-                        }
+            UIListView(rows: Binding(get: { self.tracks.sorted {
+                if self.sortType == SortType.title.rawValue && self.predicate == nil{
+                        return $0.name! < $1.name!
+                    } else {
+                        return $0.game!.name! < $1.game!.name!
                     }
-                    .frame(height: 40.0)
-                    ForEach(tracks, id: \.id) { track in
-                        Button(action: {
-                            self.playbackState.currentTracklist = Array(self.tracks)
-                            if let index = self.tracks.firstIndex(of: track) {
-                                self.playbackState.play(index: index)
-                            }
-                        }) {
-                            HStack
-                            {
-                                ListArtView(animationSettings: self.getSettings(for: track), albumArt: track.system?.name ?? "")
-                                    .frame(width: 34.0, height: 34.0)
-                                VStack(alignment: .leading) {
-                                    Text("\(self.tracks[self.tracks.firstIndex(of: track) ?? 0].name ?? "")")
-                                    Text("\(self.tracks[self.tracks.firstIndex(of: track) ?? 0].game?.name ?? "")")
-                                        .font(.subheadline)
-                                        .foregroundColor(Color(.secondaryLabel))
-                                }
-                            }
-                        }
-                    }
-                    Spacer()
-                        .frame(height: LibraryView.miniViewPosition)
-                } else {
-                    Text("Add games to your Library")
                 }
+            }, set: { _ in
                 
-            }.navigationBarTitle(Text(self.title), displayMode: .inline)
+            }), sortType: self.$sortType, showSections: self.predicate == nil )
+                .navigationBarTitle(Text(self.title), displayMode: .inline)
                 .navigationBarItems(trailing: Button(action: {
                     self.sortSheetShowing = true
                 }) {
-                    Text("Sort")
+                    if self.predicate == nil {
+                        Text("Sort")
+                    }
                 }
             ).actionSheet(isPresented: self.$sortSheetShowing) {
             ActionSheet(title: Text("Sort by..."), buttons: [
+                .default(Text("Title")) {
+                    self.sortType = SortType.title.rawValue
+                    PlaybackStateProperty.sortType.setProperty(newValue: self.sortType)
+                },
                 .default(Text("Game")) {
-                    
+                    self.sortType = SortType.game.rawValue
+                    PlaybackStateProperty.sortType.setProperty(newValue: self.sortType)
                 },
                 .cancel()
             ])
             }.onAppear(perform: {
                 self.updateSettings()
                 })
-            ListSectionIndexView(index: Binding(
-                get: {
-                    self.selectedIndex
-                },
-                set: { newValue in
-                    self.selectedIndex = newValue
-                    
-            })
-                , indices: self.currentChars)
-                .frame(width: 20.0, alignment: .trailing)
-                .offset(y: -LibraryView.miniViewPosition / 2)
         }
     }
 }

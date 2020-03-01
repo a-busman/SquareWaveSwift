@@ -29,25 +29,48 @@ class RootViewController: UIViewController {
         
         libraryController.navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(addPressed))
         
-        self.view.insertSubview(self.navController.view, at: 0)
-        let view = self.navController.view
+        self.view.addSubview(self.navController.view)
+        let view = self.navController.view!
         
-        view?.topAnchor.constraint(equalTo: self.view.topAnchor).isActive = true
-        view?.bottomAnchor.constraint(equalTo: self.view.bottomAnchor).isActive = true
-        view?.leadingAnchor.constraint(equalTo: self.view.leadingAnchor).isActive = true
-        view?.trailingAnchor.constraint(equalTo: self.view.trailingAnchor).isActive = true
-    }
-    
-    @IBSegueAction func addSwiftUIView(coder: NSCoder) -> UIViewController? {
-        let delegate = NowPlayingMiniViewDelegate()
-        let controller = UIHostingController(coder: coder, rootView: NowPlayingMiniView(delegate: delegate).environmentObject(AppDelegate.playbackState))
+        for subview in view.subviews {
+            NSLog("\(subview)")
+        }
         
-        self.cancellable = delegate.didChange.sink { (delegate) in
+        view.translatesAutoresizingMaskIntoConstraints = false
+        
+        view.topAnchor.constraint(equalTo: self.view.topAnchor).isActive = true
+        view.bottomAnchor.constraint(equalTo: self.view.bottomAnchor).isActive = true
+        view.leadingAnchor.constraint(equalTo: self.view.leadingAnchor).isActive = true
+        view.trailingAnchor.constraint(equalTo: self.view.trailingAnchor).isActive = true
+        
+        let miniDelegate = NowPlayingMiniViewDelegate()
+        let miniViewController = UIHostingController(rootView: NowPlayingMiniView(delegate: miniDelegate).environmentObject(AppDelegate.playbackState))
+        
+        self.cancellable = miniDelegate.didChange.sink { _ in
             let controller = UIHostingController(rootView: NowPlayingView().environmentObject(AppDelegate.playbackState))
             self.present(controller, animated: true)
         }
         
-        return controller
+        let blurView = UIVisualEffectView(effect: UIBlurEffect(style: .systemUltraThinMaterial))
+        blurView.translatesAutoresizingMaskIntoConstraints = false
+        let blurContentView = blurView.contentView
+        
+        let miniView = miniViewController.view!
+        miniView.backgroundColor = .clear
+        
+        blurContentView.addSubview(miniView)
+        miniView.translatesAutoresizingMaskIntoConstraints = false
+        miniView.topAnchor.constraint(equalTo: blurContentView.topAnchor).isActive = true
+        miniView.bottomAnchor.constraint(equalTo: blurContentView.bottomAnchor).isActive = true
+        miniView.leadingAnchor.constraint(equalTo: blurContentView.leadingAnchor).isActive = true
+        miniView.trailingAnchor.constraint(equalTo: blurContentView.trailingAnchor).isActive = true
+        
+        self.view.addSubview(blurView)
+
+        blurView.bottomAnchor.constraint(equalTo: self.view.bottomAnchor).isActive = true
+        blurView.topAnchor.constraint(equalTo: self.view.safeAreaLayoutGuide.bottomAnchor, constant: -75.0).isActive = true
+        blurView.leadingAnchor.constraint(equalTo: self.view.leadingAnchor).isActive = true
+        blurView.trailingAnchor.constraint(equalTo: self.view.trailingAnchor).isActive = true
     }
     
     @objc func settingsPressed(sender: UIBarButtonItem) {

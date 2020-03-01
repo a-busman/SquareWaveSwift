@@ -88,7 +88,6 @@ struct NowPlayingMiniView: View {
         .onTapGesture {
             self.delegate.didTap = true
         }.gesture(self.swipe)
-            .background(BlurView(style: .systemUltraThinMaterial))
     }
 }
 

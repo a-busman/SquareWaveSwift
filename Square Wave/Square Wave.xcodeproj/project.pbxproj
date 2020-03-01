@@ -60,6 +60,8 @@
 		FA1587472406E36900F48261 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = FA1587462406E36900F48261 /* Main.storyboard */; };
 		FA15875D240752CD00F48261 /* ListSectionIndexView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA15875C240752CD00F48261 /* ListSectionIndexView.swift */; };
 		FA244AF42407764C0086DD77 /* UIListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA244AF32407764C0086DD77 /* UIListView.swift */; };
+		FA244AF7240A28130086DD77 /* SongTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA244AF5240A28130086DD77 /* SongTableViewCell.swift */; };
+		FA244AF8240A28130086DD77 /* SongTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = FA244AF6240A28130086DD77 /* SongTableViewCell.xib */; };
 		FA2D8853240075140058713E /* PlaylistView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA2D8852240075140058713E /* PlaylistView.swift */; };
 		FA2D8855240089D30058713E /* VisualEffectView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA2D8854240089D30058713E /* VisualEffectView.swift */; };
 		FA5A25C923F5BEF400D4C28A /* LibraryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA5A25C823F5BEF400D4C28A /* LibraryView.swift */; };
@@ -219,6 +221,8 @@
 		FA1587462406E36900F48261 /* Main.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = Main.storyboard; sourceTree = "<group>"; };
 		FA15875C240752CD00F48261 /* ListSectionIndexView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ListSectionIndexView.swift; path = "../../../../Library/Mobile Documents/com~apple~CloudDocs/.Trash/ListSectionIndexView.swift"; sourceTree = "<group>"; };
 		FA244AF32407764C0086DD77 /* UIListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIListView.swift; sourceTree = "<group>"; };
+		FA244AF5240A28130086DD77 /* SongTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SongTableViewCell.swift; sourceTree = "<group>"; };
+		FA244AF6240A28130086DD77 /* SongTableViewCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = SongTableViewCell.xib; sourceTree = "<group>"; };
 		FA2D8852240075140058713E /* PlaylistView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaylistView.swift; sourceTree = "<group>"; };
 		FA2D8854240089D30058713E /* VisualEffectView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VisualEffectView.swift; sourceTree = "<group>"; };
 		FA5A25C823F5BEF400D4C28A /* LibraryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LibraryView.swift; sourceTree = "<group>"; };
@@ -460,6 +464,8 @@
 				FA5A25D023F5C75000D4C28A /* GamesView.swift */,
 				FA5A25D323F5C76400D4C28A /* SongsView.swift */,
 				FA244AF32407764C0086DD77 /* UIListView.swift */,
+				FA244AF5240A28130086DD77 /* SongTableViewCell.swift */,
+				FA244AF6240A28130086DD77 /* SongTableViewCell.xib */,
 				FAC00F9C23F61F3E0072F78C /* FilePicker.swift */,
 				FAC00F9E23F718870072F78C /* NowPlayingView.swift */,
 				FAC00FA423F887530072F78C /* PlaybackState.swift */,
@@ -616,6 +622,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				FA244AF8240A28130086DD77 /* SongTableViewCell.xib in Resources */,
 				FA822D4523F1F81E005FCFB3 /* LaunchScreen.storyboard in Resources */,
 				FA1587472406E36900F48261 /* Main.storyboard in Resources */,
 				FA822D4223F1F81E005FCFB3 /* Preview Assets.xcassets in Resources */,
@@ -748,6 +755,7 @@
 				FA1587012404C74A00F48261 /* Fir_Resampler.cpp in Sources */,
 				FA2D8855240089D30058713E /* VisualEffectView.swift in Sources */,
 				FA1586F02404C74A00F48261 /* Nes_Oscs.cpp in Sources */,
+				FA244AF7240A28130086DD77 /* SongTableViewCell.swift in Sources */,
 				FAC00FA323F729660072F78C /* BlurView.swift in Sources */,
 				FA1587112404C74A00F48261 /* Sap_Emu.cpp in Sources */,
 				FA5A25CF23F5C74200D4C28A /* PlatformsView.swift in Sources */,

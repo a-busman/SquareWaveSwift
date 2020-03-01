@@ -28,6 +28,8 @@ enum PlaybackStateProperty: String {
     case loopCount          = "loopCount"
     /// User specified playback speed
     case tempo              = "tempo"
+    /// How to sort tracks
+    case sortType           = "sortType"
 
     /**
      Gets a property from userdefaults, or initializes a new value.
@@ -52,6 +54,8 @@ enum PlaybackStateProperty: String {
                 }
             }
             return nil
+        case .sortType:
+            fallthrough
         case .lastPlayedTracknum:
             return UserDefaults.standard.integer(forKey: self.rawValue) as? T
         case .loopCount:
@@ -82,6 +86,8 @@ enum PlaybackStateProperty: String {
             } else {
                 UserDefaults.standard.removeObject(forKey: self.rawValue)
             }
+        case .sortType:
+            fallthrough
         case .lastPlayedTracknum:
             fallthrough
         case .loopCount:
