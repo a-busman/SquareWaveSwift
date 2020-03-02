@@ -15,9 +15,9 @@ struct LibraryView: View {
     var body: some View {
         ZStack(alignment: .topLeading) {
             List {
-                NavigationLink(destination: PlaylistsView()) {
+                /*NavigationLink(destination: PlaylistsView()) {
                     Text("Playlists")
-                }
+                }*/
                 NavigationLink(destination: PlatformsView()) {
                     Text("Platforms")
                 }

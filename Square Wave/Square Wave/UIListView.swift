@@ -160,7 +160,6 @@ struct UIListView: UIViewRepresentable {
             didSet {
                 self.tableViewController = self.tableView?.findViewController()
                 self.tableViewController?.navigationItem.searchController = self.searchController
-                self.tableViewController?.navigationItem.hidesSearchBarWhenScrolling = false
             }
         }
         var tableViewController: UIViewController?
