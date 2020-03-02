@@ -14,6 +14,7 @@ struct SongsView: View {
     var tracksRequest : FetchRequest<Track>
     var tracks: FetchedResults<Track>{tracksRequest.wrappedValue}
     var title: String
+    var sortFromDesc: Bool
     
     var currentChars: [String] = [
     "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z", "#"
@@ -23,11 +24,11 @@ struct SongsView: View {
     @State private var selectedIndex = ""
     @State private var sortType = PlaybackStateProperty.sortType.getProperty() ?? 0
     
-    init(title: String = "Songs", predicate: NSPredicate?) {
+    init(title: String = "Songs", predicate: NSPredicate?, sortFromDesc: Bool = false) {
         self.predicate = predicate
         self.tracksRequest = FetchRequest(entity: Track.entity(), sortDescriptors: [], predicate: predicate)
         self.title = title
-        
+        self.sortFromDesc = sortFromDesc
         UITableView.appearance().insetsLayoutMarginsFromSafeArea = false
     }
     
@@ -71,7 +72,7 @@ struct SongsView: View {
                 }
             }, set: { _ in
                 
-            }), sortType: self.$sortType,  rowType: Track.self, keypaths: UIListViewCellKeypaths(art: \Track.system?.name, title: \Track.name, desc: \Track.game?.name), showSections: self.predicate == nil)
+            }), sortType: self.$sortType,  rowType: Track.self, keypaths: UIListViewCellKeypaths(art: \Track.system?.name, title: \Track.name, desc: \Track.game?.name), sortFromDesc: self.sortFromDesc)
                 .navigationBarTitle(Text(self.title), displayMode: .inline)
                 .navigationBarItems(trailing: Button(action: {
                     self.sortSheetShowing = true

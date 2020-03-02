@@ -65,6 +65,7 @@ struct UIListView: UIViewRepresentable {
     var rowType: NSManagedObject.Type
     var keypaths: UIListViewCellKeypaths
     var showSections = true
+    var sortFromDesc = false
     
     // Hack to call updateUIView on playbackState change.
     class RandomClass { }
@@ -210,17 +211,29 @@ struct UIListView: UIViewRepresentable {
             self.rowsDict = [:]
             for object in self.filteredRows {
                 var key = ""
-                if self.sortType == SortType.title.rawValue || self.rowType != Track.self {
+                if (self.sortType == SortType.title.rawValue && !self.parent.sortFromDesc) || self.rowType != Track.self {
                     if let track = object as? Track {
                         key = String(track.name?.prefix(1) ?? "")
+                        if let _ = Int(key) {
+                            key = "#"
+                        }
                     } else if let platform = object as? System {
                         key = String(platform.name?.prefix(1) ?? "")
+                        if let _ = Int(key) {
+                            key = "#"
+                        }
                     } else if let game = object as? Game {
                         key = String(game.name?.prefix(1) ?? "")
+                        if let _ = Int(key) {
+                            key = "#"
+                        }
                     }
                 } else if self.rowType == Track.self {
                     if let track = object as? Track {
                         key = String(track.game?.name?.prefix(1) ?? "")
+                        if let _ = Int(key) {
+                            key = "#"
+                        }
                     }
                 }
                 if var values = self.rowsDict[key] {
@@ -232,7 +245,11 @@ struct UIListView: UIViewRepresentable {
             }
             self.sectionTitles = [String](self.rowsDict.keys)
             self.sectionTitles.sort {
-                $0 < $1
+                if $0 == "#" || $1 == "#" {
+                    return $0 > $1
+                } else {
+                    return $0 < $1
+                }
             }
         }
         private func shouldDisplayAnimation(_ track: Track) -> Bool {
@@ -288,10 +305,12 @@ struct UIListView: UIViewRepresentable {
 
                 var predicate: NSPredicate!
                 var title = "Songs"
+                var sortFromDesc = false
                 if self.rowType == System.self,
                     let platform = cell.info as? System {
                     predicate = NSPredicate(format: "system.id == %@", platform.id! as CVarArg)
                     title = platform.name ?? "Songs"
+                    sortFromDesc = true
                 } else if self.rowType == Game.self,
                     let game = cell.info as? Game {
                     predicate = NSPredicate(format: "game.id == %@", game.id! as CVarArg)
@@ -299,7 +318,7 @@ struct UIListView: UIViewRepresentable {
                 }
                 let delegate = UIApplication.shared.delegate as! AppDelegate
                 let context = delegate.persistentContainer.viewContext
-                let songController = UIHostingController(rootView: SongsView(title: title, predicate: predicate).environment(\.managedObjectContext, context).environmentObject(AppDelegate.playbackState))
+                let songController = UIHostingController(rootView: SongsView(title: title, predicate: predicate, sortFromDesc: sortFromDesc).environment(\.managedObjectContext, context).environmentObject(AppDelegate.playbackState))
                 self.navController?.pushViewController(songController, animated: true)
             }
         }
@@ -322,11 +341,14 @@ struct UIListView: UIViewRepresentable {
         }
         
         func sectionIndexTitles(for tableView: UITableView) -> [String]? {
+            let titles: [String] = [
+                "A", "•", "C", "•", "E", "•", "G", "•", "I", "•", "K", "•", "M", "•", "O", "•", "Q", "•", "S", "•", "U", "•", "W", "•", "Y", "•", "#"
+            ]
             if self.tableView == nil {
                 self.tableView = tableView
             }
-            if self.sectionTitles.count > 10 {
-                return self.sectionTitles
+            if self.showSections && self.sectionTitles.count > 1 {
+                return titles
             }
             return nil
         }
@@ -356,7 +378,10 @@ struct UIListView: UIViewRepresentable {
             if self.keypaths.desc != nil {
                 tableViewCell.artistLabel?.text = info[keyPath: self.keypaths.desc!] as? String
             } else {
-                tableViewCell.artistLabel?.text = nil
+                if self.rowType == System.self,
+                    let platform = info as? System {
+                    tableViewCell.artistLabel?.text = "\(platform.tracks?.count ?? 0) tracks"
+                }
             }
             
             if self.rowType == Track.self,
