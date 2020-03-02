@@ -8,6 +8,38 @@
 
 import SwiftUI
 
+struct PlaylistBlurView: UIViewRepresentable {
+    
+    func makeUIView(context: UIViewRepresentableContext<PlaylistBlurView>) -> UIVisualEffectView {
+        let blurBg = UIVisualEffectView(effect: UIBlurEffect(style: .extraLight))
+        let vibrancyView = UIVisualEffectView(effect: UIVibrancyEffect(blurEffect: UIBlurEffect(style: .extraLight), style: .label))
+        let imageView = UIImageView(image: UIImage(systemName: "plus"))
+        
+        blurBg.contentView.addSubview(vibrancyView)
+        vibrancyView.translatesAutoresizingMaskIntoConstraints = false
+        
+        vibrancyView.bottomAnchor.constraint(equalTo: blurBg.contentView.bottomAnchor).isActive = true
+        vibrancyView.topAnchor.constraint(equalTo: blurBg.contentView.topAnchor).isActive = true
+        vibrancyView.leadingAnchor.constraint(equalTo: blurBg.contentView.leadingAnchor).isActive = true
+        vibrancyView.trailingAnchor.constraint(equalTo: blurBg.contentView.trailingAnchor).isActive = true
+        
+        vibrancyView.contentView.addSubview(imageView)
+        imageView.translatesAutoresizingMaskIntoConstraints = false
+
+        imageView.widthAnchor.constraint(equalToConstant: 48.0).isActive = true
+        imageView.heightAnchor.constraint(equalTo: imageView.widthAnchor).isActive = true
+        
+        imageView.centerXAnchor.constraint(equalTo: vibrancyView.contentView.centerXAnchor).isActive = true
+        imageView.centerYAnchor.constraint(equalTo: vibrancyView.contentView.centerYAnchor).isActive = true
+
+        return blurBg
+    }
+    
+    func updateUIView(_ uiView: UIVisualEffectView, context: UIViewRepresentableContext<PlaylistBlurView>) {
+        
+    }
+}
+
 struct PlaylistRowView: View {
     @State var image: UIImage
     @State var text: String = ""
@@ -22,22 +54,7 @@ struct PlaylistRowView: View {
                     .overlay(RoundedRectangle(cornerRadius: 5.0).stroke(Color(.systemGray4)))
                     .cornerRadius(5.0)
                 if self.blurViewVisible {
-                    VisualEffectView(effect: UIBlurEffect(style: .systemUltraThinMaterial))
-                        .cornerRadius(5.0)
-                    Image("placeholder-playlist")
-                            .resizable()
-
-                    .mask(Image(systemName: "plus")
-                    .resizable()
-                    .aspectRatio(contentMode: .fit)
-                    .foregroundColor(Color(.white)))
-                    .frame(width: 48.0, height: 48.0)
-                    VisualEffectView(effect: UIBlurEffect(style: .systemUltraThinMaterialLight))
-
-                    .mask(Image(systemName: "plus")
-                    .resizable()
-                    .aspectRatio(contentMode: .fit))
-                                .frame(width: 48.0)
+                    PlaylistBlurView().cornerRadius(5.0)
                 }
             }.frame(width: 128.0, height: 128.0)
 
@@ -50,11 +67,12 @@ struct PlaylistRowView: View {
 }
 
 struct PlaylistsView: View {
+    @State var newPlaylistShowing = false
     @FetchRequest(entity: Playlist.entity(), sortDescriptors: [], predicate: NSPredicate(format: "isNowPlaying != true")) var playlists: FetchedResults<Playlist>
     var body: some View {
         List {
             Button(action: {
-                // new playlist
+                self.newPlaylistShowing.toggle()
             }) {
                 PlaylistRowView(image: UIImage(named: "placeholder-playlist") ?? UIImage(), text: "New Playlist...", blurViewVisible: true)
             }
@@ -66,6 +84,9 @@ struct PlaylistsView: View {
             Spacer()
                 .frame(height: LibraryView.miniViewPosition)
         }.navigationBarTitle(Text("Playlists"))
+        .sheet(isPresented: self.$newPlaylistShowing) {
+            NewPlaylistView()
+        }
     }
     
     func getPlaylistImage(_ playlist: Playlist) -> UIImage {

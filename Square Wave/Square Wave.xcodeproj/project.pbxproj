@@ -62,6 +62,9 @@
 		FA244AF42407764C0086DD77 /* UIListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA244AF32407764C0086DD77 /* UIListView.swift */; };
 		FA244AF7240A28130086DD77 /* SongTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA244AF5240A28130086DD77 /* SongTableViewCell.swift */; };
 		FA244AF8240A28130086DD77 /* SongTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = FA244AF6240A28130086DD77 /* SongTableViewCell.xib */; };
+		FA244AFA240CA2750086DD77 /* NewPlaylistView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA244AF9240CA2750086DD77 /* NewPlaylistView.swift */; };
+		FA244AFC240CAE370086DD77 /* TextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA244AFB240CAE370086DD77 /* TextView.swift */; };
+		FA244AFE240CC8EA0086DD77 /* AddToPlaylistView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA244AFD240CC8EA0086DD77 /* AddToPlaylistView.swift */; };
 		FA2D8853240075140058713E /* PlaylistView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA2D8852240075140058713E /* PlaylistView.swift */; };
 		FA2D8855240089D30058713E /* VisualEffectView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA2D8854240089D30058713E /* VisualEffectView.swift */; };
 		FA5A25C923F5BEF400D4C28A /* LibraryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA5A25C823F5BEF400D4C28A /* LibraryView.swift */; };
@@ -223,6 +226,9 @@
 		FA244AF32407764C0086DD77 /* UIListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIListView.swift; sourceTree = "<group>"; };
 		FA244AF5240A28130086DD77 /* SongTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SongTableViewCell.swift; sourceTree = "<group>"; };
 		FA244AF6240A28130086DD77 /* SongTableViewCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = SongTableViewCell.xib; sourceTree = "<group>"; };
+		FA244AF9240CA2750086DD77 /* NewPlaylistView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewPlaylistView.swift; sourceTree = "<group>"; };
+		FA244AFB240CAE370086DD77 /* TextView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextView.swift; sourceTree = "<group>"; };
+		FA244AFD240CC8EA0086DD77 /* AddToPlaylistView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddToPlaylistView.swift; sourceTree = "<group>"; };
 		FA2D8852240075140058713E /* PlaylistView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaylistView.swift; sourceTree = "<group>"; };
 		FA2D8854240089D30058713E /* VisualEffectView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VisualEffectView.swift; sourceTree = "<group>"; };
 		FA5A25C823F5BEF400D4C28A /* LibraryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LibraryView.swift; sourceTree = "<group>"; };
@@ -455,8 +461,11 @@
 				FA5A25C823F5BEF400D4C28A /* LibraryView.swift */,
 				FAC00FA223F729660072F78C /* BlurView.swift */,
 				FA2D8852240075140058713E /* PlaylistView.swift */,
+				FA244AFD240CC8EA0086DD77 /* AddToPlaylistView.swift */,
 				FA5A25CA23F5BF4A00D4C28A /* SettingsView.swift */,
 				FA5A25CC23F5C6F800D4C28A /* PlaylistsView.swift */,
+				FA244AFB240CAE370086DD77 /* TextView.swift */,
+				FA244AF9240CA2750086DD77 /* NewPlaylistView.swift */,
 				FAC00FA023F728F00072F78C /* NowPlayingMiniView.swift */,
 				FA2D8854240089D30058713E /* VisualEffectView.swift */,
 				FA5A25CE23F5C74200D4C28A /* PlatformsView.swift */,
@@ -701,6 +710,7 @@
 				FA1587132404C74A00F48261 /* Gme_File.cpp in Sources */,
 				FA1586F72404C74A00F48261 /* Sms_Apu.cpp in Sources */,
 				FA5A25D423F5C76400D4C28A /* SongsView.swift in Sources */,
+				FA244AFA240CA2750086DD77 /* NewPlaylistView.swift in Sources */,
 				FA1586FB2404C74A00F48261 /* Nsf_Emu.cpp in Sources */,
 				FA5A25C923F5BEF400D4C28A /* LibraryView.swift in Sources */,
 				FA1586FF2404C74A00F48261 /* Spc_Cpu.cpp in Sources */,
@@ -716,6 +726,7 @@
 				FA1586F92404C74A00F48261 /* gme.cpp in Sources */,
 				FAA4083123F8B55100E3F2A4 /* ListArtView.swift in Sources */,
 				FA1587102404C74A00F48261 /* Nes_Namco_Apu.cpp in Sources */,
+				FA244AFC240CAE370086DD77 /* TextView.swift in Sources */,
 				FA15875D240752CD00F48261 /* ListSectionIndexView.swift in Sources */,
 				FA1586FD2404C74A00F48261 /* Hes_Cpu.cpp in Sources */,
 				FA15870A2404C74A00F48261 /* Spc_Filter.cpp in Sources */,
@@ -731,6 +742,7 @@
 				FA5A25D123F5C75000D4C28A /* GamesView.swift in Sources */,
 				FA2D8853240075140058713E /* PlaylistView.swift in Sources */,
 				FA15871C2404C74A00F48261 /* Hes_Emu.cpp in Sources */,
+				FA244AFE240CC8EA0086DD77 /* AddToPlaylistView.swift in Sources */,
 				FA1587092404C74A00F48261 /* Vgm_Emu_Impl.cpp in Sources */,
 				FA15870F2404C74A00F48261 /* Ay_Apu.cpp in Sources */,
 				FA1586EA2404C74A00F48261 /* Gbs_Emu.cpp in Sources */,
