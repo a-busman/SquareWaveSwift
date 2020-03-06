@@ -10,31 +10,58 @@ import UIKit
 import SwiftUI
 import Combine
 
-class RootViewController: UIViewController {
+class RootViewController: UIViewController, FileEngineDelegate {
+    let reloadBarButtonItem = UIBarButtonItem(barButtonSystemItem: .refresh, target: self, action: #selector(refreshPressed))
+    let addBarButtonItem = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(addPressed))
+    let activityIndicator = UIActivityIndicatorView(style: .medium)
+    var activityIndicatorBarButtonItem: UIBarButtonItem!
+    
+    func progress(_ currentIndex: UInt, total: UInt) {
+        NSLog("\(currentIndex) out of \(total)")
+    }
+    
+    func complete() {
+        NSLog("Done!")
+        self.setBarItems(self.reloadBarButtonItem)
+    }
+    
+    func failed(_ error: Error) {
+        NSLog("Failed!")
+        self.setBarItems(self.reloadBarButtonItem)
+    }
+    
     var cancellable: AnyCancellable?
     var navController = UINavigationController()
+    var libraryController: UIViewController!
+    
+    func setBarItems(_ barItem: UIBarButtonItem) {
+        self.libraryController.navigationItem.setRightBarButtonItems([
+            barItem,
+            self.addBarButtonItem
+        ], animated: true)
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        self.activityIndicatorBarButtonItem = UIBarButtonItem(customView: self.activityIndicator)
+        self.activityIndicator.startAnimating()
+        FileEngine.reloadFromCloud(with: self)
 
         let delegate = UIApplication.shared.delegate as! AppDelegate
         let context = delegate.persistentContainer.viewContext
-        let libraryController = UIHostingController(rootView: LibraryView().environment(\.managedObjectContext, context).environmentObject(AppDelegate.playbackState))
+        self.libraryController = UIHostingController(rootView: LibraryView().environment(\.managedObjectContext, context).environmentObject(AppDelegate.playbackState))
         
         self.navController = UINavigationController(rootViewController: libraryController)
         
         self.navController.navigationBar.prefersLargeTitles = true
         
-        libraryController.navigationItem.leftBarButtonItem = UIBarButtonItem(title: "Settings", style: .plain, target: self, action: #selector(settingsPressed))
+        self.libraryController.navigationItem.leftBarButtonItem = UIBarButtonItem(title: "Settings", style: .plain, target: self, action: #selector(settingsPressed))
         
-        libraryController.navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(addPressed))
+        self.setBarItems(self.activityIndicatorBarButtonItem)
         
         self.view.addSubview(self.navController.view)
         let view = self.navController.view!
-        
-        for subview in view.subviews {
-            NSLog("\(subview)")
-        }
         
         view.translatesAutoresizingMaskIntoConstraints = false
         
@@ -78,25 +105,13 @@ class RootViewController: UIViewController {
         self.present(settingsView, animated: true)
     }
     
+    @objc func refreshPressed(sender: UIBarButtonItem) {
+        self.setBarItems(self.activityIndicatorBarButtonItem)
+        FileEngine.reloadFromCloud(with: self)
+    }
+    
     @objc func addPressed(sender: UIBarButtonItem) {
-        let alertController = UIAlertController(title: "Add files", message: nil, preferredStyle: .actionSheet)
-        
-        let fromFolderAction = UIAlertAction(title: "From folder...", style: .default, handler: { _ in
-            let controller = UIHostingController(rootView: FilePicker(folderType: true))
-            self.present(controller, animated: true)
-        })
-        
-        let fromFilesAction = UIAlertAction(title: "From files...", style: .default, handler: { _ in
-            let controller = UIHostingController(rootView: FilePicker(folderType: false))
-            self.present(controller, animated: true)
-        })
-        
-        let cancelAction = UIAlertAction(title: "Cancel", style: .cancel)
-        
-        alertController.addAction(fromFolderAction)
-        alertController.addAction(fromFilesAction)
-        alertController.addAction(cancelAction)
-        
-        self.present(alertController, animated: true)
+        let controller = UIHostingController(rootView: FilePicker())
+        self.present(controller, animated: true)
     }
 }

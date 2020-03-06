@@ -50,6 +50,7 @@ struct HeaderView: View {
 enum SortType: Int {
     case title
     case game
+    case none
 }
 
 struct UIListViewCellKeypaths {
@@ -62,10 +63,13 @@ struct UIListView: UIViewRepresentable {
     @EnvironmentObject var playbackState: PlaybackState
     @Binding var rows: [NSManagedObject]
     @Binding var sortType: Int
+    @Binding var isEditing: Bool
     var rowType: NSManagedObject.Type
     var keypaths: UIListViewCellKeypaths
     var showSections = true
     var sortFromDesc = false
+    var showSearch = true
+    var showsHeader = true
     
     // Hack to call updateUIView on playbackState change.
     class RandomClass { }
@@ -74,26 +78,28 @@ struct UIListView: UIViewRepresentable {
     func makeUIView(context: Context) -> UITableView {
         let collectionView = UITableView(frame: .zero, style: .plain)
 
-        if self.rowType == Track.self,
-            let trackRows = self.rows as? [Track] {
-            let headerController = UIHostingController(rootView: HeaderView(didTapPlay: Binding(get: {
-                false
-            }, set: { newValue in
-                self.playbackState.currentTracklist = Array(trackRows)
-                self.playbackState.shuffleTracks = false
-                self.playbackState.play(index: 0)
-            }),
-            didTapShuffle: Binding(get: {
-                false
-            }, set: { newValue in
-                self.playbackState.currentTracklist = Array(trackRows)
-                self.playbackState.nowPlayingTrack = nil
-                self.playbackState.shuffleTracks = true
-                self.playbackState.shuffle(true)
-                self.playbackState.play(index: 0)
-            })).frame(height: 75.0))
-            
-            collectionView.tableHeaderView = headerController.view
+        if self.showsHeader {
+            if self.rowType == Track.self,
+                let _ = self.rows as? [Track] {
+                let headerController = UIHostingController(rootView: HeaderView(didTapPlay: Binding(get: {
+                    false
+                }, set: { newValue in
+                    self.playbackState.currentTracklist = self.rows as! [Track]
+                    self.playbackState.shuffleTracks = false
+                    self.playbackState.play(index: 0)
+                }),
+                didTapShuffle: Binding(get: {
+                    false
+                }, set: { newValue in
+                    self.playbackState.currentTracklist = self.rows as! [Track]
+                    self.playbackState.nowPlayingTrack = nil
+                    self.playbackState.shuffleTracks = true
+                    self.playbackState.shuffle(true)
+                    self.playbackState.play(index: 0)
+                })).frame(height: 75.0))
+                
+                collectionView.tableHeaderView = headerController.view
+            }
         }
         collectionView.contentInset = UIEdgeInsets(top: 0.0, left: 0.0, bottom: LibraryView.miniViewPosition, right: 0.0)
         collectionView.scrollIndicatorInsets = UIEdgeInsets(top: 0.0, left: 0.0, bottom: LibraryView.miniViewPosition, right: 0.0)
@@ -112,10 +118,15 @@ struct UIListView: UIViewRepresentable {
             return
         }
         if self.rowType == Track.self {
-            if self.sortType != context.coordinator.sortType {
+            if self.sortType != context.coordinator.sortType && self.sortType != SortType.none.rawValue {
                 context.coordinator.sortType = self.sortType
                 context.coordinator.rows = self.rows
+                context.coordinator.filteredRows = self.rows
                 context.coordinator.updateSectionTitles()
+                uiView.reloadData()
+            } else if self.sortType == SortType.none.rawValue {
+                context.coordinator.rows = self.rows
+                context.coordinator.filteredRows = self.rows
                 uiView.reloadData()
             }
             for cell in uiView.visibleCells {
@@ -134,10 +145,11 @@ struct UIListView: UIViewRepresentable {
                 }
             }
         }
+        uiView.setEditing(self.isEditing, animated: true)
     }
 
     func makeCoordinator() -> Coordinator {
-        Coordinator(rows: self.rows, parent: self, sortType: self.sortType, showSections: self.showSections, rowType: self.rowType, keypaths: self.keypaths)
+        Coordinator(rows: self.rows, parent: self, sortType: self.sortType, showSections: self.showSections, rowType: self.rowType, keypaths: self.keypaths, showSearch: self.showSearch)
     }
     
     func didTapRow(track: Track) {
@@ -147,7 +159,7 @@ struct UIListView: UIViewRepresentable {
     }
 
     class Coordinator: NSObject, UITableViewDataSource, UITableViewDelegate, UISearchResultsUpdating {
-
+        var showSearch: Bool
         var parent: UIListView
         var rows: [NSManagedObject]
         var filteredRows: [NSManagedObject]
@@ -159,15 +171,17 @@ struct UIListView: UIViewRepresentable {
         var keypaths: UIListViewCellKeypaths
         var tableView: UITableView? {
             didSet {
-                self.tableViewController = self.tableView?.findViewController()
-                self.tableViewController?.navigationItem.searchController = self.searchController
+                if self.showSearch {
+                    self.tableViewController = self.tableView?.findViewController()
+                    self.tableViewController?.navigationItem.searchController = self.searchController
+                }
             }
         }
         var tableViewController: UIViewController?
         let searchController = UISearchController(searchResultsController: nil)
         let navController = (UIApplication.shared.windows.first!.rootViewController as? RootViewController)?.navController
 
-        init(rows: [NSManagedObject], parent: UIListView, sortType: Int, showSections: Bool, rowType: NSManagedObject.Type, keypaths: UIListViewCellKeypaths) {
+        init(rows: [NSManagedObject], parent: UIListView, sortType: Int, showSections: Bool, rowType: NSManagedObject.Type, keypaths: UIListViewCellKeypaths, showSearch: Bool) {
             self.rows = rows
             self.filteredRows = rows
             self.parent = parent
@@ -175,11 +189,14 @@ struct UIListView: UIViewRepresentable {
             self.showSections = showSections
             self.rowType = rowType
             self.keypaths = keypaths
+            self.showSearch = showSearch
             super.init()
             
-            self.searchController.searchBar.placeholder = "Search"
-            self.searchController.obscuresBackgroundDuringPresentation = false
-            self.searchController.searchResultsUpdater = self
+            if self.showSearch {
+                self.searchController.searchBar.placeholder = "Search"
+                self.searchController.obscuresBackgroundDuringPresentation = false
+                self.searchController.searchResultsUpdater = self
+            }
 
             if showSections {
                 self.updateSectionTitles()
@@ -288,6 +305,14 @@ struct UIListView: UIViewRepresentable {
             }
         }
         
+        func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
+            return true
+        }
+        
+        func tableView(_ tableView: UITableView, canMoveRowAt indexPath: IndexPath) -> Bool {
+            return true
+        }
+        
         func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
             if self.tableView == nil {
                 self.tableView = tableView
@@ -338,6 +363,26 @@ struct UIListView: UIViewRepresentable {
                 return self.sectionTitles[section]
             }
             return nil
+        }
+        
+        func tableView(_ tableView: UITableView, moveRowAt sourceIndexPath: IndexPath, to destinationIndexPath: IndexPath) {
+            let item = self.rows[sourceIndexPath.row]
+            
+            self.rows.remove(at: sourceIndexPath.row)
+            self.rows.insert(item, at: destinationIndexPath.row)
+            self.filteredRows = self.rows
+        }
+        
+        func tableView(_ tableView: UITableView, titleForDeleteConfirmationButtonForRowAt indexPath: IndexPath) -> String? {
+            return "Remove"
+        }
+        
+        func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
+            if editingStyle == .delete {
+                self.rows.remove(at: indexPath.row)
+                tableView.deleteRows(at: [indexPath], with: .automatic)
+                self.filteredRows = self.rows
+            }
         }
         
         func sectionIndexTitles(for tableView: UITableView) -> [String]? {

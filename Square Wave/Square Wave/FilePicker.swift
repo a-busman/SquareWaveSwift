@@ -12,16 +12,10 @@ import MobileCoreServices
 struct FilePicker: UIViewControllerRepresentable {
     @Environment(\.presentationMode) var presentationMode
     
-    var folderType: Bool
-    
     func makeUIViewController(context: UIViewControllerRepresentableContext<FilePicker>) -> UIDocumentPickerViewController {
-        var documentTypes: [String] = []
-        if folderType {
-            documentTypes = [kUTTypeFolder as String]
-        } else {
-            documentTypes = [kUTTypeZipArchive as String, "com.abusman.nsf"]
-        }
-        let picker = UIDocumentPickerViewController(documentTypes: documentTypes, in: folderType ? .open : .import)
+        let documentTypes: [String] = [kUTTypeZipArchive as String, "com.abusman.nsf"]
+
+        let picker = UIDocumentPickerViewController(documentTypes: documentTypes, in: .import)
         picker.allowsMultipleSelection = true
         picker.delegate = context.coordinator
         return picker
@@ -44,9 +38,12 @@ struct FilePicker: UIViewControllerRepresentable {
         
         func documentPicker(_ controller: UIDocumentPickerViewController, didPickDocumentsAt urls: [URL]) {
             for file in urls {
-                FileEngine.addFile(file)
+                if FileManager.default.fileExists(atPath: file.path) {
+                    FileEngine.addFile(file, removeOriginal: true)
+                }
             }
-            parent.presentationMode.wrappedValue.dismiss()
         }
     }
 }
+
+

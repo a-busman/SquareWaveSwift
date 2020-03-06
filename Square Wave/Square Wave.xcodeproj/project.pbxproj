@@ -58,13 +58,13 @@
 		FA15871C2404C74A00F48261 /* Hes_Emu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FA1586E92404C74A00F48261 /* Hes_Emu.cpp */; };
 		FA15872024056D3500F48261 /* RootViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA15871F24056D3500F48261 /* RootViewController.swift */; };
 		FA1587472406E36900F48261 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = FA1587462406E36900F48261 /* Main.storyboard */; };
-		FA15875D240752CD00F48261 /* ListSectionIndexView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA15875C240752CD00F48261 /* ListSectionIndexView.swift */; };
 		FA244AF42407764C0086DD77 /* UIListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA244AF32407764C0086DD77 /* UIListView.swift */; };
 		FA244AF7240A28130086DD77 /* SongTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA244AF5240A28130086DD77 /* SongTableViewCell.swift */; };
 		FA244AF8240A28130086DD77 /* SongTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = FA244AF6240A28130086DD77 /* SongTableViewCell.xib */; };
 		FA244AFA240CA2750086DD77 /* NewPlaylistView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA244AF9240CA2750086DD77 /* NewPlaylistView.swift */; };
 		FA244AFC240CAE370086DD77 /* TextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA244AFB240CAE370086DD77 /* TextView.swift */; };
 		FA244AFE240CC8EA0086DD77 /* AddToPlaylistView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA244AFD240CC8EA0086DD77 /* AddToPlaylistView.swift */; };
+		FA244B00241072DC0086DD77 /* CloudKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FA244AFF241072DC0086DD77 /* CloudKit.framework */; };
 		FA2D8853240075140058713E /* PlaylistView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA2D8852240075140058713E /* PlaylistView.swift */; };
 		FA2D8855240089D30058713E /* VisualEffectView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA2D8854240089D30058713E /* VisualEffectView.swift */; };
 		FA5A25C923F5BEF400D4C28A /* LibraryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA5A25C823F5BEF400D4C28A /* LibraryView.swift */; };
@@ -222,13 +222,13 @@
 		FA1586E92404C74A00F48261 /* Hes_Emu.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Hes_Emu.cpp; sourceTree = "<group>"; };
 		FA15871F24056D3500F48261 /* RootViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootViewController.swift; sourceTree = "<group>"; };
 		FA1587462406E36900F48261 /* Main.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = Main.storyboard; sourceTree = "<group>"; };
-		FA15875C240752CD00F48261 /* ListSectionIndexView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ListSectionIndexView.swift; path = "../../../../Library/Mobile Documents/com~apple~CloudDocs/.Trash/ListSectionIndexView.swift"; sourceTree = "<group>"; };
 		FA244AF32407764C0086DD77 /* UIListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIListView.swift; sourceTree = "<group>"; };
 		FA244AF5240A28130086DD77 /* SongTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SongTableViewCell.swift; sourceTree = "<group>"; };
 		FA244AF6240A28130086DD77 /* SongTableViewCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = SongTableViewCell.xib; sourceTree = "<group>"; };
 		FA244AF9240CA2750086DD77 /* NewPlaylistView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewPlaylistView.swift; sourceTree = "<group>"; };
 		FA244AFB240CAE370086DD77 /* TextView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextView.swift; sourceTree = "<group>"; };
 		FA244AFD240CC8EA0086DD77 /* AddToPlaylistView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddToPlaylistView.swift; sourceTree = "<group>"; };
+		FA244AFF241072DC0086DD77 /* CloudKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CloudKit.framework; path = System/Library/Frameworks/CloudKit.framework; sourceTree = SDKROOT; };
 		FA2D8852240075140058713E /* PlaylistView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaylistView.swift; sourceTree = "<group>"; };
 		FA2D8854240089D30058713E /* VisualEffectView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VisualEffectView.swift; sourceTree = "<group>"; };
 		FA5A25C823F5BEF400D4C28A /* LibraryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LibraryView.swift; sourceTree = "<group>"; };
@@ -263,7 +263,7 @@
 		FAC0768923F513D10096B786 /* FileEngine.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FileEngine.m; sourceTree = "<group>"; };
 		FAC0768A23F513D10096B786 /* AudioEngine.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AudioEngine.m; sourceTree = "<group>"; };
 		FAC0768B23F513D10096B786 /* FileEngine.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FileEngine.h; sourceTree = "<group>"; };
-		FAC0772323F5142F0096B786 /* Podfile */ = {isa = PBXFileReference; lastKnownFileType = text; path = Podfile; sourceTree = "<group>"; };
+		FAC0772323F5142F0096B786 /* Podfile */ = {isa = PBXFileReference; lastKnownFileType = text; path = Podfile; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -272,6 +272,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				480E72E84A0CBAA5AD24BA45 /* Pods_Square_Wave.framework in Frameworks */,
+				FA244B00241072DC0086DD77 /* CloudKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -295,6 +296,7 @@
 		7C4BEDAAD9AF5E2C2797924A /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				FA244AFF241072DC0086DD77 /* CloudKit.framework */,
 				DF4AB5F6BE0BBA54DAEDCB14 /* Pods_Square_Wave.framework */,
 			);
 			name = Frameworks;
@@ -469,7 +471,6 @@
 				FAC00FA023F728F00072F78C /* NowPlayingMiniView.swift */,
 				FA2D8854240089D30058713E /* VisualEffectView.swift */,
 				FA5A25CE23F5C74200D4C28A /* PlatformsView.swift */,
-				FA15875C240752CD00F48261 /* ListSectionIndexView.swift */,
 				FA5A25D023F5C75000D4C28A /* GamesView.swift */,
 				FA5A25D323F5C76400D4C28A /* SongsView.swift */,
 				FA244AF32407764C0086DD77 /* UIListView.swift */,
@@ -727,7 +728,6 @@
 				FAA4083123F8B55100E3F2A4 /* ListArtView.swift in Sources */,
 				FA1587102404C74A00F48261 /* Nes_Namco_Apu.cpp in Sources */,
 				FA244AFC240CAE370086DD77 /* TextView.swift in Sources */,
-				FA15875D240752CD00F48261 /* ListSectionIndexView.swift in Sources */,
 				FA1586FD2404C74A00F48261 /* Hes_Cpu.cpp in Sources */,
 				FA15870A2404C74A00F48261 /* Spc_Filter.cpp in Sources */,
 				FA1586EE2404C74A00F48261 /* Classic_Emu.cpp in Sources */,

@@ -26,6 +26,7 @@ struct TextView: UIViewRepresentable {
         myTextView.isUserInteractionEnabled = true
         myTextView.backgroundColor = .clear
         myTextView.font = UIFont.preferredFont(forTextStyle: .headline)
+        myTextView.returnKeyType = .done
 
         self.placeholder.text = self.title
         self.placeholder.textColor = .placeholderText
@@ -53,6 +54,10 @@ struct TextView: UIViewRepresentable {
         }
 
         func textView(_ textView: UITextView, shouldChangeTextIn range: NSRange, replacementText text: String) -> Bool {
+            if text == "\n" {
+                textView.resignFirstResponder()
+                return false
+            }
             return true
         }
 

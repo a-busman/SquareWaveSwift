@@ -120,14 +120,14 @@ const int kBufferCount = 3;
         }
     }
     AVAudioSession *session = AVAudioSession.sharedInstance;
-    [session setActive:true error:NULL];
+    [session setActive:YES error:nil];
     [self startAudioQueue];
 }
 
 - (void)pause {
     AudioQueuePause(_mAudioQueue);
     AVAudioSession *session = AVAudioSession.sharedInstance;
-    [session setActive:false error:NULL];
+    [session setActive:YES error:nil];
     @synchronized (self) {
         _mIsPaused = YES;
     }
@@ -140,7 +140,7 @@ const int kBufferCount = 3;
     }
     AudioQueueStop(_mAudioQueue, YES);
     AVAudioSession *session = AVAudioSession.sharedInstance;
-    [session setActive:false error:NULL];
+    [session setActive:NO error:nil];
 
 }
 
@@ -237,7 +237,7 @@ const int kBufferCount = 3;
 - (TrackInfo *)getCurrentTrackInfo {
     @synchronized (self) {
         if (!_mEmu) {
-            return NULL;
+            return nil;
         }
         TrackInfo *ret = [[TrackInfo alloc] init];
         gme_info_t *info = NULL;
@@ -341,7 +341,7 @@ void AudioEngineOutputBufferCallback(void * inUserData, AudioQueueRef inAQ, Audi
             handle_error(gme_play(_mEmu, sampleCount, rawBuf));
             buffer->mAudioDataByteSize = sampleCount * sizeof (SInt16);
 
-            err = AudioQueueEnqueueBuffer(queue, buffer, 0, NULL);
+            err = AudioQueueEnqueueBuffer(queue, buffer, 0, nil);
             if (err == kAudioSessionNotActiveError || err == kAudioQueueErr_EnqueueDuringReset) {
                 _mIsPlaying = NO;
             } else if (err != noErr) {

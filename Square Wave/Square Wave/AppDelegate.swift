@@ -20,7 +20,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     
     func application(_ application: UIApplication, open url: URL, options: [UIApplication.OpenURLOptionsKey : Any] = [:]) -> Bool {
         NSLog("URL: \(url.absoluteString)")
-        FileEngine.addFile(url)
+        FileEngine.addFile(url, removeOriginal:true)
         return true
     }
 
@@ -61,6 +61,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                  * The store could not be migrated to the current model version.
                  Check the error message to determine what the actual problem was.
                  */
+                FileEngine.clearDatabase()
                 fatalError("Unresolved error \(error), \(error.userInfo)")
             }
         })

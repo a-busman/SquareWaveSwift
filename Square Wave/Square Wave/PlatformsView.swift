@@ -21,7 +21,7 @@ struct PlatformsView: View {
             SortType.title.rawValue
         }, set: { _ in
             
-        }), rowType: System.self, keypaths: UIListViewCellKeypaths(art: \System.name, title: \System.name, desc: nil), showSections: false)
+        }), isEditing: .constant(false), rowType: System.self, keypaths: UIListViewCellKeypaths(art: \System.name, title: \System.name, desc: nil), showSections: false)
             .navigationBarTitle(Text("Platforms"))
             .edgesIgnoringSafeArea(.vertical)
     }

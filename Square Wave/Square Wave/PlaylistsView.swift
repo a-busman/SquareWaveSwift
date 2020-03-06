@@ -77,7 +77,7 @@ struct PlaylistsView: View {
                 PlaylistRowView(image: UIImage(named: "placeholder-playlist") ?? UIImage(), text: "New Playlist...", blurViewVisible: true)
             }
             ForEach(self.playlists, id: \.self) { (playlist: Playlist) in
-                NavigationLink(destination: PlaylistView()) {
+                NavigationLink(destination: PlaylistView(playlistModel: PlaylistModel(playlist: playlist))) {
                     PlaylistRowView(image: self.getPlaylistImage(playlist), text: playlist.name ?? "")
                 }
             }

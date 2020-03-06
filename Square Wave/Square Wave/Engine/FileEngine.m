@@ -29,10 +29,124 @@ const NSString * kMasterSystemFolder = @"MasterSystem";
 
 const NSString * const kSupportedFileTypes[] = { @"zip", @"nsf" };
 
+const NSString * kAddToThisFolder = @"Add music files here";
+
 typedef enum {
     ZIP,
     NSF
 } FILE_TYPE;
+
+/**
+ * getContainerUrl
+ * @brief Gets the url for the default ubiquity container ID
+ * @param [in]manager File manager instance to use
+ * @return If a container URL exists, and the directory also exists, the container's URL, else nil
+ */
++ (NSURL *)getContainerUrl:(NSFileManager *)manager {
+    NSURL *containerUrl = [manager URLForUbiquityContainerIdentifier:nil];
+    
+    if (containerUrl != nil) {
+        NSURL *documentsDir = [containerUrl URLByAppendingPathComponent:@"Documents"];
+        // Check if we have to create the default directory for our ubiquity container
+        if (![manager fileExistsAtPath:[documentsDir path]]) {
+            NSError *err = nil;
+            [manager createDirectoryAtURL:documentsDir withIntermediateDirectories:YES attributes:nil error:&err];
+            
+            if (err != nil) {
+                NSLog(@"Error creating cloud container directory: %@", [err localizedDescription]);
+                containerUrl = nil;
+            }
+        } else {
+            //[manager removeItemAtURL:containerUrl error:nil];
+        }
+        if (![manager fileExistsAtPath:[[documentsDir URLByAppendingPathComponent:kAddToThisFolder] path]]) {
+            [manager createFileAtPath:[[documentsDir URLByAppendingPathComponent:kAddToThisFolder] path] contents:nil attributes:nil];
+        }
+    }
+    return containerUrl;
+}
+
++ (void) addUbiquitousItemAt:(NSURL *) url {
+    NSFileManager *manager = [NSFileManager defaultManager];
+    NSString *filePath = @"";
+    BOOL isDownloaded = YES;
+    BOOL isSecured = [url startAccessingSecurityScopedResource];
+    
+    if ([[url pathExtension] isEqualToString:@"icloud"]) {
+        // Remove trailing ".icloud"
+        filePath = [[url URLByDeletingPathExtension] lastPathComponent];
+        // Remove leading '.'
+        filePath = [filePath substringFromIndex:1];
+        isDownloaded = NO;
+    } else {
+        filePath = [url lastPathComponent];
+    }
+    NSURL *finalUrl = [[url URLByDeletingLastPathComponent] URLByAppendingPathComponent:filePath];
+    if (!isDownloaded) {
+        NSError *err = nil;
+        [manager startDownloadingUbiquitousItemAtURL:url error:&err];
+        if (err != nil) {
+            NSLog(@"Could not start downloading: %@", [err localizedDescription]);
+            return;
+        }
+        
+        // Wait for download to complete by checking if file is present.
+        for (int i = 0; i < 10; i++) {
+            if ([manager fileExistsAtPath:finalUrl.path]) {
+                isDownloaded = YES;
+                break;
+            }
+            [NSThread sleepForTimeInterval:1];
+        }
+        if (isDownloaded) {
+            NSLog(@"Download success!");
+        } else {
+            NSLog(@"Download failed!");
+        }
+    }
+    if (isDownloaded) {
+        [FileEngine addFile:finalUrl removeOriginal:NO];
+    }
+    if (isSecured) {
+        [url stopAccessingSecurityScopedResource];
+    }
+}
+
+/**
+ * reloadFromCloudWith
+ * @brief Adds all new files in cloud container
+ */
++ (void)reloadFromCloudWith:(id<FileEngineDelegate>)delegate {
+    dispatch_async(dispatch_get_global_queue(QOS_CLASS_UTILITY, 0), ^{
+        NSFileManager *defaultManager = [NSFileManager defaultManager];
+        NSURL *containerUrl = [FileEngine getContainerUrl:defaultManager];
+        
+        if (containerUrl == nil) {
+            dispatch_async(dispatch_get_main_queue(), ^{
+                [delegate failed:[NSError errorWithDomain:@"SquareWaveError" code:-1 userInfo:@{NSLocalizedDescriptionKey : @"Container URL could not be determined"}]];
+            });
+            return;
+        }
+        NSError *err = nil;
+        NSArray *contents = [defaultManager contentsOfDirectoryAtURL:[containerUrl URLByAppendingPathComponent:@"Documents"] includingPropertiesForKeys:nil options:NSDirectoryEnumerationSkipsPackageDescendants error:&err];
+        NSUInteger index = 0;
+        const NSUInteger total = [contents count];
+        for (NSURL *url in contents) {
+            if ([defaultManager isUbiquitousItemAtURL:url]) {
+                [FileEngine addUbiquitousItemAt:url];
+            } else {
+                [FileEngine addFile:url removeOriginal:NO];
+            }
+            index++;
+            dispatch_sync(dispatch_get_main_queue(), ^{
+                [delegate progress:index total:total];
+            });
+        }
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [delegate complete];
+        });
+    });
+}
 
 /**
  * addFile
@@ -40,14 +154,14 @@ typedef enum {
  * @param [in]url URL to external file
  * @return NO for failure, YES for success
 */
-+ (BOOL)addFile:(NSURL *)url {
++ (BOOL)addFile:(NSURL *)url removeOriginal:(BOOL)removeOriginal {
     // Determine file type
     NSFileManager * defaultManager = [NSFileManager defaultManager];
     NSString * extension = [[url pathExtension] lowercaseString];
     NSString * filePath = [url path];
     NSError * error = nil;
-    BOOL isDirectory = false;
-    BOOL success = false;
+    BOOL isDirectory = NO;
+    BOOL success = NO;
     
     if (![defaultManager fileExistsAtPath:[FileEngine getMusicDirectory] isDirectory:&isDirectory]) {
         __DEBUG_FE(@"Creating %@", [FileEngine getMusicDirectory]);
@@ -58,8 +172,8 @@ typedef enum {
         }
     }
     NSArray * supportedTypes = [NSArray arrayWithObjects:kSupportedFileTypes count:(sizeof(kSupportedFileTypes) / sizeof(id))];
+    
     FILE_TYPE fType = [supportedTypes indexOfObject:extension];
-    NSLog(@"zip directory %@", [[FileEngine getMusicDirectory] stringByAppendingPathComponent:kZipFolder]);
     switch (fType) {
         case ZIP:
         {
@@ -96,11 +210,13 @@ typedef enum {
             }
             
             // Remove zip file
-            __DEBUG_FE(@"Removing original file %@", filePath);
-            success = [defaultManager removeItemAtPath:filePath error:&error];
-            if (!success) {
-                NSLog(@"Error removing %@: %@", filePath, error);
-                return NO;
+            if (removeOriginal) {
+                __DEBUG_FE(@"Removing original file %@", filePath);
+                success = [defaultManager removeItemAtPath:filePath error:&error];
+                if (!success) {
+                    NSLog(@"Error removing %@: %@", filePath, error);
+                    return NO;
+                }
             }
             // Determine contents of zip file
             NSDirectoryEnumerator *enumerator = [defaultManager enumeratorAtPath:destination];
@@ -273,7 +389,10 @@ typedef enum {
     }
     
     // Add all tracks found in file to database
-    [FileEngine addToDatabase:emu relativePath:[[consoleFolder stringByAppendingPathComponent:gameFolder] stringByAppendingPathComponent:[filePath lastPathComponent]]];
+    // Run on main thread since this accesses the app delegate
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [FileEngine addToDatabase:emu relativePath:[[consoleFolder stringByAppendingPathComponent:gameFolder] stringByAppendingPathComponent:[filePath lastPathComponent]]];
+    });
     
     return YES;
 }
@@ -322,7 +441,7 @@ typedef enum {
         NSLog(@"Music directory not deletable");
         return NO;
     }
-    NSError *error = NULL;
+    NSError *error = nil;
     if (![defaultManager removeItemAtPath:directory error:&error]) {
         NSLog(@"Failed to delete Music directory. Error: %@", error);
         return NO;
@@ -339,12 +458,12 @@ typedef enum {
     BOOL ret = YES;
     AppDelegate *delegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
     NSURL *url = [[[[delegate persistentContainer] persistentStoreDescriptions] firstObject] URL];
-    ret = [[[delegate persistentContainer] persistentStoreCoordinator] destroyPersistentStoreAtURL: url withType: NSSQLiteStoreType options:NULL error:NULL];
+    ret = [[[delegate persistentContainer] persistentStoreCoordinator] destroyPersistentStoreAtURL: url withType: NSSQLiteStoreType options:nil error:nil];
     if (ret == NO) {
         return ret;
     }
     
-    ret = [[[delegate persistentContainer] persistentStoreCoordinator] addPersistentStoreWithType:NSSQLiteStoreType configuration:NULL URL:url options:NULL error:NULL];
+    ret = [[[delegate persistentContainer] persistentStoreCoordinator] addPersistentStoreWithType:NSSQLiteStoreType configuration:nil URL:url options:nil error:nil];
     
     return ret;
 }

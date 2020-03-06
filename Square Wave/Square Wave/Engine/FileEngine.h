@@ -21,10 +21,17 @@
 @class Song;
 @class Artist;
 
+@protocol FileEngineDelegate
+- (void)progress:(NSUInteger)currentIndex total:(NSUInteger)total;
+- (void)complete;
+- (void)failed:(NSError *_Nonnull)error;
+@end
 
 @interface FileEngine : NSObject
-+ (BOOL) addFile:(nonnull NSURL *)url;
++ (void) reloadFromCloudWith:(id<FileEngineDelegate>_Nonnull)delegate;
++ (BOOL) addFile:(nonnull NSURL *)url removeOriginal:(BOOL)removeOriginal;
 + (void) refreshDatabase;
 + (NSString *_Nonnull)getMusicDirectory;
 + (BOOL) clearAll;
++ (BOOL) clearDatabase;
 @end

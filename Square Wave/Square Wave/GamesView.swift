@@ -22,8 +22,8 @@ struct GamesView: View {
             SortType.title.rawValue
         }, set: { _ in
             
-        }), rowType: Game.self, keypaths: UIListViewCellKeypaths(art: \Game.system?.name, title: \Game.name, desc: \Game.system?.name))
-        .navigationBarTitle(Text("Games"))
+        }), isEditing: .constant(false), rowType: Game.self, keypaths: UIListViewCellKeypaths(art: \Game.system?.name, title: \Game.name, desc: \Game.system?.name))
+            .navigationBarTitle(Text("Games"), displayMode: .inline)
         .edgesIgnoringSafeArea(.vertical)
     }
 }

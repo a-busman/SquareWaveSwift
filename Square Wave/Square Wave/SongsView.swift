@@ -16,9 +16,6 @@ struct SongsView: View {
     var title: String
     var sortFromDesc: Bool
     
-    var currentChars: [String] = [
-    "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z", "#"
-    ]
     @State private var sortSheetShowing = false
     @State private var animationSettings: [Track : AnimationSettings] = [:]
     @State private var selectedIndex = ""
@@ -64,7 +61,7 @@ struct SongsView: View {
     var body: some View {
         ZStack(alignment: .trailing) {
             UIListView(rows: Binding(get: { self.tracks.sorted {
-                if self.sortType == SortType.title.rawValue && self.predicate == nil{
+                if self.sortType == SortType.title.rawValue && self.predicate == nil {
                         return $0.name! < $1.name!
                     } else {
                         return $0.game!.name! < $1.game!.name!
@@ -72,7 +69,7 @@ struct SongsView: View {
                 }
             }, set: { _ in
                 
-            }), sortType: self.$sortType,  rowType: Track.self, keypaths: UIListViewCellKeypaths(art: \Track.system?.name, title: \Track.name, desc: \Track.game?.name), sortFromDesc: self.sortFromDesc)
+            }), sortType: self.$sortType, isEditing: .constant(false), rowType: Track.self, keypaths: UIListViewCellKeypaths(art: \Track.system?.name, title: \Track.name, desc: \Track.game?.name), sortFromDesc: self.sortFromDesc)
                 .navigationBarTitle(Text(self.title), displayMode: .inline)
                 .navigationBarItems(trailing: Button(action: {
                     self.sortSheetShowing = true
@@ -102,7 +99,6 @@ struct SongsView: View {
 }
 
 struct SongsView_Previews: PreviewProvider {
-    static let playbackState = PlaybackState()
     static var previews: some View {
         SongsView(predicate: nil)
     }

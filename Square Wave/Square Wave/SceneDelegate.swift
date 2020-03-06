@@ -25,7 +25,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     func scene(_ scene: UIScene, openURLContexts URLContexts: Set<UIOpenURLContext>) {
         for urlContext in URLContexts {
             NSLog("URL: \(urlContext.url.absoluteString)")
-            FileEngine.addFile(urlContext.url)
+            FileEngine.addFile(urlContext.url, removeOriginal: true)
         }
     }
 
