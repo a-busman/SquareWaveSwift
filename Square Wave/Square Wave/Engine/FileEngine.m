@@ -66,6 +66,11 @@ typedef enum {
     return containerUrl;
 }
 
+/**
+ * addUbiquitousItemAt
+ * @brief adds an ubiquitous item to the database and file structure at a given url
+ * @param [in]url The URL of the ubiquitous item to add
+ */
 + (void) addUbiquitousItemAt:(NSURL *) url {
     NSFileManager *manager = [NSFileManager defaultManager];
     NSString *filePath = @"";
@@ -115,6 +120,7 @@ typedef enum {
 /**
  * reloadFromCloudWith
  * @brief Adds all new files in cloud container
+ * @param delegate Delegate to update with progress and completion status.
  */
 + (void)reloadFromCloudWith:(id<FileEngineDelegate>)delegate {
     dispatch_async(dispatch_get_global_queue(QOS_CLASS_UTILITY, 0), ^{
@@ -455,17 +461,34 @@ typedef enum {
  * @return NO for failure, YES for success
  */
 + (BOOL)clearDatabase {
-    BOOL ret = YES;
+    __block BOOL ret = YES;
     AppDelegate *delegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
-    NSURL *url = [[[[delegate persistentContainer] persistentStoreDescriptions] firstObject] URL];
-    ret = [[[delegate persistentContainer] persistentStoreCoordinator] destroyPersistentStoreAtURL: url withType: NSSQLiteStoreType options:nil error:nil];
-    if (ret == NO) {
-        return ret;
-    }
-    
-    ret = [[[delegate persistentContainer] persistentStoreCoordinator] addPersistentStoreWithType:NSSQLiteStoreType configuration:nil URL:url options:nil error:nil];
+    NSManagedObjectContext *context = [[delegate persistentContainer] viewContext];
+    [context performBlockAndWait:^{
+        [context reset];
+        for (NSEntityDescription *entity in [[delegate persistentContainer] managedObjectModel]) {
+            if (![FileEngine deleteEntity:[entity name]]) {
+                ret = NO;
+            }
+        }
+        [delegate saveContext];
+    }];
     
     return ret;
+}
+
++ (BOOL)deleteEntity:(NSString *)entity {
+    AppDelegate *delegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
+    NSFetchRequest *request = [[NSFetchRequest alloc] initWithEntityName:entity];
+    NSBatchDeleteRequest *delete = [[NSBatchDeleteRequest alloc] initWithFetchRequest:request];
+    NSError *error = nil;
+    
+    [[[delegate persistentContainer] persistentStoreCoordinator] executeRequest:delete withContext:[[delegate persistentContainer] viewContext] error:&error];
+    if (error != nil) {
+        NSLog(@"Failed to delete entity: %@", entity);
+        return NO;
+    }
+    return YES;
 }
 
 /**

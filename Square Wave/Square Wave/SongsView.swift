@@ -62,9 +62,9 @@ struct SongsView: View {
         ZStack(alignment: .trailing) {
             UIListView(rows: Binding(get: { self.tracks.sorted {
                 if self.sortType == SortType.title.rawValue && self.predicate == nil {
-                        return $0.name! < $1.name!
+                        return $0.name ?? "" < $1.name ?? ""
                     } else {
-                        return $0.game!.name! < $1.game!.name!
+                        return $0.game?.name ?? "" < $1.game?.name ?? ""
                     }
                 }
             }, set: { _ in
