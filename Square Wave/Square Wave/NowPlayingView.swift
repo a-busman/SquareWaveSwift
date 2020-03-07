@@ -103,6 +103,7 @@ struct NowPlayingView: View {
     @State var remainingString: String = "--:--"
     @State var optionsShowing: Bool = false
     @State var playbackRate: Double = 2
+    @State var elapsedTimer: Timer?
     var body: some View {
         VStack {
             // MARK: - Drag Handle
@@ -363,26 +364,47 @@ struct NowPlayingView: View {
                 }.padding(Edge.Set(arrayLiteral: [.bottom, .horizontal]))
             }
         }.onReceive(self.playbackState.objectWillChange) {
-            self.elapsedTime = self.playbackState.elapsedTime
-            if self.playbackState.nowPlayingTrack?.loopLength ?? 0 > 0 {
-                let loopCount: Int = PlaybackStateProperty.loopCount.getProperty() ?? 2
-                let loopLength = self.playbackState.nowPlayingTrack!.loopLength * Int32(loopCount)
-                self.totalTime = Int(self.playbackState.nowPlayingTrack!.introLength + loopLength)
-            } else if self.playbackState.nowPlayingTrack?.length ?? 0 > 0 {
-                self.totalTime = Int(self.playbackState.nowPlayingTrack!.length)
+            if self.playbackState.isNowPlaying {
+                self.elapsedTimer = Timer.scheduledTimer(withTimeInterval: 0.5, repeats: true, block: { _ in
+                    self.updateTimes()
+                })
             } else {
-                self.totalTime = PlaybackStateProperty.trackLength.getProperty() ?? 150000
+                self.elapsedTimer?.invalidate()
             }
-            self.remainingTime = self.totalTime - self.elapsedTime
-            if !self.playbackState.loopTrack {
-                self.scrubTime = Float(self.elapsedTime) / Float(self.totalTime)
-                self.elapsedString = String(format: "%d:%02d", (self.elapsedTime / 1000) / 60, (self.elapsedTime / 1000) % 60)
-                self.remainingString = String(format: "-%d:%02d", (self.remainingTime / 1000) / 60, max(((self.remainingTime / 1000) % 60), 0))
+            self.updateTimes()
+            
+        }.onAppear {
+            if self.playbackState.isNowPlaying {
+                self.elapsedTimer = Timer.scheduledTimer(withTimeInterval: 0.5, repeats: true, block: { _ in
+                    self.updateTimes()
+                })
             } else {
-                self.scrubTime = 0.0
-                self.elapsedString = "∞"
-                self.remainingString = "-∞"
+                self.elapsedTimer?.invalidate()
             }
+            self.updateTimes()
+        }
+    }
+    
+    func updateTimes() {
+        self.elapsedTime = self.playbackState.elapsedTime
+        if self.playbackState.nowPlayingTrack?.loopLength ?? 0 > 0 {
+            let loopCount: Int = PlaybackStateProperty.loopCount.getProperty() ?? 2
+            let loopLength = self.playbackState.nowPlayingTrack!.loopLength * Int32(loopCount)
+            self.totalTime = Int(self.playbackState.nowPlayingTrack!.introLength + loopLength)
+        } else if self.playbackState.nowPlayingTrack?.length ?? 0 > 0 {
+            self.totalTime = Int(self.playbackState.nowPlayingTrack!.length)
+        } else {
+            self.totalTime = PlaybackStateProperty.trackLength.getProperty() ?? 150000
+        }
+        self.remainingTime = self.totalTime - self.elapsedTime
+        if !self.playbackState.loopTrack {
+            self.scrubTime = Float(self.elapsedTime) / Float(self.totalTime)
+            self.elapsedString = String(format: "%d:%02d", (self.elapsedTime / 1000) / 60, (self.elapsedTime / 1000) % 60)
+            self.remainingString = String(format: "-%d:%02d", (self.remainingTime / 1000) / 60, max(((self.remainingTime / 1000) % 60), 0))
+        } else {
+            self.scrubTime = 0.0
+            self.elapsedString = "∞"
+            self.remainingString = "-∞"
         }
     }
     

@@ -172,7 +172,7 @@ class PlaybackState: ObservableObject {
         }
     }
     /// Time in ms the currently playing track has progressed.
-    @Published var elapsedTime   = 0
+    var elapsedTime   = 0
     /// Whether or not to keep looping the current track.
     @Published var loopTrack     = false
     /// Whether or not to play the current track list in a random order.
