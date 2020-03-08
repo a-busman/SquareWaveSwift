@@ -27,13 +27,21 @@ const NSString * kSpectrumFolder     = @"Spectrum";
 const NSString * kTurboGrafxFolder   = @"TurboGrafx";
 const NSString * kMasterSystemFolder = @"MasterSystem";
 
-const NSString * const kSupportedFileTypes[] = { @"zip", @"nsf" };
+const NSString * const kSupportedFileTypes[] = { @"zip", @"nsf", @"ay", @"gbs", @"gym", @"hes", @"kss", @"sap", @"spc", @"vgm" };
 
 const NSString * kAddToThisFolder = @"Add music files here";
 
 typedef enum {
     ZIP,
-    NSF
+    NSF,
+    AY,
+    GBS,
+    GYM,
+    HES,
+    KSS,
+    SAP,
+    SPC,
+    VGM
 } FILE_TYPE;
 
 /**
@@ -162,12 +170,13 @@ typedef enum {
 */
 + (BOOL)addFile:(NSURL *)url removeOriginal:(BOOL)removeOriginal {
     // Determine file type
-    NSFileManager * defaultManager = [NSFileManager defaultManager];
-    NSString * extension = [[url pathExtension] lowercaseString];
-    NSString * filePath = [url path];
-    NSError * error = nil;
+    NSFileManager *defaultManager = [NSFileManager defaultManager];
+    NSString      *extension      = [[url pathExtension] lowercaseString];
+    NSString      *filePath       = [url path];
+    NSError       *error          = nil;
+    
     BOOL isDirectory = NO;
-    BOOL success = NO;
+    BOOL success     = NO;
     
     if (![defaultManager fileExistsAtPath:[FileEngine getMusicDirectory] isDirectory:&isDirectory]) {
         __DEBUG_FE(@"Creating %@", [FileEngine getMusicDirectory]);
@@ -177,13 +186,13 @@ typedef enum {
             return NO;
         }
     }
-    NSArray * supportedTypes = [NSArray arrayWithObjects:kSupportedFileTypes count:(sizeof(kSupportedFileTypes) / sizeof(id))];
+    NSArray *supportedTypes = [NSArray arrayWithObjects:kSupportedFileTypes count:(sizeof(kSupportedFileTypes) / sizeof(id))];
     
     FILE_TYPE fType = [supportedTypes indexOfObject:extension];
     switch (fType) {
         case ZIP:
         {
-            NSString * destination =[[FileEngine getMusicDirectory] stringByAppendingPathComponent:kZipFolder];
+            NSString *destination = [[FileEngine getMusicDirectory] stringByAppendingPathComponent:kZipFolder];
             
             // Check if Zip directory exists, create it if not, clean it if so
             if (![defaultManager fileExistsAtPath:destination isDirectory:nil]) {
@@ -196,7 +205,8 @@ typedef enum {
             } else {
                 // Remove everything from directory if it already exists
                 NSDirectoryEnumerator *enumerator = [defaultManager enumeratorAtPath:destination];
-                NSString *file = nil;
+                NSString              *file       = nil;
+
                 while (file = [enumerator nextObject]) {
                     __DEBUG_FE(@"Removing %@", file);
                     success = [defaultManager removeItemAtPath:[destination stringByAppendingPathComponent:file] error:&error];
@@ -226,18 +236,28 @@ typedef enum {
             }
             // Determine contents of zip file
             NSDirectoryEnumerator *enumerator = [defaultManager enumeratorAtPath:destination];
-            NSString *file = nil;
+            NSString              *file       = nil;
+
             while (file = [enumerator nextObject]) {
                 [FileEngine parseAudioFileContents:[destination stringByAppendingPathComponent:file]];
             }
         }
             break;
         case NSF:
+        case AY:
+        case GBS:
+        case GYM:
+        case HES:
+        case KSS:
+        case SAP:
+        case SPC:
+        case VGM:
         {
             [FileEngine parseAudioFileContents:url.path];
         }
             break;
         default:
+            NSLog(@"Unsupported file type %@", extension);
             break;
     }
     return YES;
@@ -249,8 +269,9 @@ typedef enum {
  * @return Absolute path of music directory
 */
 + (NSString *)getMusicDirectory {
-    NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
+    NSArray  *paths              = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
     NSString *documentsDirectory = [paths objectAtIndex:0];
+
     return [documentsDirectory stringByAppendingPathComponent:@"Music"];
 }
 
@@ -420,6 +441,7 @@ typedef enum {
  */
 + (BOOL)clearAll {
     BOOL ret = YES;
+
     if (![FileEngine clearDatabase]) {
         ret = NO;
     }
@@ -435,9 +457,12 @@ typedef enum {
  * @return NO for failure, YES for success
  */
 + (BOOL)clearFiles {
-    BOOL isDirectory = NO;
-    NSString *directory = [FileEngine getMusicDirectory];
+    NSError *error      = nil;
+    BOOL    isDirectory = NO;
+
+    NSString      *directory      = [FileEngine getMusicDirectory];
     NSFileManager *defaultManager = [NSFileManager defaultManager];
+
     if (![defaultManager fileExistsAtPath:directory isDirectory:&isDirectory]) {
         NSLog(@"Music directory does not exist");
         return NO;
@@ -447,7 +472,7 @@ typedef enum {
         NSLog(@"Music directory not deletable");
         return NO;
     }
-    NSError *error = nil;
+
     if (![defaultManager removeItemAtPath:directory error:&error]) {
         NSLog(@"Failed to delete Music directory. Error: %@", error);
         return NO;
@@ -462,8 +487,10 @@ typedef enum {
  */
 + (BOOL)clearDatabase {
     __block BOOL ret = YES;
-    AppDelegate *delegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
-    NSManagedObjectContext *context = [[delegate persistentContainer] viewContext];
+
+    AppDelegate            *delegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
+    NSManagedObjectContext *context  = [[delegate persistentContainer] viewContext];
+
     [context performBlockAndWait:^{
         [context reset];
         for (NSEntityDescription *entity in [[delegate persistentContainer] managedObjectModel]) {
@@ -478,12 +505,15 @@ typedef enum {
 }
 
 + (BOOL)deleteEntity:(NSString *)entity {
-    AppDelegate *delegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
-    NSFetchRequest *request = [[NSFetchRequest alloc] initWithEntityName:entity];
-    NSBatchDeleteRequest *delete = [[NSBatchDeleteRequest alloc] initWithFetchRequest:request];
     NSError *error = nil;
     
+    AppDelegate          *delegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
+    NSFetchRequest       *request  = [NSFetchRequest fetchRequestWithEntityName:entity];
+    NSBatchDeleteRequest *delete   = [[NSBatchDeleteRequest alloc] initWithFetchRequest:request];
+
+
     [[[delegate persistentContainer] persistentStoreCoordinator] executeRequest:delete withContext:[[delegate persistentContainer] viewContext] error:&error];
+
     if (error != nil) {
         NSLog(@"Failed to delete entity: %@", entity);
         return NO;
@@ -594,12 +624,12 @@ typedef enum {
 */
 + (NSArray *)getObjectsByName:(NSString *)name entity:(NSString *)entity {
     NSError *error = nil;
-    NSArray *ret = nil;
-    NSManagedObjectContext *context = [[(AppDelegate *)[[UIApplication sharedApplication] delegate] persistentContainer] viewContext];
-    NSEntityDescription *entityDescription = [NSEntityDescription entityForName:entity inManagedObjectContext:context];
-    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"name == %@", name];
-    NSFetchRequest *request = [[NSFetchRequest alloc] init];
-    [request setEntity:entityDescription];
+    NSArray *ret   = nil;
+
+    NSManagedObjectContext *context   = [[(AppDelegate *)[[UIApplication sharedApplication] delegate] persistentContainer] viewContext];
+    NSPredicate            *predicate = [NSPredicate predicateWithFormat:@"name == %@", name];
+    NSFetchRequest         *request   = [NSFetchRequest fetchRequestWithEntityName:entity];
+
     [request setPredicate:predicate];
     
     ret = [context executeFetchRequest:request error:&error];

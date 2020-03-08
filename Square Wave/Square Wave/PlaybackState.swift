@@ -207,12 +207,16 @@ class PlaybackState: ObservableObject {
         }
         
         commandCenter.pauseCommand.addTarget { (event) -> MPRemoteCommandHandlerStatus in
-            self.pause()
+            if self.isNowPlaying {
+                self.pause()
+            }
             return .success
         }
         
         commandCenter.playCommand.addTarget { (event) -> MPRemoteCommandHandlerStatus in
-            self.play()
+            if !self.isNowPlaying {
+                self.play()
+            }
             return .success
         }
         
@@ -497,6 +501,9 @@ class PlaybackState: ObservableObject {
      Also updates MPNowPlayingInfoCenter
      */
     func play() {
+        guard !self.isNowPlaying else {
+            return
+        }
         guard self.currentTracklist.count > 0 else {
             self.populateTrackList()
             if (self.currentTracklist.count > 0) {
@@ -504,27 +511,28 @@ class PlaybackState: ObservableObject {
             }
             return
         }
+        self.isNowPlaying = true
+        self.nowPlayingInfo[MPNowPlayingInfoPropertyPlaybackRate] = self.currentTempo
+        self.updateNowPlayingInfoCenter()
         DispatchQueue.global().async {
             AudioEngine.sharedInstance()?.setTempo(self.currentTempo)
             AudioEngine.sharedInstance()?.setMuteVoices(Int32(self.muteMask))
             AudioEngine.sharedInstance()?.play()
             self.setFade()
         }
-        self.isNowPlaying = true
-        self.nowPlayingInfo[MPNowPlayingInfoPropertyPlaybackRate] = self.currentTempo
-        self.updateNowPlayingInfoCenter()
+
         
     }
     /**
      Pauses the currently playing track, and updates MPNowPlayingInfoCenter
      */
     func pause() {
-        DispatchQueue.global().async {
-            AudioEngine.sharedInstance()?.pause()
-        }
         self.isNowPlaying = false
         self.nowPlayingInfo[MPNowPlayingInfoPropertyPlaybackRate] = 0.0
         MPNowPlayingInfoCenter.default().nowPlayingInfo = self.nowPlayingInfo
+        DispatchQueue.global().async {
+            AudioEngine.sharedInstance()?.pause()
+        }
     }
     
     /**
@@ -547,6 +555,11 @@ class PlaybackState: ObservableObject {
      - Parameter track: Track to play.
      */
     private func play(_ track: Track) {
+        self.elapsedTime = 0
+        self.nowPlayingTrack = track
+        self.nowPlayingInfo[MPNowPlayingInfoPropertyPlaybackRate] = 1.0
+        self.updateNowPlayingInfoCenter()
+        self.isNowPlaying = true
         DispatchQueue.global().async {
             let path = URL(fileURLWithPath: FileEngine.getMusicDirectory()).appendingPathComponent(track.url!).path
 
@@ -559,11 +572,6 @@ class PlaybackState: ObservableObject {
             self.setFade()
 
         }
-        self.elapsedTime = 0
-        self.nowPlayingTrack = track
-        self.nowPlayingInfo[MPNowPlayingInfoPropertyPlaybackRate] = 1.0
-        self.updateNowPlayingInfoCenter()
-        self.isNowPlaying = true
     }
     
     /**

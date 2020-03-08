@@ -244,14 +244,14 @@ const int kBufferCount = 3;
         
         gme_track_info(_mEmu, &info, _mTrack);
         
-        ret.artist = [[NSString alloc] initWithUTF8String:info->author];
-        ret.game   = [[NSString alloc] initWithUTF8String:info->game];
+        ret.artist = [NSString stringWithUTF8String:info->author];
+        ret.game   = [NSString stringWithUTF8String:info->game];
         if (strlen(info->song) == 0) {
-            ret.title = [[NSString alloc] initWithFormat:@"Track %d", _mTrack + 1];
+            ret.title = [NSString stringWithFormat:@"Track %d", _mTrack + 1];
         } else {
-            ret.title  = [[NSString alloc] initWithUTF8String:info->song];
+            ret.title  = [NSString stringWithUTF8String:info->song];
         }
-        ret.system = [[NSString alloc] initWithUTF8String:info->system];
+        ret.system = [NSString stringWithUTF8String:info->system];
         
         ret.play_length  = info->play_length;
         ret.length       = info->length;
@@ -356,7 +356,7 @@ void AudioEngineOutputBufferCallback(void * inUserData, AudioQueueRef inAQ, Audi
 
 static void handle_error(const char* str) {
     if (str) {
-        NSLog(@"%@", [[NSString alloc] initWithUTF8String:str]);
+        NSLog(@"%@", [NSString stringWithUTF8String:str]);
     }
 }
 @end
