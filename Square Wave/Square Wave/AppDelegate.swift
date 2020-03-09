@@ -20,6 +20,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         return true
     }
     
+    static func updatePlaybackState(hasTracks: Bool) {
+        AppDelegate.playbackState.objectWillChange.send()
+        AppDelegate.playbackState.hasTracks = hasTracks
+    }
+    
     func createDirectories() {
         if let playlistImagesDir = Util.getPlaylistImagesDirectory() {
             if !FileManager.default.fileExists(atPath: playlistImagesDir.path) {

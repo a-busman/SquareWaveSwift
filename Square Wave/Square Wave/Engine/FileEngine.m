@@ -79,11 +79,12 @@ typedef enum {
  * @brief adds an ubiquitous item to the database and file structure at a given url
  * @param [in]url The URL of the ubiquitous item to add
  */
-+ (void) addUbiquitousItemAt:(NSURL *) url {
++ (BOOL) addUbiquitousItemAt:(NSURL *) url {
     NSFileManager *manager = [NSFileManager defaultManager];
     NSString *filePath = @"";
     BOOL isDownloaded = YES;
     BOOL isSecured = [url startAccessingSecurityScopedResource];
+    BOOL ret = NO;
     
     if ([[url pathExtension] isEqualToString:@"icloud"]) {
         // Remove trailing ".icloud"
@@ -100,7 +101,7 @@ typedef enum {
         [manager startDownloadingUbiquitousItemAtURL:url error:&err];
         if (err != nil) {
             NSLog(@"Could not start downloading: %@", [err localizedDescription]);
-            return;
+            return NO;
         }
         
         // Wait for download to complete by checking if file is present.
@@ -118,11 +119,12 @@ typedef enum {
         }
     }
     if (isDownloaded) {
-        [FileEngine addFile:finalUrl removeOriginal:NO];
+        ret = [FileEngine addFile:finalUrl removeOriginal:NO];
     }
     if (isSecured) {
         [url stopAccessingSecurityScopedResource];
     }
+    return ret;
 }
 
 /**
@@ -145,15 +147,23 @@ typedef enum {
         NSArray *contents = [defaultManager contentsOfDirectoryAtURL:[containerUrl URLByAppendingPathComponent:@"Documents"] includingPropertiesForKeys:nil options:NSDirectoryEnumerationSkipsPackageDescendants error:&err];
         NSUInteger index = 0;
         const NSUInteger total = [contents count];
+        BOOL success = NO;
         for (NSURL *url in contents) {
             if ([defaultManager isUbiquitousItemAtURL:url]) {
-                [FileEngine addUbiquitousItemAt:url];
+                if ([FileEngine addUbiquitousItemAt:url]) {
+                    success = YES;
+                }
             } else {
-                [FileEngine addFile:url removeOriginal:NO];
+                if ([FileEngine addFile:url removeOriginal:NO]) {
+                    success = YES;
+                }
             }
             index++;
             dispatch_sync(dispatch_get_main_queue(), ^{
                 [delegate progress:index total:total];
+                if (success) {
+                    [AppDelegate updatePlaybackStateWithHasTracks:YES];
+                }
             });
         }
         dispatch_async(dispatch_get_main_queue(), ^{
@@ -259,6 +269,9 @@ typedef enum {
         default:
             NSLog(@"Unsupported file type %@", extension);
             break;
+    }
+    if (removeOriginal) {
+        [AppDelegate updatePlaybackStateWithHasTracks:YES];
     }
     return YES;
 }
@@ -445,6 +458,7 @@ typedef enum {
     if (![FileEngine clearDatabase]) {
         ret = NO;
     }
+    [AppDelegate updatePlaybackStateWithHasTracks:NO];
     if (![FileEngine clearFiles]) {
         ret = NO;
     }
@@ -492,15 +506,19 @@ typedef enum {
     NSManagedObjectContext *context  = [[delegate persistentContainer] viewContext];
 
     [context performBlockAndWait:^{
+        NSError *err = nil;
         [context reset];
         for (NSEntityDescription *entity in [[delegate persistentContainer] managedObjectModel]) {
             if (![FileEngine deleteEntity:[entity name]]) {
                 ret = NO;
             }
         }
-        [delegate saveContext];
+        [context save:&err];
+        if (err != nil) {
+            NSLog(@"Failed to save context: %@", [err localizedDescription]);
+        }
     }];
-    
+    [delegate saveContext];
     return ret;
 }
 
@@ -510,7 +528,6 @@ typedef enum {
     AppDelegate          *delegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
     NSFetchRequest       *request  = [NSFetchRequest fetchRequestWithEntityName:entity];
     NSBatchDeleteRequest *delete   = [[NSBatchDeleteRequest alloc] initWithFetchRequest:request];
-
 
     [[[delegate persistentContainer] persistentStoreCoordinator] executeRequest:delete withContext:[[delegate persistentContainer] viewContext] error:&error];
 

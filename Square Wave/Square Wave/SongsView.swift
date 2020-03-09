@@ -40,8 +40,8 @@ struct SongsView: View {
     
     private func getSettings(for track: Track) -> AnimationSettings {
         guard let settings = self.animationSettings[track] else { return AnimationSettings() }
-        if shouldDisplayAnimation(track) {
-            if shouldAnimate(track) {
+        if self.shouldDisplayAnimation(track) {
+            if self.shouldAnimate(track) {
                 settings.startAnimating()
             } else {
                 settings.pauseAnimating()

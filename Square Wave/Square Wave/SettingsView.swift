@@ -89,6 +89,7 @@ struct SettingsView: View {
     ]
     @State var trackLength: [Int] = SettingsView.getTrackLength(from: PlaybackStateProperty.trackLength.getProperty() ?? 150000)
     @State var isShowingPicker = false
+    @State var deleteShowing = false
     
     static func getTrackLength(from ms: Int) -> [Int] {
         var ret: [Int] = []
@@ -143,8 +144,7 @@ struct SettingsView: View {
                 }
                 Section {
                     Button(action: {
-                        self.playbackState.clearCurrentPlaybackState()
-                        FileEngine.clearAll()
+                        self.deleteShowing.toggle()
                     }) {
                         Text("Delete All")
                     }.foregroundColor(.red)
@@ -153,6 +153,11 @@ struct SettingsView: View {
                         Text("Done").bold()
                 })
             }
+        }.alert(isPresented: self.$deleteShowing) {
+                Alert(title: Text("Delete All?"), message: Text("This will delete all your music and playlists. This will NOT delete anything stored in your cloud drive.\nAre you sure?"), primaryButton: .destructive(Text("Yes, Delete")) {
+                    self.playbackState.clearCurrentPlaybackState()
+                    FileEngine.clearAll()
+                    }, secondaryButton: .cancel())
         }
     }
 }

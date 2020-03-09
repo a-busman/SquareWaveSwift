@@ -191,6 +191,8 @@ class PlaybackState: ObservableObject {
     private var nowPlayingInfo = [String : Any]()
     /// Mask of which voices to mute.
     @Published var muteMask: Int = 0
+    /// Whether or not there are any tracks in the DB
+    @Published var hasTracks: Bool = false
     
     // MARK: - Initialization
     /**
@@ -284,6 +286,10 @@ class PlaybackState: ObservableObject {
             self.shuffle(true)
         }
         self.currentTempo = PlaybackStateProperty.tempo.getProperty() ?? 1.0
+        
+        let req: NSFetchRequest = Track.fetchRequest()
+        let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
+        self.hasTracks = (try? context.count(for: req)) ?? 0 != 0
     }
     /**
      Handles any audio interruption by pausing when interruption began, and playing when it ended
