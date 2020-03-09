@@ -16,9 +16,9 @@ class PlaylistModel: ObservableObject {
                 playlist.tracks = NSOrderedSet(array: self.tracks)
                 NSLog("Setting playlist to have \(self.tracks.count) tracks")
                 let delegate = UIApplication.shared.delegate as! AppDelegate
-                self.updatePlaylistImage()
                 delegate.saveContext()
             }
+            self.updatePlaylistImage()
         }
     }
     @Published var titleText: String = "" {

@@ -28,7 +28,9 @@ struct NewPlaylistView: View {
                     playlist.name = self.playlistModel.titleText
                     playlist.tracks = NSOrderedSet(array: self.playlistModel.tracks)
                     playlist.dateAdded = Date()
-                    self.savePlaylistImage(image: self.playlistModel.image)
+                    let image = self.playlistModel.image
+                    self.savePlaylistImage(playlist, image: image)
+                    
                     self.presentationMode.wrappedValue.dismiss()
                 }) {
                     Text("Done")
@@ -37,15 +39,16 @@ struct NewPlaylistView: View {
         }
     }
     
-    func savePlaylistImage(image: UIImage?) {
-        if let playlist = self.playlist,
-            let filename = Util.getPlaylistImagesDirectory()?.appendingPathComponent("\(playlist.id!).png") {
+    func savePlaylistImage(_ playlist: Playlist, image: UIImage?) {
+        if let filename = Util.getPlaylistImagesDirectory()?.appendingPathComponent("\(playlist.id!).png") {
+            let url = URL(fileURLWithPath: "\(playlist.id!).png")
             let delegate = UIApplication.shared.delegate as! AppDelegate
             if image != nil {
                 let data = image!.pngData()
                 do {
                     try data?.write(to: filename)
-                    playlist.art = filename
+                    NSLog("Wrote image to \(filename.path)")
+                    playlist.art = url
                     delegate.saveContext()
                 } catch {
                     NSLog("Failed to write image data to \(filename.path)")

@@ -43,7 +43,7 @@ struct PlaylistBlurView: UIViewRepresentable {
 struct PlaylistRowView: View {
     @State private var image: Image?
     @Binding var uiImage: UIImage
-    @State var text: String = ""
+    @Binding var text: String
     @State var blurViewVisible: Bool = false
     
     var body: some View {
@@ -82,7 +82,7 @@ struct PlaylistsView: View {
                     UIImage(named: "placeholder-playlist") ?? UIImage()
                 }, set: { _ in
                     
-                }), text: "New Playlist...", blurViewVisible: true)
+                }), text: .constant("New Playlist..."), blurViewVisible: true)
             }
             ForEach(self.playlists, id: \.self) { (playlist: Playlist) in
                 NavigationLink(destination: PlaylistView(playlist: playlist)) {
@@ -90,7 +90,11 @@ struct PlaylistsView: View {
                         self.getPlaylistImage(playlist)
                     }, set: { _ in
                         
-                    }), text: playlist.name ?? "")
+                    }), text: Binding(get: {
+                        playlist.name ?? ""
+                    }, set: { _ in
+                        
+                    }))
                 }
             }.onDelete(perform: { indexSet in
                 for index in indexSet {

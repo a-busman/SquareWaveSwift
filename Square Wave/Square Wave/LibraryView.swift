@@ -11,6 +11,7 @@ import SwiftUI
 struct LibraryView: View {
     @EnvironmentObject var playbackState: PlaybackState
     @State var hasTracks: Bool = false
+    @State var isShowingPicker: Bool = false
     static var miniViewPosition: CGFloat = 75.0
 
     var body: some View {
@@ -33,10 +34,14 @@ struct LibraryView: View {
                 .navigationBarTitle(Text("Library"))
             } else {
                 VStack {
+                    Button(action: {
+                        self.isShowingPicker.toggle()
+                    }) {
                     Image(systemName: "plus")
                         .resizable()
                         .aspectRatio(contentMode: .fit)
                         .padding(Edge.Set(arrayLiteral: [.horizontal, .top]), 100)
+                    }
                     Text("Add files by pressing the \"+\" button in the top right, or by adding them to the\nSquare Wave folder on your iCloud Drive").multilineTextAlignment(.center)
                     .lineLimit(4)
                     .padding()
@@ -44,6 +49,9 @@ struct LibraryView: View {
                 }
                 .foregroundColor(Color(.tertiaryLabel))
                 .navigationBarTitle(Text("Library"))
+                .sheet(isPresented: self.$isShowingPicker) {
+                    FilePicker()
+                }
             }
         }.onAppear {
             self.hasTracks = self.playbackState.hasTracks
