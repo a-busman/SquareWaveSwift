@@ -11,7 +11,7 @@
 #import <CoreData/CoreData.h>
 #import "SSZipArchive.h"
 #include "gme/gme.h"
-#import "Square_Wave-Swift.h"
+#import "Square_Waves-Swift.h"
 #import "FileEngine.h"
 
 @implementation FileEngine

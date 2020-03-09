@@ -7,5 +7,7 @@ target 'Square Wave' do
 
   # Pods for Square Wave
   pod 'SSZipArchive'
-  pod 'MarqueeLabel'
+  pod 'Firebase/Analytics'
+  pod 'Fabric'
+  pod 'Crashlytics'
 end
