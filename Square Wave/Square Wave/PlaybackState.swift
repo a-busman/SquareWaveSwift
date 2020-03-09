@@ -190,7 +190,7 @@ class PlaybackState: ObservableObject {
     /// Info for MPNowPlayingInfoCenter
     private var nowPlayingInfo = [String : Any]()
     /// Mask of which voices to mute.
-    var muteMask: Int = 0
+    @Published var muteMask: Int = 0
     
     // MARK: - Initialization
     /**
