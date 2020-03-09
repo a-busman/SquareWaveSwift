@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CLIENT_ID</key>
+	<string>568783072531-eha6nct4vmihcu8o0jq666ckgje1ffsd.apps.googleusercontent.com</string>
+	<key>REVERSED_CLIENT_ID</key>
+	<string>com.googleusercontent.apps.568783072531-eha6nct4vmihcu8o0jq666ckgje1ffsd</string>
+	<key>API_KEY</key>
+	<string>AIzaSyDdNArgKF6i354aaIm64wU_cH7GGAKeU_k</string>
+	<key>GCM_SENDER_ID</key>
+	<string>568783072531</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>com.abusman.Square-Wave</string>
+	<key>PROJECT_ID</key>
+	<string>square-wave-e799a</string>
+	<key>STORAGE_BUCKET</key>
+	<string>square-wave-e799a.appspot.com</string>
+	<key>IS_ADS_ENABLED</key>
+	<false></false>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true></true>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:568783072531:ios:b8f47bf6684a1d0a2bbee6</string>
+	<key>DATABASE_URL</key>
+	<string>https://square-wave-e799a.firebaseio.com</string>
+</dict>
+</plist>
