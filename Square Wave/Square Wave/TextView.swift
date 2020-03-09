@@ -27,6 +27,7 @@ struct TextView: UIViewRepresentable {
         myTextView.backgroundColor = .clear
         myTextView.font = UIFont.preferredFont(forTextStyle: .headline)
         myTextView.returnKeyType = .done
+        myTextView.text = self.text
 
         self.placeholder.text = self.title
         self.placeholder.textColor = .placeholderText
@@ -38,6 +39,10 @@ struct TextView: UIViewRepresentable {
 
         self.placeholder.leadingAnchor.constraint(equalTo: myTextView.leadingAnchor, constant: 6).isActive = true
         self.placeholder.topAnchor.constraint(equalTo: myTextView.topAnchor, constant: 7.5).isActive = true
+        
+        if !self.text.isEmpty {
+            self.placeholder.isHidden = true
+        }
         return myTextView
     }
 

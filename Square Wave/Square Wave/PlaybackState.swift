@@ -121,7 +121,7 @@ class PlaybackState: ObservableObject {
                     self.elapsedTime = Int(Double(AudioEngine.sharedInstance()?.getElapsedTime() ?? 0) * self.currentTempo)
                     self.updateNowPlayingElapsed()
                     if let didEnd = AudioEngine.sharedInstance()?.getTrackEnded() {
-                        if didEnd && !self.loopTrack && !self.trackEnded {
+                        if (didEnd && !self.loopTrack && !self.trackEnded) || (didEnd && self.loopTrack && !self.trackEnded && self.nowPlayingTrack?.length ?? 0 > 0) {
                             self.playTimer?.invalidate()
                             self.trackEnded = true
                             if self.trackNum + 1 < self.currentTracklist.count {
@@ -152,10 +152,14 @@ class PlaybackState: ObservableObject {
     @Published var currentTracklist: [Track] = [] {
         didSet {
             if self.currentTracklist.count == 0 {
+                self.trackNum = 0
                 return
             }
             if self.nowPlayingPlaylist == nil {
                 self.getNowPlayingPlaylist()
+            }
+            if self.nowPlayingTrack != nil {
+                self.trackNum = self.currentTracklist.firstIndex(of: self.nowPlayingTrack!) ?? 0
             }
             let delegate = UIApplication.shared.delegate as! AppDelegate
             self.nowPlayingPlaylist?.removeFromTracks(at: NSIndexSet(indexesIn: NSRange(location: 0, length: self.nowPlayingPlaylist?.tracks?.count ?? 1)))

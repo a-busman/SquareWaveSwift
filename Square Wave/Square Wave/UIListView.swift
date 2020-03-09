@@ -70,6 +70,7 @@ struct UIListView: UIViewRepresentable {
     var sortFromDesc = false
     var showSearch = true
     var showsHeader = true
+    var headerView = UIViewController()
     
     // Hack to call updateUIView on playbackState change.
     class RandomClass { }
@@ -81,24 +82,10 @@ struct UIListView: UIViewRepresentable {
         if self.showsHeader {
             if self.rowType == Track.self,
                 let _ = self.rows as? [Track] {
-                let headerController = UIHostingController(rootView: HeaderView(didTapPlay: Binding(get: {
-                    false
-                }, set: { newValue in
-                    self.playbackState.currentTracklist = self.rows as! [Track]
-                    self.playbackState.shuffleTracks = false
-                    self.playbackState.play(index: 0)
-                }),
-                didTapShuffle: Binding(get: {
-                    false
-                }, set: { newValue in
-                    self.playbackState.currentTracklist = self.rows as! [Track]
-                    self.playbackState.nowPlayingTrack = nil
-                    self.playbackState.shuffleTracks = true
-                    self.playbackState.shuffle(true)
-                    self.playbackState.play(index: 0)
-                })).frame(height: 75.0))
+                let headerController = self.makeHeaderView()
                 
                 collectionView.tableHeaderView = headerController.view
+                collectionView.tableHeaderView?.frame.size = CGSize(width: collectionView.tableHeaderView!.frame.width, height: 75.0)
             }
         }
         collectionView.contentInset = UIEdgeInsets(top: 0.0, left: 0.0, bottom: LibraryView.miniViewPosition, right: 0.0)
@@ -107,10 +94,30 @@ struct UIListView: UIViewRepresentable {
         collectionView.dataSource = context.coordinator
         collectionView.delegate = context.coordinator
         collectionView.register(UINib(nibName: "SongTableViewCell", bundle: nil), forCellReuseIdentifier: "Song")
-        collectionView.tableHeaderView?.frame.size = CGSize(width: collectionView.tableHeaderView!.frame.width, height: 75.0)
         collectionView.tableFooterView = UIView(frame: .zero)
 
         return collectionView
+    }
+    
+    func makeHeaderView() -> UIViewController {
+        let headerController = UIHostingController(rootView: HeaderView(didTapPlay: Binding(get: {
+            false
+        }, set: { newValue in
+            self.playbackState.currentTracklist = self.rows as! [Track]
+            self.playbackState.shuffleTracks = false
+            self.playbackState.play(index: 0)
+        }),
+        didTapShuffle: Binding(get: {
+            false
+        }, set: { newValue in
+            self.playbackState.currentTracklist = self.rows as! [Track]
+            self.playbackState.nowPlayingTrack = nil
+            self.playbackState.shuffleTracks = true
+            self.playbackState.shuffle(true)
+            self.playbackState.play(index: 0)
+        })).frame(height: 75.0))
+        
+        return headerController
     }
 
     func updateUIView(_ uiView: UITableView, context: Context) {
@@ -124,7 +131,12 @@ struct UIListView: UIViewRepresentable {
                 context.coordinator.filteredRows = self.rows
                 context.coordinator.updateSectionTitles()
                 uiView.reloadData()
-            } else if self.sortType == SortType.none.rawValue {
+            } else if self.sortType != context.coordinator.sortType && self.sortType == SortType.none.rawValue {
+                context.coordinator.rows = self.rows
+                context.coordinator.filteredRows = self.rows
+                uiView.reloadData()
+            }
+            if self.rows != context.coordinator.rows {
                 context.coordinator.rows = self.rows
                 context.coordinator.filteredRows = self.rows
                 uiView.reloadData()
@@ -145,16 +157,26 @@ struct UIListView: UIViewRepresentable {
                 }
             }
         }
+        if self.showsHeader && !context.coordinator.isShowingHeader {
+            uiView.tableHeaderView = self.makeHeaderView().view
+            uiView.tableHeaderView?.frame.size = CGSize(width: uiView.tableHeaderView!.frame.width, height: 75.0)
+            context.coordinator.isShowingHeader = true
+        } else if !self.showsHeader && context.coordinator.isShowingHeader {
+            uiView.tableHeaderView = UIView(frame: .zero)
+            context.coordinator.isShowingHeader = false
+        }
+        
         uiView.setEditing(self.isEditing, animated: true)
     }
 
     func makeCoordinator() -> Coordinator {
-        Coordinator(rows: self.rows, parent: self, sortType: self.sortType, showSections: self.showSections, rowType: self.rowType, keypaths: self.keypaths, showSearch: self.showSearch)
+        Coordinator(rows: self.rows, parent: self, sortType: self.sortType, showSections: self.showSections, rowType: self.rowType, keypaths: self.keypaths, showSearch: self.showSearch, showsHeader: self.showsHeader)
     }
     
     func didTapRow(track: Track) {
         self.playbackState.currentTracklist = self.rows as! [Track]
         let index = self.rows.firstIndex(of: track) ?? 0
+        NSLog("Index: \(index) in \(self.rows.count) tracks")
         self.playbackState.play(index: index)
     }
 
@@ -163,6 +185,7 @@ struct UIListView: UIViewRepresentable {
         var parent: UIListView
         var rows: [NSManagedObject]
         var filteredRows: [NSManagedObject]
+        var isShowingHeader: Bool
         var sortType: Int
         var showSections: Bool
         var sectionTitles: [String] = []
@@ -181,7 +204,7 @@ struct UIListView: UIViewRepresentable {
         let searchController = UISearchController(searchResultsController: nil)
         let navController = (UIApplication.shared.windows.first!.rootViewController as? RootViewController)?.navController
 
-        init(rows: [NSManagedObject], parent: UIListView, sortType: Int, showSections: Bool, rowType: NSManagedObject.Type, keypaths: UIListViewCellKeypaths, showSearch: Bool) {
+        init(rows: [NSManagedObject], parent: UIListView, sortType: Int, showSections: Bool, rowType: NSManagedObject.Type, keypaths: UIListViewCellKeypaths, showSearch: Bool, showsHeader: Bool) {
             self.rows = rows
             self.filteredRows = rows
             self.parent = parent
@@ -190,6 +213,7 @@ struct UIListView: UIViewRepresentable {
             self.rowType = rowType
             self.keypaths = keypaths
             self.showSearch = showSearch
+            self.isShowingHeader = showsHeader
             super.init()
             
             if self.showSearch {
@@ -371,6 +395,7 @@ struct UIListView: UIViewRepresentable {
             self.rows.remove(at: sourceIndexPath.row)
             self.rows.insert(item, at: destinationIndexPath.row)
             self.filteredRows = self.rows
+            self.parent.rows = self.rows
         }
         
         func tableView(_ tableView: UITableView, titleForDeleteConfirmationButtonForRowAt indexPath: IndexPath) -> String? {
@@ -380,14 +405,15 @@ struct UIListView: UIViewRepresentable {
         func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
             if editingStyle == .delete {
                 self.rows.remove(at: indexPath.row)
-                tableView.deleteRows(at: [indexPath], with: .automatic)
                 self.filteredRows = self.rows
+                self.parent.rows = self.rows
+                tableView.deleteRows(at: [indexPath], with: .automatic)
             }
         }
         
         func sectionIndexTitles(for tableView: UITableView) -> [String]? {
             let titles: [String] = [
-                "A", "•", "C", "•", "E", "•", "G", "•", "I", "•", "K", "•", "M", "•", "O", "•", "Q", "•", "S", "•", "U", "•", "W", "•", "Y", "•", "#"
+                "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z", "#"
             ]
             if self.tableView == nil {
                 self.tableView = tableView

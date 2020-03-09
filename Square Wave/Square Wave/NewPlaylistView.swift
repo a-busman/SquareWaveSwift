@@ -26,6 +26,7 @@ struct NewPlaylistView: View {
                     
                     playlist.name = self.playlistModel.titleText
                     playlist.tracks = NSOrderedSet(array: self.playlistModel.tracks)
+                    playlist.dateAdded = Date()
                     
                     try? context.save()
                     self.presentationMode.wrappedValue.dismiss()

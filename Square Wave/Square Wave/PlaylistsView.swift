@@ -67,8 +67,9 @@ struct PlaylistRowView: View {
 }
 
 struct PlaylistsView: View {
+    @Environment(\.managedObjectContext) var context
     @State var newPlaylistShowing = false
-    @FetchRequest(entity: Playlist.entity(), sortDescriptors: [], predicate: NSPredicate(format: "isNowPlaying != true")) var playlists: FetchedResults<Playlist>
+    @FetchRequest(entity: Playlist.entity(), sortDescriptors: [NSSortDescriptor(keyPath: \Playlist.dateAdded, ascending: true)], predicate: NSPredicate(format: "isNowPlaying != true")) var playlists: FetchedResults<Playlist>
     var body: some View {
         List {
             Button(action: {
@@ -77,10 +78,16 @@ struct PlaylistsView: View {
                 PlaylistRowView(image: UIImage(named: "placeholder-playlist") ?? UIImage(), text: "New Playlist...", blurViewVisible: true)
             }
             ForEach(self.playlists, id: \.self) { (playlist: Playlist) in
-                NavigationLink(destination: PlaylistView(playlistModel: PlaylistModel(playlist: playlist))) {
+                NavigationLink(destination: PlaylistView(playlist: playlist)) {
                     PlaylistRowView(image: self.getPlaylistImage(playlist), text: playlist.name ?? "")
                 }
-            }
+            }.onDelete(perform: { indexSet in
+                for index in indexSet {
+                    let playlist = self.playlists[index]
+                    self.context.delete(playlist)
+                    try? self.context.save()
+                }
+            })
             Spacer()
                 .frame(height: LibraryView.miniViewPosition)
         }.navigationBarTitle(Text("Playlists"))
