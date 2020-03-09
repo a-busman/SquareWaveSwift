@@ -29,7 +29,7 @@ struct NowPlayingMiniView: View {
     @EnvironmentObject var playbackState: PlaybackState
     
     @ObservedObject var delegate: NowPlayingMiniViewDelegate
-    
+    let impactGenerator = UIImpactFeedbackGenerator()
     var swipe: some Gesture {
         DragGesture()
             .onChanged({ value in
@@ -64,6 +64,7 @@ struct NowPlayingMiniView: View {
                 }
                 Spacer()
                 Button(action: {
+                    self.impactGenerator.impactOccurred(intensity: 1.0)
                     if !self.playbackState.isNowPlaying {
                         self.playbackState.play()
                     } else {
@@ -76,6 +77,7 @@ struct NowPlayingMiniView: View {
                         .frame(height: 25.0)
                 }.foregroundColor(Color(.label))
                 Button(action: {
+                    self.impactGenerator.impactOccurred(intensity: 0.5)
                     self.playbackState.nextTrack()
                 }) {
                     Image(systemName: "forward.end.fill")
@@ -90,6 +92,9 @@ struct NowPlayingMiniView: View {
         .onTapGesture {
             self.delegate.didTap = true
         }.gesture(self.swipe)
+        .onAppear {
+            self.impactGenerator.prepare()
+        }
     }
 }
 

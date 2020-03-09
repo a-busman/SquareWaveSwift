@@ -104,6 +104,8 @@ struct NowPlayingView: View {
     @State var optionsShowing: Bool = false
     @State var playbackRate: Double = 2
     @State var elapsedTimer: Timer?
+    let impactGenerator = UIImpactFeedbackGenerator()
+    let selectionGenerator = UISelectionFeedbackGenerator()
     var body: some View {
         VStack {
             // MARK: - Drag Handle
@@ -132,6 +134,7 @@ struct NowPlayingView: View {
                     Spacer()
                     if self.playbackState.nowPlayingTrack != nil {
                         Button(action: {
+                            self.selectionGenerator.selectionChanged()
                             withAnimation {
                                 self.optionsShowing.toggle()
                             }
@@ -202,6 +205,7 @@ struct NowPlayingView: View {
                     List {
                         ForEach(0..<(AudioEngine.sharedInstance()?.getVoiceCount() ?? 0), id: \.self) { index in
                             Button(action: {
+                                self.selectionGenerator.selectionChanged()
                                 if (self.playbackState.muteMask & (1 << index)) == 0 {
                                     self.playbackState.muteMask |= (1 << index)
                                 } else {
@@ -237,6 +241,7 @@ struct NowPlayingView: View {
                     Spacer()
                     if self.playbackState.nowPlayingTrack != nil {
                         Button(action: {
+                            self.selectionGenerator.selectionChanged()
                             withAnimation {
                                 self.optionsShowing.toggle()
                             }
@@ -268,6 +273,7 @@ struct NowPlayingView: View {
                 HStack {
                     Spacer()
                     Button(action: {
+                        self.impactGenerator.impactOccurred(intensity: 0.5)
                         self.playbackState.prevTrack()
                     }) {
                         Image(systemName: "backward.end.fill")
@@ -278,6 +284,7 @@ struct NowPlayingView: View {
                     .padding(.horizontal)
                     Spacer()
                     Button(action: {
+                        self.impactGenerator.impactOccurred(intensity: 1.0)
                         if !self.playbackState.isNowPlaying {
                             self.playbackState.play()
                         } else {
@@ -292,6 +299,7 @@ struct NowPlayingView: View {
                     .padding(.horizontal)
                     Spacer()
                     Button(action: {
+                        self.impactGenerator.impactOccurred(intensity: 0.5)
                         self.playbackState.nextTrack()
                     }) {
                         Image(systemName: "forward.end.fill")
@@ -325,6 +333,7 @@ struct NowPlayingView: View {
                 HStack {
                     Spacer()
                     Button(action: {
+                        self.selectionGenerator.selectionChanged()
                         self.playbackState.loop()
                     }) {
                         ZStack {
@@ -345,6 +354,7 @@ struct NowPlayingView: View {
                         .frame(height: 30.0)
                         .padding()
                     Button(action: {
+                        self.selectionGenerator.selectionChanged()
                         self.playbackState.shuffle()
                     }) {
                         ZStack {
@@ -374,6 +384,8 @@ struct NowPlayingView: View {
             self.updateTimes()
             
         }.onAppear {
+            self.impactGenerator.prepare()
+            self.selectionGenerator.prepare()
             if self.playbackState.isNowPlaying {
                 self.elapsedTimer = Timer.scheduledTimer(withTimeInterval: 0.5, repeats: true, block: { _ in
                     self.updateTimes()

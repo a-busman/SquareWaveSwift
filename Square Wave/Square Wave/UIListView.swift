@@ -410,10 +410,23 @@ struct UIListView: UIViewRepresentable {
             }
         }
         
+        func tableView(_ tableView: UITableView, sectionForSectionIndexTitle title: String, at index: Int) -> Int {
+            if index == 0 {
+                let offset = CGPoint(x: 0.0, y: -140)
+                tableView.setContentOffset(offset, animated: true)
+                return NSNotFound
+            }
+            return index - 1
+        }
+        
         func sectionIndexTitles(for tableView: UITableView) -> [String]? {
-            let titles: [String] = [
+            var titles: [String] = []
+            if self.showSearch {
+                titles.append(UITableView.indexSearch)
+            }
+            titles.append(contentsOf: [
                 "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z", "#"
-            ]
+            ])
             if self.tableView == nil {
                 self.tableView = tableView
             }

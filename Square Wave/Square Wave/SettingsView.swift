@@ -144,6 +144,7 @@ struct SettingsView: View {
                 }
                 Section {
                     Button(action: {
+                        UINotificationFeedbackGenerator().notificationOccurred(.warning)
                         self.deleteShowing.toggle()
                     }) {
                         Text("Delete All")

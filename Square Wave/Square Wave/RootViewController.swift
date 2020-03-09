@@ -15,6 +15,8 @@ class RootViewController: UIViewController, FileEngineDelegate {
     let addBarButtonItem = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(addPressed))
     let activityIndicator = UIActivityIndicatorView(style: .medium)
     var activityIndicatorBarButtonItem: UIBarButtonItem!
+    let selectionGenerator = UISelectionFeedbackGenerator()
+    let notificationGenerator = UINotificationFeedbackGenerator()
     
     func progress(_ currentIndex: UInt, total: UInt) {
         NSLog("\(currentIndex) out of \(total)")
@@ -22,11 +24,13 @@ class RootViewController: UIViewController, FileEngineDelegate {
     
     func complete() {
         NSLog("Done!")
+        self.notificationGenerator.notificationOccurred(.success)
         self.setBarItems(self.reloadBarButtonItem)
     }
     
     func failed(_ error: Error) {
         NSLog("Failed!")
+        self.notificationGenerator.notificationOccurred(.error)
         self.setBarItems(self.reloadBarButtonItem)
     }
     
@@ -43,6 +47,9 @@ class RootViewController: UIViewController, FileEngineDelegate {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        self.selectionGenerator.prepare()
+        self.notificationGenerator.prepare()
         
         self.activityIndicatorBarButtonItem = UIBarButtonItem(customView: self.activityIndicator)
         self.activityIndicator.startAnimating()
@@ -106,11 +113,13 @@ class RootViewController: UIViewController, FileEngineDelegate {
     }
     
     @objc func refreshPressed(sender: UIBarButtonItem) {
+        self.selectionGenerator.selectionChanged()
         self.setBarItems(self.activityIndicatorBarButtonItem)
         FileEngine.reloadFromCloud(with: self)
     }
     
     @objc func addPressed(sender: UIBarButtonItem) {
+        self.selectionGenerator.selectionChanged()
         let controller = UIHostingController(rootView: FilePicker())
         self.present(controller, animated: true)
     }

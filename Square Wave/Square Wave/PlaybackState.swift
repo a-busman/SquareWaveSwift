@@ -468,6 +468,8 @@ class PlaybackState: ObservableObject {
     func updateNowPlayingInfoCenter() {
         self.nowPlayingInfo[MPMediaItemPropertyTitle] = self.nowPlayingTrack?.name ?? ""
         self.nowPlayingInfo[MPMediaItemPropertyArtist] = self.nowPlayingTrack?.game?.name ?? ""
+        self.nowPlayingInfo[MPMediaItemPropertyAlbumTitle] = self.nowPlayingTrack?.system?.name ?? ""
+        self.nowPlayingInfo[MPMediaItemPropertyGenre] = "Video Game"
         
         let image = ListArtView.getImage(for: self.nowPlayingTrack?.system?.name ?? "")
         let mediaArtwork = MPMediaItemArtwork(boundsSize: CGSize(width: 768, height: 768), requestHandler: { (size) -> UIImage in
