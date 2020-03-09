@@ -15,7 +15,21 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     static var playbackState = PlaybackState()
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
+        self.createDirectories()
+        
         return true
+    }
+    
+    func createDirectories() {
+        if let playlistImagesDir = Util.getPlaylistImagesDirectory() {
+            if !FileManager.default.fileExists(atPath: playlistImagesDir.path) {
+                do {
+                    try FileManager.default.createDirectory(at: playlistImagesDir, withIntermediateDirectories: true, attributes: nil)
+                } catch {
+                    NSLog("Could not create playlist images directory. \(error.localizedDescription)")
+                }
+            }
+        }
     }
     
     func application(_ application: UIApplication, open url: URL, options: [UIApplication.OpenURLOptionsKey : Any] = [:]) -> Bool {

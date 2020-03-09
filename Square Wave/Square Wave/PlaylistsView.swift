@@ -41,14 +41,15 @@ struct PlaylistBlurView: UIViewRepresentable {
 }
 
 struct PlaylistRowView: View {
-    @State var image: UIImage
+    @State private var image: Image?
+    @Binding var uiImage: UIImage
     @State var text: String = ""
     @State var blurViewVisible: Bool = false
     
     var body: some View {
         HStack {
             ZStack {
-                Image(uiImage: self.image)
+                self.image?
                     .resizable()
                     .aspectRatio(contentMode: .fit)
                     .overlay(RoundedRectangle(cornerRadius: 5.0).stroke(Color(.systemGray4)))
@@ -62,6 +63,8 @@ struct PlaylistRowView: View {
                 .foregroundColor(Color(.systemBlue))
                 .padding()
             
+        }.onAppear() {
+            self.image = Image(uiImage: self.uiImage)
         }
     }
 }
@@ -75,11 +78,19 @@ struct PlaylistsView: View {
             Button(action: {
                 self.newPlaylistShowing.toggle()
             }) {
-                PlaylistRowView(image: UIImage(named: "placeholder-playlist") ?? UIImage(), text: "New Playlist...", blurViewVisible: true)
+                PlaylistRowView(uiImage: Binding(get: {
+                    UIImage(named: "placeholder-playlist") ?? UIImage()
+                }, set: { _ in
+                    
+                }), text: "New Playlist...", blurViewVisible: true)
             }
             ForEach(self.playlists, id: \.self) { (playlist: Playlist) in
                 NavigationLink(destination: PlaylistView(playlist: playlist)) {
-                    PlaylistRowView(image: self.getPlaylistImage(playlist), text: playlist.name ?? "")
+                    PlaylistRowView(uiImage: Binding(get: {
+                        self.getPlaylistImage(playlist)
+                    }, set: { _ in
+                        
+                    }), text: playlist.name ?? "")
                 }
             }.onDelete(perform: { indexSet in
                 for index in indexSet {
@@ -97,7 +108,12 @@ struct PlaylistsView: View {
     }
     
     func getPlaylistImage(_ playlist: Playlist) -> UIImage {
-        return UIImage()
+        if playlist.art != nil {
+            NSLog("Got image from \(playlist.art!.path)")
+            let image = UIImage(contentsOfFile: Util.getPlaylistImagesDirectory()!.appendingPathComponent(playlist.art?.path ?? "").path) ?? UIImage(named: "placeholder-art")!
+            return image
+        }
+        return UIImage(named: "placeholder-art")!
     }
 }
 

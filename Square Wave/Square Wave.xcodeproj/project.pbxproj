@@ -81,6 +81,7 @@
 		FA822D4523F1F81E005FCFB3 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = FA822D4323F1F81E005FCFB3 /* LaunchScreen.storyboard */; };
 		FA822D5023F1F81E005FCFB3 /* Square_WaveTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA822D4F23F1F81E005FCFB3 /* Square_WaveTests.swift */; };
 		FA822D5B23F1F81E005FCFB3 /* Square_WaveUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA822D5A23F1F81E005FCFB3 /* Square_WaveUITests.swift */; };
+		FA8CEAF12415C56E00649CBE /* Util.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA8CEAF02415C56E00649CBE /* Util.swift */; };
 		FAA4083123F8B55100E3F2A4 /* ListArtView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAA4083023F8B55100E3F2A4 /* ListArtView.swift */; };
 		FAC00F9D23F61F3E0072F78C /* FilePicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAC00F9C23F61F3E0072F78C /* FilePicker.swift */; };
 		FAC00F9F23F718870072F78C /* NowPlayingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAC00F9E23F718870072F78C /* NowPlayingView.swift */; };
@@ -252,6 +253,7 @@
 		FA822D5623F1F81E005FCFB3 /* Square WaveUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Square WaveUITests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		FA822D5A23F1F81E005FCFB3 /* Square_WaveUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Square_WaveUITests.swift; sourceTree = "<group>"; };
 		FA822D5C23F1F81E005FCFB3 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		FA8CEAF02415C56E00649CBE /* Util.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Util.swift; sourceTree = "<group>"; };
 		FAA4083023F8B55100E3F2A4 /* ListArtView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListArtView.swift; sourceTree = "<group>"; };
 		FAC00F9C23F61F3E0072F78C /* FilePicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FilePicker.swift; sourceTree = "<group>"; };
 		FAC00F9E23F718870072F78C /* NowPlayingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NowPlayingView.swift; sourceTree = "<group>"; };
@@ -467,6 +469,7 @@
 				FA5A25CA23F5BF4A00D4C28A /* SettingsView.swift */,
 				FA5A25CC23F5C6F800D4C28A /* PlaylistsView.swift */,
 				FA244AFB240CAE370086DD77 /* TextView.swift */,
+				FA8CEAF02415C56E00649CBE /* Util.swift */,
 				FA244AF9240CA2750086DD77 /* NewPlaylistView.swift */,
 				FAC00FA023F728F00072F78C /* NowPlayingMiniView.swift */,
 				FA2D8854240089D30058713E /* VisualEffectView.swift */,
@@ -721,6 +724,7 @@
 				FA1587162404C74A00F48261 /* Spc_Dsp.cpp in Sources */,
 				FA1586EF2404C74A00F48261 /* Sap_Apu.cpp in Sources */,
 				FA15870D2404C74A00F48261 /* Nes_Vrc6_Apu.cpp in Sources */,
+				FA8CEAF12415C56E00649CBE /* Util.swift in Sources */,
 				FA822D3623F1F81C005FCFB3 /* AppDelegate.swift in Sources */,
 				FA1586EB2404C74A00F48261 /* Kss_Cpu.cpp in Sources */,
 				FA15872024056D3500F48261 /* RootViewController.swift in Sources */,

@@ -24,16 +24,41 @@ struct NewPlaylistView: View {
                     let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
                     let playlist = Playlist(entity: Playlist.entity(), insertInto: context)
                     
+                    playlist.id = UUID()
                     playlist.name = self.playlistModel.titleText
                     playlist.tracks = NSOrderedSet(array: self.playlistModel.tracks)
                     playlist.dateAdded = Date()
-                    
-                    try? context.save()
+                    self.savePlaylistImage(image: self.playlistModel.image)
                     self.presentationMode.wrappedValue.dismiss()
                 }) {
                     Text("Done")
                     .bold()
                 })
+        }
+    }
+    
+    func savePlaylistImage(image: UIImage?) {
+        if let playlist = self.playlist,
+            let filename = Util.getPlaylistImagesDirectory()?.appendingPathComponent("\(playlist.id!).png") {
+            let delegate = UIApplication.shared.delegate as! AppDelegate
+            if image != nil {
+                let data = image!.pngData()
+                do {
+                    try data?.write(to: filename)
+                    playlist.art = filename
+                    delegate.saveContext()
+                } catch {
+                    NSLog("Failed to write image data to \(filename.path)")
+                }
+            } else {
+                do {
+                    try FileManager.default.removeItem(at: filename)
+                    playlist.art = nil
+                    delegate.saveContext()
+                } catch {
+                    NSLog("Failed to remove \(filename.path)")
+                }
+            }
         }
     }
 }
