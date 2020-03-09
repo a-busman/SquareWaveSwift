@@ -113,7 +113,6 @@ struct UIListView: UIViewRepresentable {
             self.playbackState.currentTracklist = self.rows as! [Track]
             self.playbackState.nowPlayingTrack = nil
             self.playbackState.shuffleTracks = true
-            self.playbackState.shuffle(true)
             self.playbackState.play(index: 0)
         })).frame(height: 75.0))
         
