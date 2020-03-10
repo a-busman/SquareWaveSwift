@@ -248,10 +248,10 @@
 		FA822D4123F1F81E005FCFB3 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		FA822D4423F1F81E005FCFB3 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		FA822D4623F1F81E005FCFB3 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		FA822D4B23F1F81E005FCFB3 /* Square WaveTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Square WaveTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
+		FA822D4B23F1F81E005FCFB3 /* Square WavesTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Square WavesTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		FA822D4F23F1F81E005FCFB3 /* Square_WaveTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Square_WaveTests.swift; sourceTree = "<group>"; };
 		FA822D5123F1F81E005FCFB3 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		FA822D5623F1F81E005FCFB3 /* Square WaveUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Square WaveUITests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
+		FA822D5623F1F81E005FCFB3 /* Square WavesUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Square WavesUITests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		FA822D5A23F1F81E005FCFB3 /* Square_WaveUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Square_WaveUITests.swift; sourceTree = "<group>"; };
 		FA822D5C23F1F81E005FCFB3 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		FA8CEAF02415C56E00649CBE /* Util.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Util.swift; sourceTree = "<group>"; };
@@ -446,8 +446,8 @@
 			isa = PBXGroup;
 			children = (
 				FA822D3223F1F81C005FCFB3 /* Square Waves.app */,
-				FA822D4B23F1F81E005FCFB3 /* Square WaveTests.xctest */,
-				FA822D5623F1F81E005FCFB3 /* Square WaveUITests.xctest */,
+				FA822D4B23F1F81E005FCFB3 /* Square WavesTests.xctest */,
+				FA822D5623F1F81E005FCFB3 /* Square WavesUITests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -534,9 +534,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		FA822D3123F1F81C005FCFB3 /* Square Wave */ = {
+		FA822D3123F1F81C005FCFB3 /* Square Waves */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = FA822D5F23F1F81E005FCFB3 /* Build configuration list for PBXNativeTarget "Square Wave" */;
+			buildConfigurationList = FA822D5F23F1F81E005FCFB3 /* Build configuration list for PBXNativeTarget "Square Waves" */;
 			buildPhases = (
 				5224BAB81D889C8E9893D7E9 /* [CP] Check Pods Manifest.lock */,
 				FA822D2E23F1F81C005FCFB3 /* Sources */,
@@ -549,14 +549,14 @@
 			);
 			dependencies = (
 			);
-			name = "Square Wave";
+			name = "Square Waves";
 			productName = "Square Wave";
 			productReference = FA822D3223F1F81C005FCFB3 /* Square Waves.app */;
 			productType = "com.apple.product-type.application";
 		};
-		FA822D4A23F1F81E005FCFB3 /* Square WaveTests */ = {
+		FA822D4A23F1F81E005FCFB3 /* Square WavesTests */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = FA822D6223F1F81E005FCFB3 /* Build configuration list for PBXNativeTarget "Square WaveTests" */;
+			buildConfigurationList = FA822D6223F1F81E005FCFB3 /* Build configuration list for PBXNativeTarget "Square WavesTests" */;
 			buildPhases = (
 				FA822D4723F1F81E005FCFB3 /* Sources */,
 				FA822D4823F1F81E005FCFB3 /* Frameworks */,
@@ -567,14 +567,14 @@
 			dependencies = (
 				FA822D4D23F1F81E005FCFB3 /* PBXTargetDependency */,
 			);
-			name = "Square WaveTests";
+			name = "Square WavesTests";
 			productName = "Square WaveTests";
-			productReference = FA822D4B23F1F81E005FCFB3 /* Square WaveTests.xctest */;
+			productReference = FA822D4B23F1F81E005FCFB3 /* Square WavesTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
-		FA822D5523F1F81E005FCFB3 /* Square WaveUITests */ = {
+		FA822D5523F1F81E005FCFB3 /* Square WavesUITests */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = FA822D6523F1F81E005FCFB3 /* Build configuration list for PBXNativeTarget "Square WaveUITests" */;
+			buildConfigurationList = FA822D6523F1F81E005FCFB3 /* Build configuration list for PBXNativeTarget "Square WavesUITests" */;
 			buildPhases = (
 				FA822D5223F1F81E005FCFB3 /* Sources */,
 				FA822D5323F1F81E005FCFB3 /* Frameworks */,
@@ -585,9 +585,9 @@
 			dependencies = (
 				FA822D5823F1F81E005FCFB3 /* PBXTargetDependency */,
 			);
-			name = "Square WaveUITests";
+			name = "Square WavesUITests";
 			productName = "Square WaveUITests";
-			productReference = FA822D5623F1F81E005FCFB3 /* Square WaveUITests.xctest */;
+			productReference = FA822D5623F1F81E005FCFB3 /* Square WavesUITests.xctest */;
 			productType = "com.apple.product-type.bundle.ui-testing";
 		};
 /* End PBXNativeTarget section */
@@ -614,7 +614,7 @@
 					};
 				};
 			};
-			buildConfigurationList = FA822D2D23F1F81C005FCFB3 /* Build configuration list for PBXProject "Square Wave" */;
+			buildConfigurationList = FA822D2D23F1F81C005FCFB3 /* Build configuration list for PBXProject "Square Waves" */;
 			compatibilityVersion = "Xcode 9.3";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
@@ -627,9 +627,9 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				FA822D3123F1F81C005FCFB3 /* Square Wave */,
-				FA822D4A23F1F81E005FCFB3 /* Square WaveTests */,
-				FA822D5523F1F81E005FCFB3 /* Square WaveUITests */,
+				FA822D3123F1F81C005FCFB3 /* Square Waves */,
+				FA822D4A23F1F81E005FCFB3 /* Square WavesTests */,
+				FA822D5523F1F81E005FCFB3 /* Square WavesUITests */,
 			);
 		};
 /* End PBXProject section */
@@ -827,12 +827,12 @@
 /* Begin PBXTargetDependency section */
 		FA822D4D23F1F81E005FCFB3 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = FA822D3123F1F81C005FCFB3 /* Square Wave */;
+			target = FA822D3123F1F81C005FCFB3 /* Square Waves */;
 			targetProxy = FA822D4C23F1F81E005FCFB3 /* PBXContainerItemProxy */;
 		};
 		FA822D5823F1F81E005FCFB3 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = FA822D3123F1F81C005FCFB3 /* Square Wave */;
+			target = FA822D3123F1F81C005FCFB3 /* Square Waves */;
 			targetProxy = FA822D5723F1F81E005FCFB3 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
@@ -1033,7 +1033,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Square Wave.app/Square Wave";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Square Waves.app/Square Waves";
 			};
 			name = Debug;
 		};
@@ -1054,7 +1054,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Square Wave.app/Square Wave";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Square Waves.app/Square Waves";
 			};
 			name = Release;
 		};
@@ -1099,7 +1099,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		FA822D2D23F1F81C005FCFB3 /* Build configuration list for PBXProject "Square Wave" */ = {
+		FA822D2D23F1F81C005FCFB3 /* Build configuration list for PBXProject "Square Waves" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				FA822D5D23F1F81E005FCFB3 /* Debug */,
@@ -1108,7 +1108,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		FA822D5F23F1F81E005FCFB3 /* Build configuration list for PBXNativeTarget "Square Wave" */ = {
+		FA822D5F23F1F81E005FCFB3 /* Build configuration list for PBXNativeTarget "Square Waves" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				FA822D6023F1F81E005FCFB3 /* Debug */,
@@ -1117,7 +1117,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		FA822D6223F1F81E005FCFB3 /* Build configuration list for PBXNativeTarget "Square WaveTests" */ = {
+		FA822D6223F1F81E005FCFB3 /* Build configuration list for PBXNativeTarget "Square WavesTests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				FA822D6323F1F81E005FCFB3 /* Debug */,
@@ -1126,7 +1126,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		FA822D6523F1F81E005FCFB3 /* Build configuration list for PBXNativeTarget "Square WaveUITests" */ = {
+		FA822D6523F1F81E005FCFB3 /* Build configuration list for PBXNativeTarget "Square WavesUITests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				FA822D6623F1F81E005FCFB3 /* Debug */,
