@@ -294,7 +294,7 @@ struct PlaylistView: View {
                 self.playlistModel.objectWillChange.send()
                 self.playlistModel.tracks = value as! [Track]
                 self.playbackState.currentTracklist = self.playlistModel.tracks
-            }), sortType: .constant(SortType.none.rawValue), isEditing: self.$isEditMode, rowType: Track.self, keypaths: UIListViewCellKeypaths(art: \Track.system?.name, title: \Track.name, desc: \Track.game?.name), showSections: false, showSearch: false, showsHeader: !self.isEditMode)
+            }), sortType: .constant(SortType.none.rawValue), isEditing: self.$isEditMode, rowType: Track.self, keypaths: UIListViewCellKeypaths(art: \Track.system?.name, title: \Track.name, desc: \Track.game?.name), showSections: false, showSearch: false, showsHeader: !self.isEditMode, isEditable: true)
                 .environmentObject(AppDelegate.playbackState)
                 .offset(y: -8.0)
                 .edgesIgnoringSafeArea(.bottom)

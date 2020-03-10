@@ -99,12 +99,21 @@ struct PlaylistsView: View {
             }.onDelete(perform: { indexSet in
                 for index in indexSet {
                     let playlist = self.playlists[index]
+                    if let imageUrl = playlist.art,
+                        let fullUrl = Util.getPlaylistImagesDirectory()?.appendingPathComponent(imageUrl.lastPathComponent) {
+                        if FileManager.default.isDeletableFile(atPath: fullUrl.path) {
+                            do {
+                                try FileManager.default.removeItem(at: fullUrl)
+                                NSLog("Successfully deleted playlist art at \(fullUrl.path)")
+                            } catch {
+                                NSLog("Failed to delete playlist art at \(fullUrl.path)")
+                            }
+                        }
+                    }
                     self.context.delete(playlist)
                     try? self.context.save()
                 }
             })
-            Spacer()
-                .frame(height: LibraryView.miniViewPosition)
         }.navigationBarTitle(Text("Playlists"))
         .sheet(isPresented: self.$newPlaylistShowing) {
             NewPlaylistView()
@@ -113,8 +122,7 @@ struct PlaylistsView: View {
     
     func getPlaylistImage(_ playlist: Playlist) -> UIImage {
         if playlist.art != nil {
-            NSLog("Got image from \(playlist.art!.path)")
-            let image = UIImage(contentsOfFile: Util.getPlaylistImagesDirectory()!.appendingPathComponent(playlist.art?.path ?? "").path) ?? UIImage(named: "placeholder-art")!
+            let image = UIImage(contentsOfFile: Util.getPlaylistImagesDirectory()!.appendingPathComponent(playlist.art?.lastPathComponent ?? "").path) ?? UIImage(named: "placeholder-art")!
             return image
         }
         return UIImage(named: "placeholder-art")!

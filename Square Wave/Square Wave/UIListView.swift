@@ -71,6 +71,7 @@ struct UIListView: UIViewRepresentable {
     var showSearch = true
     var showsHeader = true
     var headerView = UIViewController()
+    var isEditable = false
     
     // Hack to call updateUIView on playbackState change.
     class RandomClass { }
@@ -169,7 +170,7 @@ struct UIListView: UIViewRepresentable {
     }
 
     func makeCoordinator() -> Coordinator {
-        Coordinator(rows: self.rows, parent: self, sortType: self.sortType, showSections: self.showSections, rowType: self.rowType, keypaths: self.keypaths, showSearch: self.showSearch, showsHeader: self.showsHeader)
+        Coordinator(rows: self.rows, parent: self, sortType: self.sortType, showSections: self.showSections, rowType: self.rowType, keypaths: self.keypaths, showSearch: self.showSearch, showsHeader: self.showsHeader, isEditable: self.isEditable)
     }
     
     func didTapRow(track: Track) {
@@ -191,6 +192,7 @@ struct UIListView: UIViewRepresentable {
         var rowsDict: [String : [NSManagedObject]] = [:]
         var rowType: NSManagedObject.Type
         var keypaths: UIListViewCellKeypaths
+        var isEditable: Bool
         var tableView: UITableView? {
             didSet {
                 if self.showSearch {
@@ -203,7 +205,7 @@ struct UIListView: UIViewRepresentable {
         let searchController = UISearchController(searchResultsController: nil)
         let navController = (UIApplication.shared.windows.first!.rootViewController as? RootViewController)?.navController
 
-        init(rows: [NSManagedObject], parent: UIListView, sortType: Int, showSections: Bool, rowType: NSManagedObject.Type, keypaths: UIListViewCellKeypaths, showSearch: Bool, showsHeader: Bool) {
+        init(rows: [NSManagedObject], parent: UIListView, sortType: Int, showSections: Bool, rowType: NSManagedObject.Type, keypaths: UIListViewCellKeypaths, showSearch: Bool, showsHeader: Bool, isEditable: Bool) {
             self.rows = rows
             self.filteredRows = rows
             self.parent = parent
@@ -213,6 +215,7 @@ struct UIListView: UIViewRepresentable {
             self.keypaths = keypaths
             self.showSearch = showSearch
             self.isShowingHeader = showsHeader
+            self.isEditable = isEditable
             super.init()
             
             if self.showSearch {
@@ -329,11 +332,11 @@ struct UIListView: UIViewRepresentable {
         }
         
         func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
-            return true
+            return self.isEditable
         }
         
         func tableView(_ tableView: UITableView, canMoveRowAt indexPath: IndexPath) -> Bool {
-            return true
+            return self.isEditable
         }
         
         func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
