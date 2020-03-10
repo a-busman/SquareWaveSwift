@@ -127,7 +127,7 @@ const int kBufferCount = 3;
 - (void)pause {
     AudioQueuePause(_mAudioQueue);
     AVAudioSession *session = AVAudioSession.sharedInstance;
-    [session setActive:YES error:nil];
+    [session setActive:NO error:nil];
     @synchronized (self) {
         _mIsPaused = YES;
     }

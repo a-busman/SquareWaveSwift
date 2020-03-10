@@ -265,8 +265,7 @@ class PlaybackState: ObservableObject {
             return .success
         }
         
-        NotificationCenter.default.addObserver(self, selector: #selector(self.handleAudioInterruption), name: .AVCaptureSessionWasInterrupted, object: AVAudioSession.sharedInstance())
-        NotificationCenter.default.addObserver(self, selector: #selector(self.handleAudioInterruption), name: .AVCaptureSessionInterruptionEnded, object: AVAudioSession.sharedInstance())
+        NotificationCenter.default.addObserver(self, selector: #selector(self.handleAudioInterruption), name: AVAudioSession.interruptionNotification, object: AVAudioSession.sharedInstance())
  
         self.loopTrack = PlaybackStateProperty.loopTrack.getProperty() ?? false
         self.shuffleTracks = PlaybackStateProperty.shuffleTracks.getProperty() ?? false
@@ -571,10 +570,12 @@ class PlaybackState: ObservableObject {
         self.nowPlayingTrack = track
         self.nowPlayingInfo[MPNowPlayingInfoPropertyPlaybackRate] = 1.0
         self.updateNowPlayingInfoCenter()
-        self.isNowPlaying = true
+        
         DispatchQueue.global().async {
             let path = URL(fileURLWithPath: FileEngine.getMusicDirectory()).appendingPathComponent(track.url!).path
-
+            DispatchQueue.main.async {
+                self.isNowPlaying = false
+            }
             AudioEngine.sharedInstance()?.stop()
             AudioEngine.sharedInstance()?.setFileName(path)
             AudioEngine.sharedInstance()?.setTrack(Int32(track.trackNum))
@@ -582,7 +583,9 @@ class PlaybackState: ObservableObject {
             AudioEngine.sharedInstance()?.setMuteVoices(Int32(self.muteMask))
             AudioEngine.sharedInstance()?.play()
             self.setFade()
-
+            DispatchQueue.main.async {
+                self.isNowPlaying = true
+            }
         }
     }
     
