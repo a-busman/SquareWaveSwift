@@ -53,6 +53,11 @@ const int kBufferSize = 8000;
 const int kBufferCount = 3;
 
 // MARK: - Initialization
+/**
+ * sharedInstance
+ * @brief Returns a single instance of an Audio Engine
+ * @return A static instance of an Audio Engine
+ */
 + (AudioEngine *)sharedInstance {
     static AudioEngine *sharedInstance = nil;
     static dispatch_once_t onceToken;
@@ -62,7 +67,11 @@ const int kBufferCount = 3;
     return sharedInstance;
 }
 
-
+/**
+ * init
+ * @brief Initializes a new Audio Engine
+ * @return A new Audio Engine object
+ */
 - (id)init {
     if (!(self = [super init])) return nil;
 
@@ -75,6 +84,10 @@ const int kBufferCount = 3;
     return self;
 }
 
+/**
+ * dealloc
+ * @brief Cleans up Audio Engine object
+ */
 - (void)dealloc {
     if (_mEmu) {
         gme_delete(_mEmu);
@@ -82,6 +95,11 @@ const int kBufferCount = 3;
     }
 }
 
+/**
+ * setFileName
+ * @brief Creates a new emulator based on the given filename
+ * @param [in]fileName Name of file to open
+ */
 - (void)setFileName:(NSString *)fileName {
     @synchronized(self) {
         if (_mEmu) {
@@ -94,6 +112,11 @@ const int kBufferCount = 3;
     }
 }
 
+/**
+ * setTrack
+ * @brief Sets the current active track in the file
+ * @param track Track number to activate
+ */
 - (void)setTrack:(int)track {
     @synchronized (self) {
         CHECK_EMU_AND_RETURN();
@@ -107,6 +130,10 @@ const int kBufferCount = 3;
 }
 
 // MARK: - Playback
+/**
+ * play
+ * @brief Starts current audio track and starts the audio queue
+ */
 - (void)play {
     @synchronized (self) {
         CHECK_EMU_AND_RETURN();
@@ -124,6 +151,10 @@ const int kBufferCount = 3;
     [self startAudioQueue];
 }
 
+/**
+ * pause
+ * @brief Pauses current audio queue
+ */
 - (void)pause {
     AudioQueuePause(_mAudioQueue);
     AVAudioSession *session = AVAudioSession.sharedInstance;
@@ -133,6 +164,10 @@ const int kBufferCount = 3;
     }
 }
 
+/**
+ * stop
+ * @brief Stops current audio queue
+ */
 - (void)stop {
     @synchronized (self) {
         _mIsPlaying = NO;
@@ -144,6 +179,10 @@ const int kBufferCount = 3;
 
 }
 
+/**
+ * nextTrack
+ * @brief Skips to the next track in the current file
+ */
 - (void)nextTrack {
     @synchronized (self) {
         CHECK_EMU_AND_RETURN();
@@ -156,6 +195,10 @@ const int kBufferCount = 3;
     }
 }
 
+/**
+ * prevTrack
+ * @brief Skips to the previous track in the current file
+ */
 - (void)prevTrack {
     @synchronized (self) {
         CHECK_EMU_AND_RETURN();
@@ -167,6 +210,11 @@ const int kBufferCount = 3;
     }
 }
 
+/**
+ * setMuteVoices
+ * @brief Sets the mask for muting voices of the current track
+ * @param mask Voice mask
+ */
 - (void)setMuteVoices:(int)mask {
     @synchronized (self) {
         CHECK_EMU_AND_RETURN();
@@ -175,6 +223,11 @@ const int kBufferCount = 3;
     }
 }
 
+/**
+ * getVoiceCount
+ * @brief Gets the count of voices of the current track
+ * @return Voice count
+ */
 - (int)getVoiceCount {
     @synchronized (self) {
         if (_mEmu == NULL) {
@@ -184,6 +237,12 @@ const int kBufferCount = 3;
     }
 }
 
+/**
+ * getVoiceName
+ * @brief Gets the name of a given voice for the current track
+ * @param index Index of the voice to get
+ * @return Voice name
+ */
 - (const char *)getVoiceName:(int)index {
     @synchronized (self) {
         if (_mEmu == NULL) {
@@ -194,6 +253,11 @@ const int kBufferCount = 3;
 }
 
 // MARK: - Track Properties
+/**
+ * getTrackEnded
+ * @brief Checks to see if the current track has ended
+ * @return NO for not ended, YES for ended
+ */
 - (BOOL)getTrackEnded {
     @synchronized (self) {
         if (_mEmu) {
@@ -203,6 +267,10 @@ const int kBufferCount = 3;
     return true;
 }
 
+/**
+ * fadeOutCurrentTrack
+ * @brief Fades out the current track at its play length.
+ */
 - (void)fadeOutCurrentTrack {
     @synchronized (self) {
         CHECK_EMU_AND_RETURN();
@@ -213,6 +281,11 @@ const int kBufferCount = 3;
     }
 }
 
+/**
+ * setFadeTime
+ * @brief Sets the time to fade out the current track
+ * @param msec Time to fade out in milliseconds
+ */
 - (void)setFadeTime:(int)msec {
     @synchronized (self) {
         CHECK_EMU_AND_RETURN();
@@ -220,6 +293,11 @@ const int kBufferCount = 3;
     }
 }
 
+/**
+ * setTempo
+ * @brief Sets the playback rate of the current track
+ * @param tempo Playback rate to set as a multiplier
+ */
 - (void)setTempo:(double)tempo {
     @synchronized (self) {
         CHECK_EMU_AND_RETURN();
@@ -227,6 +305,10 @@ const int kBufferCount = 3;
     }
 }
 
+/**
+ * resetFadeTime
+ * @brief Removes fade out of current track
+ */
 - (void)resetFadeTime {
     @synchronized (self) {
         CHECK_EMU_AND_RETURN();
@@ -234,6 +316,11 @@ const int kBufferCount = 3;
     }
 }
 
+/**
+ * getCurrentTrackInfo
+ * @brief Gets the info of the current track
+ * @return Info of the current track
+ */
 - (TrackInfo *)getCurrentTrackInfo {
     @synchronized (self) {
         if (!_mEmu) {
@@ -263,6 +350,11 @@ const int kBufferCount = 3;
     }
 }
 
+/**
+ * getElapsedTime
+ * @brief Gets the current elapsed time of the current track in milliseconds
+ * @return Elapsed time in milliseconds
+ */
 - (int)getElapsedTime {
     @synchronized (self) {
         if (_mEmu) {
@@ -273,6 +365,10 @@ const int kBufferCount = 3;
 }
 
 // MARK: - Audio Management
+/**
+ * startAudioQueue
+ * @brief Starts the current audio queue
+ */
 - (void)startAudioQueue {
     @synchronized (self) {
         CHECK_EMU_AND_RETURN();
@@ -314,6 +410,10 @@ const int kBufferCount = 3;
     }
 }
 
+/**
+ * setupFormat
+ * @brief Sets up the stream format needed for an AudioQueue
+ */
 - (void)setupFormat {
     @synchronized (self) {
         _mStreamFormat.mSampleRate       = kSampleRate;
@@ -327,11 +427,24 @@ const int kBufferCount = 3;
     }
 }
 
+/**
+ * AudioEngineOutputBufferCallback
+ * @brief callback for when a buffer becomes free in an AudioQueue
+ * @param inUserData Audio Engine instance
+ * @param inAQ Current queue
+ * @param inBuffer Current buffer to fill
+ */
 void AudioEngineOutputBufferCallback(void * inUserData, AudioQueueRef inAQ, AudioQueueBufferRef inBuffer) {
     AudioEngine *engine = (__bridge AudioEngine *) inUserData;
     [engine processOutputBuffer:inBuffer queue: inAQ];
 }
 
+/**
+ * processOutputBuffer
+ * @brief Fills Audio Queue buffer by playing enough samples to fill it, then enqueues the buffer.
+ * @param buffer AudioQueue buffer to fill
+ * @param queue AudioQueue to enqueue buffer in
+ */
 - (void)processOutputBuffer:(AudioQueueBufferRef)buffer queue:(AudioQueueRef)queue {
     @synchronized (self) {
         OSStatus err;

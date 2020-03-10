@@ -522,6 +522,12 @@ typedef enum {
     return ret;
 }
 
+/**
+ * deleteEntity
+ * @brief Deletes all records of a given entity
+ * @param [in]entity Entity to delete
+ * @return NO for failure, YES for success
+ */
 + (BOOL)deleteEntity:(NSString *)entity {
     NSError *error = nil;
     
