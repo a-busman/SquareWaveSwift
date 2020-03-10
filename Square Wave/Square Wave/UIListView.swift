@@ -411,12 +411,15 @@ struct UIListView: UIViewRepresentable {
         }
         
         func tableView(_ tableView: UITableView, sectionForSectionIndexTitle title: String, at index: Int) -> Int {
-            if index == 0 {
-                let offset = CGPoint(x: 0.0, y: -140)
-                tableView.setContentOffset(offset, animated: true)
-                return NSNotFound
+            if self.showSearch {
+                if index == 0 {
+                    let offset = CGPoint(x: 0.0, y: -140)
+                    tableView.setContentOffset(offset, animated: true)
+                    return NSNotFound
+                }
+                return index - 1
             }
-            return index - 1
+            return index
         }
         
         func sectionIndexTitles(for tableView: UITableView) -> [String]? {
