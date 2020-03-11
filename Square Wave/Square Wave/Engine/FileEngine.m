@@ -11,6 +11,7 @@
 #import <CoreData/CoreData.h>
 #import "SSZipArchive.h"
 #include "gme/gme.h"
+#include <CommonCrypto/CommonDigest.h>
 #import "Square_Waves-Swift.h"
 #import "FileEngine.h"
 
@@ -249,7 +250,13 @@ typedef enum {
             NSString              *file       = nil;
 
             while (file = [enumerator nextObject]) {
-                [FileEngine parseAudioFileContents:[destination stringByAppendingPathComponent:file]];
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    NSError *err = nil;
+                    if (![FileEngine checkAndParseFileContents:[destination stringByAppendingPathComponent:file]]) {
+                        NSLog(@"Removing %@", [destination stringByAppendingPathComponent:file]);
+                        [defaultManager removeItemAtPath:[destination stringByAppendingPathComponent:file] error:&err];
+                    }
+                });
             }
         }
             break;
@@ -263,7 +270,13 @@ typedef enum {
         case SPC:
         case VGM:
         {
-            [FileEngine parseAudioFileContents:url.path];
+            dispatch_async(dispatch_get_main_queue(), ^{
+                NSError *err = nil;
+                if (![FileEngine checkAndParseFileContents:url.path]) {
+                    NSLog(@"Removing %@", url.path);
+                    [defaultManager removeItemAtPath:url.path error:&err];
+                }
+            });
         }
             break;
         default:
@@ -274,6 +287,54 @@ typedef enum {
         [AppDelegate updatePlaybackStateWithHasTracks:YES];
     }
     return YES;
+}
+
++ (BOOL)checkAndParseFileContents:(NSString *)path {
+    AppDelegate            *delegate      = (AppDelegate *)[[UIApplication sharedApplication] delegate];
+    NSManagedObjectContext *objectContext = delegate.persistentContainer.viewContext;
+    NSFetchRequest         *request       = [NSFetchRequest fetchRequestWithEntityName:@"File"];
+    NSError                *error         = nil;
+
+    NSString *checksum = [FileEngine getFileChecksum:path];
+    if (checksum != nil) {
+        NSPredicate *predicate = [NSPredicate predicateWithFormat:@"checksum == %@", checksum];
+        
+        [request setPredicate:predicate];
+        NSArray *objects = [objectContext executeFetchRequest:request error:&error];
+        if ((error == nil) && ([objects count] == 0)) {
+            File *newFile = [[File alloc] initWithContext:objectContext];
+            [newFile setExt:[path pathExtension]];
+            [newFile setChecksum:checksum];
+            [newFile setFilename:path];
+            [FileEngine parseAudioFileContents:newFile];
+        } else {
+            NSLog(@"File: %@ already imported.", path);
+            return NO;
+        }
+    } else {
+        return NO;
+    }
+    return YES;
+}
+
++ (NSString *)getFileChecksum:(NSString *)path {
+    NSFileManager *fileManager = [NSFileManager defaultManager];
+    // Make sure the file exists
+    if([fileManager fileExistsAtPath:path isDirectory:nil]) {
+        NSData *data = [NSData dataWithContentsOfFile:path];
+        unsigned char digest[CC_MD5_DIGEST_LENGTH] = {0};
+
+        CC_MD5(data.bytes, (CC_LONG)data.length, digest);
+
+        NSMutableString *output = [NSMutableString stringWithCapacity:CC_MD5_DIGEST_LENGTH * 2];
+
+        for(int i = 0; i < CC_MD5_DIGEST_LENGTH; i++) {
+            [output appendFormat:@"%02x", digest[i]];
+        }
+        return output;
+    } else {
+        return nil;
+    }
 }
 
 /**
@@ -292,14 +353,16 @@ typedef enum {
  * parseAudioFileContents
  * @brief Given a file path, determine which folder it should be placed in, place it there,
  *        and add its contents to the database.
- * @param [in]filePath Path of file to parse
+ * @param [in]fileObject Preformed file object.
  * @return NO for failure, YES for success
  */
-+ (BOOL)parseAudioFileContents:(NSString *)filePath {
++ (BOOL)parseAudioFileContents:(File *)fileObject {
     BOOL success     = false;
     BOOL isDirectory = false;
     
     NSError *error = nil;
+    
+    NSString *filePath = [fileObject filename];
     
     const NSString *consoleFolder = nil;
     NSString       *consolePath   = nil;
@@ -429,10 +492,7 @@ typedef enum {
     }
     
     // Add all tracks found in file to database
-    // Run on main thread since this accesses the app delegate
-    dispatch_async(dispatch_get_main_queue(), ^{
-        [FileEngine addToDatabase:emu relativePath:[[consoleFolder stringByAppendingPathComponent:gameFolder] stringByAppendingPathComponent:[filePath lastPathComponent]]];
-    });
+    [FileEngine addToDatabase:emu relativePath:[[consoleFolder stringByAppendingPathComponent:gameFolder] stringByAppendingPathComponent:[filePath lastPathComponent]] fileObject:fileObject];
     
     return YES;
 }
@@ -550,7 +610,7 @@ typedef enum {
  * @param [in]emu Music emulator all ready to go
  * @param [in]relativePath Path of file to parse
  */
-+ (void)addToDatabase:(Music_Emu *)emu relativePath:(NSString *)relativePath {
++ (void)addToDatabase:(Music_Emu *)emu relativePath:(NSString *)relativePath fileObject:(File *)fileObject {
     gme_info_t *gameInfo = nil;
     
     AppDelegate            *delegate          = (AppDelegate *)[[UIApplication sharedApplication] delegate];
@@ -593,6 +653,7 @@ typedef enum {
         [trackMO setLength:trackLength];
         [trackMO setIntroLength:introLength];
         [trackMO setLoopLength:loopLength];
+        [trackMO setFile:fileObject];
         
         // Look up other attributes, if they don't exist, create them.
         

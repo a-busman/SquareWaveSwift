@@ -5,6 +5,12 @@
         <attribute name="name" optional="YES" attributeType="String"/>
         <relationship name="tracks" optional="YES" toMany="YES" deletionRule="Nullify" ordered="YES" destinationEntity="Track" inverseName="artist" inverseEntity="Track"/>
     </entity>
+    <entity name="File" representedClassName="File" syncable="YES" codeGenerationType="class">
+        <attribute name="checksum" optional="YES" attributeType="String"/>
+        <attribute name="ext" optional="YES" attributeType="String"/>
+        <attribute name="filename" optional="YES" attributeType="String"/>
+        <relationship name="tracks" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Track" inverseName="file" inverseEntity="Track"/>
+    </entity>
     <entity name="Game" representedClassName=".Game" syncable="YES" codeGenerationType="class">
         <attribute name="id" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
         <attribute name="name" optional="YES" attributeType="String"/>
@@ -37,15 +43,17 @@
         <attribute name="trackNum" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="url" optional="YES" attributeType="String"/>
         <relationship name="artist" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Artist" inverseName="tracks" inverseEntity="Artist"/>
+        <relationship name="file" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="File" inverseName="tracks" inverseEntity="File"/>
         <relationship name="game" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Game" inverseName="tracks" inverseEntity="Game"/>
         <relationship name="playlists" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Playlist" inverseName="tracks" inverseEntity="Playlist"/>
         <relationship name="system" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="System" inverseName="tracks" inverseEntity="System"/>
     </entity>
     <elements>
         <element name="Artist" positionX="-171" positionY="-282" width="128" height="88"/>
-        <element name="Game" positionX="-169.92578125" positionY="-188.78125" width="128" height="118"/>
-        <element name="Playlist" positionX="225.78515625" positionY="-158.91796875" width="128" height="133"/>
-        <element name="System" positionX="-170.546875" positionY="-79.578125" width="128" height="103"/>
-        <element name="Track" positionX="36" positionY="-234" width="128" height="238"/>
+        <element name="Game" positionX="-181.90234375" positionY="-129.09375" width="128" height="118"/>
+        <element name="Playlist" positionX="219.5703125" positionY="-55.83984375" width="128" height="133"/>
+        <element name="System" positionX="-378.6796875" positionY="-83.78515625" width="128" height="103"/>
+        <element name="Track" positionX="36" positionY="-234" width="128" height="253"/>
+        <element name="File" positionX="219.6875" positionY="-173.32421875" width="128" height="103"/>
     </elements>
 </model>
