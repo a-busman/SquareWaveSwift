@@ -332,11 +332,49 @@ struct UIListView: UIViewRepresentable {
         }
         
         func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
-            return self.isEditable
+            if self.rowType == Track.self {
+                return true
+            }
+            return false
         }
         
         func tableView(_ tableView: UITableView, canMoveRowAt indexPath: IndexPath) -> Bool {
             return self.isEditable
+        }
+        
+        func tableView(_ tableView: UITableView, contextMenuConfigurationForRowAt indexPath: IndexPath, point: CGPoint) -> UIContextMenuConfiguration? {
+            if self.rowType == Track.self && !self.isEditable {
+                let configuration = UIContextMenuConfiguration(identifier: nil, previewProvider: nil) { actions -> UIMenu? in
+                    let action = UIAction(title: "Rename", image: UIImage(systemName: "square.and.pencil"), identifier: .none) { action in
+                        guard let cell = tableView.cellForRow(at: indexPath) as? SongTableViewCell,
+                            let track = cell.info as? Track else { return }
+                        
+                        self.rename(track: track)
+                        
+                    }
+                    return UIMenu(title: "", image: nil, identifier: .none, options: .displayInline, children: [action])
+                }
+                return configuration
+            }
+            return nil
+        }
+        
+        func rename(track: Track) {
+            let alert = UIAlertController(title: "Rename", message: nil, preferredStyle: .alert)
+            alert.addTextField { textField in
+                textField.placeholder = "Title"
+                textField.text = track.name
+            }
+            let okAction = UIAlertAction(title: "Save", style: .default) { _ in
+                track.name = alert.textFields?[0].text ?? "No Name"
+                (UIApplication.shared.delegate as? AppDelegate)?.saveContext()
+            }
+            let cancelAction = UIAlertAction(title: "Cancel", style: .cancel)
+            
+            alert.addAction(okAction)
+            alert.addAction(cancelAction)
+            
+            self.tableViewController?.present(alert, animated: true)
         }
         
         func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
@@ -398,6 +436,22 @@ struct UIListView: UIViewRepresentable {
             self.rows.insert(item, at: destinationIndexPath.row)
             self.filteredRows = self.rows
             self.parent.rows = self.rows
+        }
+        
+        func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
+            if self.rowType == Track.self && !self.isEditable {
+                let renameAction = UIContextualAction(style: .normal, title: "Rename", handler: {_,_,_ in
+                    guard let cell = tableView.cellForRow(at: indexPath) as? SongTableViewCell,
+                        let track = cell.info as? Track else { return }
+                    
+                    self.rename(track: track)
+                })
+                renameAction.backgroundColor = .systemBlue
+                let config = UISwipeActionsConfiguration(actions: [renameAction])
+                config.performsFirstActionWithFullSwipe = false
+                return config
+            }
+            return nil
         }
         
         func tableView(_ tableView: UITableView, titleForDeleteConfirmationButtonForRowAt indexPath: IndexPath) -> String? {
