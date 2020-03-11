@@ -15,7 +15,7 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "FA822D3123F1F81C005FCFB3"
-               BuildableName = "Square Wavess.app"
+               BuildableName = "Square Waves.app"
                BlueprintName = "Square Waves"
                ReferencedContainer = "container:Square Waves.xcodeproj">
             </BuildableReference>
@@ -65,7 +65,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "FA822D3123F1F81C005FCFB3"
-            BuildableName = "Square Wavess.app"
+            BuildableName = "Square Waves.app"
             BlueprintName = "Square Waves"
             ReferencedContainer = "container:Square Waves.xcodeproj">
          </BuildableReference>
@@ -82,7 +82,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "FA822D3123F1F81C005FCFB3"
-            BuildableName = "Square Wavess.app"
+            BuildableName = "Square Waves.app"
             BlueprintName = "Square Waves"
             ReferencedContainer = "container:Square Waves.xcodeproj">
          </BuildableReference>
