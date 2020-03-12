@@ -24,20 +24,19 @@ struct HeaderView: View {
                     .foregroundColor(Color(.systemGray6))
                 HStack {
                     Image(systemName: "play.fill")
-                    Text("Play")
+                    Text("Play").fixedSize()
                 }
             }
                 .onTapGesture {
                     self.didTapPlay = true
                     
             }
-            Spacer()
             ZStack {
                 RoundedRectangle(cornerRadius: 5.0)
                 .foregroundColor(Color(.systemGray6))
                 HStack {
                     Image(systemName: "shuffle")
-                    Text("Shuffle")
+                    Text("Shuffle").fixedSize()
                 }
             }.onTapGesture {
                 self.didTapShuffle = true
