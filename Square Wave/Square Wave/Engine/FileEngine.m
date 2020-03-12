@@ -550,18 +550,22 @@ typedef enum {
     
     [AppDelegate removeTrackFromTracklist: track];
 
-    [context deleteObject:track];
+    if (track != nil) {
+        [context deleteObject:track];
+    }
     
-    if ([[game tracks] count] <= 1) {
+    if ((game != nil) && ([[game tracks] count] <= 1)) {
         [context deleteObject:game];
     }
-    if ([[platform tracks] count] <= 1) {
+    
+    if ((platform != nil) && ([[platform tracks] count] <= 1)) {
         [context deleteObject:platform];
     }
-    if ([[artist tracks] count] <= 1) {
+    
+    if ((artist != nil) && ([[artist tracks] count] <= 1)) {
         [context deleteObject:artist];
     }
-    if (([[file tracks] count] <= 1) && ([[NSFileManager defaultManager] isDeletableFileAtPath:filePath])) {
+    if ((file != nil) && ([[file tracks] count] <= 1) && ([[NSFileManager defaultManager] isDeletableFileAtPath:filePath])) {
         [[NSFileManager defaultManager] removeItemAtPath:filePath error:&error];
         if (error != nil) {
             NSLog(@"Failed to remove %@: %@", filePath, [error localizedDescription]);
