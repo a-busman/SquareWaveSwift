@@ -27,6 +27,29 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         AppDelegate.playbackState.hasTracks = hasTracks
     }
     
+    static func getCurrentPlayingTrack() -> Track? {
+        return AppDelegate.playbackState.nowPlayingTrack
+    }
+    
+    static func clearCurrentTrackList() {
+        AppDelegate.playbackState.stop()
+        AppDelegate.playbackState.currentTracklist = []
+        AppDelegate.playbackState.nowPlayingTrack = nil
+        AppDelegate.playbackState.trackNum = 0
+    }
+    
+    static func removeTrackFromTracklist(_ track: Track) {
+        guard let index = AppDelegate.playbackState.currentTracklist.firstIndex(of: track) else {
+            return
+        }
+        AppDelegate.playbackState.currentTracklist.remove(at: index)
+        if AppDelegate.playbackState.nowPlayingTrack == track {
+            AppDelegate.playbackState.stop()
+            AppDelegate.playbackState.nowPlayingTrack = nil
+            AppDelegate.playbackState.trackNum = 0
+        }
+    }
+    
     func createDirectories() {
         if let playlistImagesDir = Util.getPlaylistImagesDirectory() {
             if !FileManager.default.fileExists(atPath: playlistImagesDir.path) {

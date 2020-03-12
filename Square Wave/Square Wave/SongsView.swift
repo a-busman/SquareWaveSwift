@@ -26,6 +26,9 @@ struct SongsView: View {
         self.tracksRequest = FetchRequest(entity: Track.entity(), sortDescriptors: [], predicate: predicate)
         self.title = title
         self.sortFromDesc = sortFromDesc
+        if sortFromDesc {
+            self.sortType = SortType.game.rawValue
+        }
         UITableView.appearance().insetsLayoutMarginsFromSafeArea = false
     }
     

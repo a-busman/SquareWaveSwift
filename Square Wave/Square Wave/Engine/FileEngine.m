@@ -370,9 +370,9 @@ typedef enum {
     NSString       *gamePath      = nil;
     NSString       *finalPath     = nil;
     
-    gme_type_t  gameType = nil;
-    gme_info_t *gameInfo = nil;
-    Music_Emu  *emu      = nil;
+    gme_type_t  gameType = NULL;
+    gme_info_t *gameInfo = NULL;
+    Music_Emu  *emu      = NULL;
     
     NSFileManager *defaultManager = [NSFileManager defaultManager];
     NSLog(@"Attempting to open %@", filePath);
@@ -508,6 +508,73 @@ typedef enum {
 }
 
 /**
+ * removeGame
+ * @brief Removes a game and all its associated tracks from the database.
+ * @param [in]game Game to remove
+ * @return NO if any track failed to remove associated file. YES otherwise.
+ */
++ (BOOL)removeGame:(Game *)game {
+    BOOL ret = YES;
+    
+    NSOrderedSet *tracks = [[game tracks] copy] ;
+    
+    for (int i = 0; i < [tracks count]; i++) {
+        if (![FileEngine removeTrack:tracks[i]]) {
+            ret = NO;
+        }
+        NSLog(@"deleting %d of %lu", i, (unsigned long)[tracks count]);
+    }
+    return ret;
+}
+
+/**
+ * removeTrack
+ * @brief Removes a track from the database
+ * @note If it is the last track in a file, it removes the file. If last track in game, artist, or system, it removes these as well.
+ * @param [in]track Track to remove from database
+ * @return NO if failed to remove file. YES otherwise
+ */
++ (BOOL)removeTrack:(Track *)track {
+    BOOL ret = YES;
+    
+    AppDelegate *delegate = (AppDelegate *)UIApplication.sharedApplication.delegate;
+    
+    NSManagedObjectContext *context = [[delegate persistentContainer] viewContext];
+    
+    File     *file      = [track file];
+    Game     *game      = [track game];
+    System   *platform  = [track system];
+    Artist   *artist    = [track artist];
+    NSString *filePath  = [[FileEngine getMusicDirectory] stringByAppendingPathComponent:[file filename]];
+    NSError  *error     = nil;
+    
+    [AppDelegate removeTrackFromTracklist: track];
+
+    [context deleteObject:track];
+    
+    if ([[game tracks] count] <= 1) {
+        [context deleteObject:game];
+    }
+    if ([[platform tracks] count] <= 1) {
+        [context deleteObject:platform];
+    }
+    if ([[artist tracks] count] <= 1) {
+        [context deleteObject:artist];
+    }
+    if (([[file tracks] count] <= 1) && ([[NSFileManager defaultManager] isDeletableFileAtPath:filePath])) {
+        [[NSFileManager defaultManager] removeItemAtPath:filePath error:&error];
+        if (error != nil) {
+            NSLog(@"Failed to remove %@: %@", filePath, [error localizedDescription]);
+            ret = NO;
+        }
+        [context deleteObject:file];
+    }
+
+    [context save:&error];
+    return ret;
+}
+
+/**
  * clearAll
  * @brief Clears database and deletes all local files
  * @return NO for failure, YES for success
@@ -621,6 +688,7 @@ typedef enum {
     [request setEntity:entityDescription];
 
     __DEBUG_FE(@"database location: %@", delegate.persistentContainer.persistentStoreCoordinator.persistentStores.firstObject.URL);
+    [fileObject setFilename:relativePath];
     for (int i = 0; i < gme_track_count(emu); i++) {
         gme_track_info(emu, &gameInfo, i);
         NSString *trackName  = strlen(gameInfo->song)   > 0 ? [NSString stringWithUTF8String:gameInfo->song]   : [NSString stringWithFormat:@"Track %d", i + 1];
@@ -641,6 +709,7 @@ typedef enum {
         } else if (error != nil) {
             NSLog(@"request error: %@", error);
         }
+        
         Track *trackMO = [[Track alloc] initWithContext:objectContext];
         Artist *artistMO;
         Game *gameMO;

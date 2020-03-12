@@ -156,6 +156,11 @@ struct UIListView: UIViewRepresentable {
                     }
                 }
             }
+        } else {
+            context.coordinator.rows = self.rows
+            context.coordinator.filteredRows = self.rows
+            context.coordinator.updateSectionTitles()
+            uiView.reloadData()
         }
         if self.showsHeader && !context.coordinator.isShowingHeader {
             uiView.tableHeaderView = self.makeHeaderView().view
@@ -170,7 +175,7 @@ struct UIListView: UIViewRepresentable {
     }
 
     func makeCoordinator() -> Coordinator {
-        Coordinator(rows: self.rows, parent: self, sortType: self.sortType, showSections: self.showSections, rowType: self.rowType, keypaths: self.keypaths, showSearch: self.showSearch, showsHeader: self.showsHeader, isEditable: self.isEditable)
+        Coordinator(rows: self.rows, parent: self, sortType: self.sortType, showSections: self.showSections, rowType: self.rowType, keypaths: self.keypaths, showSearch: self.showSearch, showsHeader: self.showsHeader, isEditable: self.isEditable, sortFromDesc: self.sortFromDesc)
     }
     
     func didTapRow(track: Track) {
@@ -193,6 +198,7 @@ struct UIListView: UIViewRepresentable {
         var rowType: NSManagedObject.Type
         var keypaths: UIListViewCellKeypaths
         var isEditable: Bool
+        var sortFromDesc: Bool
         var tableView: UITableView? {
             didSet {
                 if self.showSearch {
@@ -205,7 +211,7 @@ struct UIListView: UIViewRepresentable {
         let searchController = UISearchController(searchResultsController: nil)
         let navController = (UIApplication.shared.windows.first!.rootViewController as? RootViewController)?.navController
 
-        init(rows: [NSManagedObject], parent: UIListView, sortType: Int, showSections: Bool, rowType: NSManagedObject.Type, keypaths: UIListViewCellKeypaths, showSearch: Bool, showsHeader: Bool, isEditable: Bool) {
+        init(rows: [NSManagedObject], parent: UIListView, sortType: Int, showSections: Bool, rowType: NSManagedObject.Type, keypaths: UIListViewCellKeypaths, showSearch: Bool, showsHeader: Bool, isEditable: Bool, sortFromDesc: Bool) {
             self.rows = rows
             self.filteredRows = rows
             self.parent = parent
@@ -216,6 +222,7 @@ struct UIListView: UIViewRepresentable {
             self.showSearch = showSearch
             self.isShowingHeader = showsHeader
             self.isEditable = isEditable
+            self.sortFromDesc = sortFromDesc
             super.init()
             
             if self.showSearch {
@@ -332,7 +339,7 @@ struct UIListView: UIViewRepresentable {
         }
         
         func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
-            if self.rowType == Track.self {
+            if self.rowType == Track.self || self.rowType == Game.self {
                 return true
             }
             return false
@@ -439,15 +446,75 @@ struct UIListView: UIViewRepresentable {
         }
         
         func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
-            if self.rowType == Track.self && !self.isEditable {
-                let renameAction = UIContextualAction(style: .normal, title: "Rename", handler: {_,_,_ in
-                    guard let cell = tableView.cellForRow(at: indexPath) as? SongTableViewCell,
-                        let track = cell.info as? Track else { return }
-                    
-                    self.rename(track: track)
-                })
-                renameAction.backgroundColor = .systemBlue
-                let config = UISwipeActionsConfiguration(actions: [renameAction])
+            var actions: [UIContextualAction] = []
+            if !self.isEditable {
+                if self.rowType == Track.self || self.rowType == Game.self {
+                    let deleteAction = UIContextualAction(style: .destructive, title: "Delete", handler: {_,_,_ in
+                        guard let cell = tableView.cellForRow(at: indexPath) as? SongTableViewCell else { return }
+                        
+                        self.rows.remove(at: indexPath.row)
+                        self.filteredRows = self.rows
+                        self.parent.rows = self.rows
+                        if let track = cell.info as? Track {
+                            var prefix = ""
+                            if !self.sortFromDesc {
+                                prefix = String(track.name?.prefix(1) ?? "")
+                            } else {
+                                prefix = String(track.game?.name?.prefix(1) ?? "")
+                            }
+                            if let _ = Int(prefix) {
+                                prefix = "#"
+                            }
+                            var arr = self.rowsDict[prefix]
+                            if let indexToRemove = arr?.firstIndex(of: track) {
+                                arr?.remove(at: indexToRemove)
+                            }
+                            self.rowsDict[prefix] = arr
+                            FileEngine.remove(track)
+                            
+                            if arr?.count == 0,
+                                let sectionIndex = self.sectionTitles.firstIndex(of: prefix) {
+                                self.sectionTitles.remove(at: sectionIndex)
+                                tableView.deleteSections(IndexSet(arrayLiteral: sectionIndex), with: .automatic)
+                            } else {
+                                tableView.deleteRows(at: [indexPath], with: .automatic)
+                            }
+                        } else if let game = cell.info as? Game {
+                            var prefix = String(game.name?.prefix(1) ?? "")
+                            if let _ = Int(prefix) {
+                                prefix = "#"
+                            }
+                            var arr = self.rowsDict[prefix]
+                            if let indexToRemove = arr?.firstIndex(of: game) {
+                                arr?.remove(at: indexToRemove)
+                            }
+                            self.rowsDict[prefix] = arr
+                            FileEngine.remove(game)
+                            if arr?.count == 0,
+                                let sectionIndex = self.sectionTitles.firstIndex(of: prefix) {
+                                self.sectionTitles.remove(at: sectionIndex)
+                                tableView.deleteSections(IndexSet(arrayLiteral: sectionIndex), with: .automatic)
+                            } else {
+                                tableView.deleteRows(at: [indexPath], with: .automatic)
+                            }
+                        }
+                    })
+                    actions.append(deleteAction)
+                }
+                if self.rowType == Track.self {
+                    let renameAction = UIContextualAction(style: .normal, title: "Rename", handler: {_,_,_ in
+                        guard let cell = tableView.cellForRow(at: indexPath) as? SongTableViewCell,
+                            let track = cell.info as? Track else { return }
+                        
+                        self.rename(track: track)
+                    })
+                    renameAction.backgroundColor = .systemBlue
+                    actions.append(renameAction)
+
+                }
+            }
+            if actions.count > 0 {
+                let config = UISwipeActionsConfiguration(actions: actions)
                 config.performsFirstActionWithFullSwipe = false
                 return config
             }
@@ -468,15 +535,19 @@ struct UIListView: UIViewRepresentable {
         }
         
         func tableView(_ tableView: UITableView, sectionForSectionIndexTitle title: String, at index: Int) -> Int {
+
             if self.showSearch {
                 if index == 0 {
                     let offset = CGPoint(x: 0.0, y: -140)
                     tableView.setContentOffset(offset, animated: true)
                     return NSNotFound
                 }
-                return index - 1
             }
-            return index
+
+            if let index = self.sectionTitles.firstIndex(of: title) {
+                return index
+            }
+            return NSNotFound
         }
         
         func sectionIndexTitles(for tableView: UITableView) -> [String]? {

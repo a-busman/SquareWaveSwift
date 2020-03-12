@@ -50,10 +50,10 @@
     </entity>
     <elements>
         <element name="Artist" positionX="-171" positionY="-282" width="128" height="88"/>
+        <element name="File" positionX="219.6875" positionY="-173.32421875" width="128" height="103"/>
         <element name="Game" positionX="-181.90234375" positionY="-129.09375" width="128" height="118"/>
         <element name="Playlist" positionX="219.5703125" positionY="-55.83984375" width="128" height="133"/>
         <element name="System" positionX="-378.6796875" positionY="-83.78515625" width="128" height="103"/>
         <element name="Track" positionX="36" positionY="-234" width="128" height="253"/>
-        <element name="File" positionX="219.6875" positionY="-173.32421875" width="128" height="103"/>
     </elements>
 </model>

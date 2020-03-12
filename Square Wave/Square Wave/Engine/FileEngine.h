@@ -28,10 +28,12 @@
 @end
 
 @interface FileEngine : NSObject
++ (BOOL) removeGame:(Game *_Nonnull)game;
++ (BOOL) removeTrack:(Track *_Nonnull)track;
 + (void) reloadFromCloudWith:(id<FileEngineDelegate>_Nonnull)delegate;
 + (BOOL) addFile:(nonnull NSURL *)url removeOriginal:(BOOL)removeOriginal;
 + (void) refreshDatabase;
-+ (NSString *_Nonnull)getMusicDirectory;
++ (NSString *_Nonnull) getMusicDirectory;
 + (BOOL) clearAll;
 + (BOOL) clearDatabase;
 @end
