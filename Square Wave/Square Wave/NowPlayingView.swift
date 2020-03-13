@@ -447,13 +447,13 @@ struct NowPlayingView: View {
             if self.showsHandle {
                 return 288.0
             } else {
-                return 576.0
+                return 400.0
             }
         } else {
             if self.showsHandle {
                 return 256.0
             } else {
-                return 512.0
+                return 384.0
             }
         }
     }
