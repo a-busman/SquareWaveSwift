@@ -159,7 +159,7 @@ struct SettingsView: View {
                     self.playbackState.clearCurrentPlaybackState()
                     FileEngine.clearAll()
                     }, secondaryButton: .cancel())
-        }
+        }.navigationViewStyle(StackNavigationViewStyle())
     }
 }
 

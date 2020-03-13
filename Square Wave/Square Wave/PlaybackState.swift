@@ -384,7 +384,6 @@ class PlaybackState: ObservableObject {
      */
     func shuffle() {
         self.shuffleTracks.toggle()
-        PlaybackStateProperty.shuffleTracks.setProperty(newValue: self.shuffleTracks)
         self.shuffle(self.shuffleTracks)
     }
     
@@ -393,6 +392,7 @@ class PlaybackState: ObservableObject {
      - Parameter enabled: Whether or not to enable shuffle
      */
     func shuffle(_ enabled: Bool) {
+        self.shuffleTracks = enabled
         if enabled {
             self.originalTrackList = self.currentTracklist
             var tempList = Array(self.currentTracklist)
@@ -414,6 +414,7 @@ class PlaybackState: ObservableObject {
                 self.trackNum = 0
             }
         }
+        PlaybackStateProperty.shuffleTracks.setProperty(newValue: self.shuffleTracks)
     }
     
     /**
@@ -552,12 +553,12 @@ class PlaybackState: ObservableObject {
      */
     func play(index: Int) {
         guard index < self.currentTracklist.count else { return }
-        let track = self.currentTracklist[index]
         if self.shuffleTracks {
             self.shuffle(true)
         } else {
             self.trackNum = index
         }
+        let track = self.currentTracklist[index]
         self.play(track)
     }
     

@@ -10,7 +10,7 @@ import UIKit
 import SwiftUI
 import Combine
 
-class RootViewController: UIViewController, FileEngineDelegate {
+class RootViewController: UISplitViewController, UISplitViewControllerDelegate, FileEngineDelegate {
     let reloadBarButtonItem = UIBarButtonItem(barButtonSystemItem: .refresh, target: self, action: #selector(refreshPressed))
     let addBarButtonItem = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(addPressed))
     let activityIndicator = UIActivityIndicatorView(style: .medium)
@@ -37,6 +37,7 @@ class RootViewController: UIViewController, FileEngineDelegate {
     var cancellable: AnyCancellable?
     var navController = UINavigationController()
     var libraryController: UIViewController!
+    var splitController = UISplitViewController()
     
     func setBarItems(_ barItem: UIBarButtonItem) {
         self.libraryController.navigationItem.setRightBarButtonItems([
@@ -48,6 +49,9 @@ class RootViewController: UIViewController, FileEngineDelegate {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        self.delegate = self
+        self.preferredDisplayMode = .allVisible
+        self.preferredPrimaryColumnWidthFraction = 1 / 3
         self.selectionGenerator.prepare()
         self.notificationGenerator.prepare()
         
@@ -58,8 +62,8 @@ class RootViewController: UIViewController, FileEngineDelegate {
         let delegate = UIApplication.shared.delegate as! AppDelegate
         let context = delegate.persistentContainer.viewContext
         self.libraryController = UIHostingController(rootView: LibraryView().environment(\.managedObjectContext, context).environmentObject(AppDelegate.playbackState))
-        
-        self.navController = UINavigationController(rootViewController: libraryController)
+
+        self.navController = UINavigationController(rootViewController: self.libraryController)
         
         self.navController.navigationBar.prefersLargeTitles = true
         
@@ -67,44 +71,48 @@ class RootViewController: UIViewController, FileEngineDelegate {
         
         self.setBarItems(self.activityIndicatorBarButtonItem)
         
-        self.view.addSubview(self.navController.view)
-        let view = self.navController.view!
-        
-        view.translatesAutoresizingMaskIntoConstraints = false
-        
-        view.topAnchor.constraint(equalTo: self.view.topAnchor).isActive = true
-        view.bottomAnchor.constraint(equalTo: self.view.bottomAnchor).isActive = true
-        view.leadingAnchor.constraint(equalTo: self.view.leadingAnchor).isActive = true
-        view.trailingAnchor.constraint(equalTo: self.view.trailingAnchor).isActive = true
         
         let miniDelegate = NowPlayingMiniViewDelegate()
         let miniViewController = UIHostingController(rootView: NowPlayingMiniView(delegate: miniDelegate).environmentObject(AppDelegate.playbackState))
         
-        self.cancellable = miniDelegate.didChange.sink { _ in
-            let controller = UIHostingController(rootView: NowPlayingView().environmentObject(AppDelegate.playbackState))
-            self.present(controller, animated: true)
+        if UIDevice.current.userInterfaceIdiom == .phone {
+            let npController = UIHostingController(rootView: NowPlayingView().environmentObject(AppDelegate.playbackState))
+            self.cancellable = miniDelegate.didChange.sink { _ in
+                self.present(npController, animated: true)
+            }
+        
+            let blurView = UIVisualEffectView(effect: UIBlurEffect(style: .systemUltraThinMaterial))
+            blurView.translatesAutoresizingMaskIntoConstraints = false
+            let blurContentView = blurView.contentView
+            
+            let miniView = miniViewController.view!
+            miniView.backgroundColor = .clear
+            
+            blurContentView.addSubview(miniView)
+            miniView.translatesAutoresizingMaskIntoConstraints = false
+            miniView.topAnchor.constraint(equalTo: blurContentView.topAnchor).isActive = true
+            miniView.bottomAnchor.constraint(equalTo: blurContentView.bottomAnchor).isActive = true
+            miniView.leadingAnchor.constraint(equalTo: blurContentView.leadingAnchor).isActive = true
+            miniView.trailingAnchor.constraint(equalTo: blurContentView.trailingAnchor).isActive = true
+            
+            self.view.addSubview(blurView)
+
+            blurView.bottomAnchor.constraint(equalTo: self.view.bottomAnchor).isActive = true
+            blurView.topAnchor.constraint(equalTo: self.view.safeAreaLayoutGuide.bottomAnchor, constant: -75.0).isActive = true
+            blurView.leadingAnchor.constraint(equalTo: self.view.leadingAnchor).isActive = true
+            blurView.trailingAnchor.constraint(equalTo: self.view.trailingAnchor).isActive = true
         }
         
-        let blurView = UIVisualEffectView(effect: UIBlurEffect(style: .systemUltraThinMaterial))
-        blurView.translatesAutoresizingMaskIntoConstraints = false
-        let blurContentView = blurView.contentView
+        var npController = UIViewController()
         
-        let miniView = miniViewController.view!
-        miniView.backgroundColor = .clear
-        
-        blurContentView.addSubview(miniView)
-        miniView.translatesAutoresizingMaskIntoConstraints = false
-        miniView.topAnchor.constraint(equalTo: blurContentView.topAnchor).isActive = true
-        miniView.bottomAnchor.constraint(equalTo: blurContentView.bottomAnchor).isActive = true
-        miniView.leadingAnchor.constraint(equalTo: blurContentView.leadingAnchor).isActive = true
-        miniView.trailingAnchor.constraint(equalTo: blurContentView.trailingAnchor).isActive = true
-        
-        self.view.addSubview(blurView)
-
-        blurView.bottomAnchor.constraint(equalTo: self.view.bottomAnchor).isActive = true
-        blurView.topAnchor.constraint(equalTo: self.view.safeAreaLayoutGuide.bottomAnchor, constant: -75.0).isActive = true
-        blurView.leadingAnchor.constraint(equalTo: self.view.leadingAnchor).isActive = true
-        blurView.trailingAnchor.constraint(equalTo: self.view.trailingAnchor).isActive = true
+        if UIDevice.current.userInterfaceIdiom == .pad {
+            npController = UIHostingController(rootView: NowPlayingView(showsHandle: false).environmentObject(AppDelegate.playbackState))
+        }
+        self.viewControllers = [self.navController, npController]
+    }
+    
+    func splitViewController(_ splitViewController: UISplitViewController, collapseSecondary secondaryViewController: UIViewController, onto primaryViewController: UIViewController) -> Bool {
+        return true
     }
     
     @objc func settingsPressed(sender: UIBarButtonItem) {

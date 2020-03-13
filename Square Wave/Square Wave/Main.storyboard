@@ -10,7 +10,7 @@
         <!--Root View Controller-->
         <scene sceneID="MAe-0Q-NCh">
             <objects>
-                <viewController id="Eda-T7-l9u" customClass="RootViewController" customModule="Square_Wave" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController id="Eda-T7-l9u" customClass="RootViewController" customModule="Square_Waves" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="1Dk-s0-a0G">
                         <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -20,7 +20,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="7aE-pq-D3a" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="44.927536231884062" y="140.625"/>
+            <point key="canvasLocation" x="-975" y="76"/>
         </scene>
     </scenes>
 </document>

@@ -88,8 +88,10 @@ struct UIListView: UIViewRepresentable {
                 collectionView.tableHeaderView?.frame.size = CGSize(width: collectionView.tableHeaderView!.frame.width, height: 75.0)
             }
         }
-        collectionView.contentInset = UIEdgeInsets(top: 0.0, left: 0.0, bottom: LibraryView.miniViewPosition, right: 0.0)
-        collectionView.scrollIndicatorInsets = UIEdgeInsets(top: 0.0, left: 0.0, bottom: LibraryView.miniViewPosition, right: 0.0)
+        if UIDevice.current.userInterfaceIdiom == .phone {
+            collectionView.contentInset = UIEdgeInsets(top: 0.0, left: 0.0, bottom: LibraryView.miniViewPosition, right: 0.0)
+            collectionView.scrollIndicatorInsets = UIEdgeInsets(top: 0.0, left: 0.0, bottom: LibraryView.miniViewPosition, right: 0.0)
+        }
         collectionView.translatesAutoresizingMaskIntoConstraints = false
         collectionView.dataSource = context.coordinator
         collectionView.delegate = context.coordinator

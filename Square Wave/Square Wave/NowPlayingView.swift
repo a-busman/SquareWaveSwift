@@ -104,15 +104,18 @@ struct NowPlayingView: View {
     @State var optionsShowing: Bool = false
     @State var playbackRate: Double = 2
     @State var elapsedTimer: Timer?
+    var showsHandle = true
     let impactGenerator = UIImpactFeedbackGenerator()
     let selectionGenerator = UISelectionFeedbackGenerator()
     var body: some View {
         VStack {
             // MARK: - Drag Handle
-            RoundedRectangle(cornerRadius: 2.5)
-                .frame(width: 40.0, height: 5.0)
-                .foregroundColor(Color(.systemGray3))
-                .padding(.top)
+            if self.showsHandle {
+                RoundedRectangle(cornerRadius: 2.5)
+                    .frame(width: 40.0, height: 5.0)
+                    .foregroundColor(Color(.systemGray3))
+                    .padding(.top)
+            }
             Spacer()
             // MARK: - Album Art
             HStack {
@@ -441,9 +444,17 @@ struct NowPlayingView: View {
         if self.optionsShowing {
             return 64.0
         } else if self.playbackState.isNowPlaying {
-            return 288.0
+            if self.showsHandle {
+                return 288.0
+            } else {
+                return 576.0
+            }
         } else {
-            return 256.0
+            if self.showsHandle {
+                return 256.0
+            } else {
+                return 512.0
+            }
         }
     }
 }
