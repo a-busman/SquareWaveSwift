@@ -34,6 +34,7 @@ struct LibraryView: View {
                 .navigationBarTitle(Text("Library"))
             } else {
                 VStack {
+                    Spacer()
                     Button(action: {
                         self.isShowingPicker.toggle()
                     }) {
@@ -43,8 +44,9 @@ struct LibraryView: View {
                         .padding(Edge.Set(arrayLiteral: [.horizontal, .top]), 100)
                     }
                     Text("Add files by pressing the \"+\" button in the top right, or by adding them to the\nSquare Wave folder on your iCloud Drive").multilineTextAlignment(.center)
-                    .lineLimit(4)
+                    .lineLimit(6)
                     .padding()
+                        .padding(.bottom, 50)
                     Spacer()
                 }
                 .foregroundColor(Color(.tertiaryLabel))
