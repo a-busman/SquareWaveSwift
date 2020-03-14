@@ -115,7 +115,7 @@ struct UIListView: UIViewRepresentable {
             self.playbackState.currentTracklist = self.rows as! [Track]
             self.playbackState.nowPlayingTrack = nil
             self.playbackState.shuffleTracks = true
-            self.playbackState.play(index: 0)
+            self.playbackState.play(index: Int.random(in: 0..<self.rows.count))
         })).frame(height: 75.0))
         
         return headerController

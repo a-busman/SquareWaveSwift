@@ -553,12 +553,12 @@ class PlaybackState: ObservableObject {
      */
     func play(index: Int) {
         guard index < self.currentTracklist.count else { return }
+        let track = self.currentTracklist[index]
         if self.shuffleTracks {
             self.shuffle(true)
         } else {
             self.trackNum = index
         }
-        let track = self.currentTracklist[index]
         self.play(track)
     }
     
