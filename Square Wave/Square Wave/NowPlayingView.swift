@@ -218,7 +218,7 @@ struct NowPlayingView: View {
                                 AudioEngine.sharedInstance()?.setMuteVoices(Int32(self.playbackState.muteMask))
                             }) {
                                 HStack {
-                                    Text(String(cString: (AudioEngine.sharedInstance()!.getVoiceName(index as Int32))))
+                                    Text(AudioEngine.sharedInstance()!.getVoiceName(index as Int32))
                                     Spacer()
                                     if (self.playbackState.muteMask & (1 << index)) == 0 {
                                         Image(systemName: "checkmark")

@@ -9,6 +9,9 @@
 #import "gme/gme.h"
 #import <AudioToolbox/AudioToolbox.h>
 #import <AVFoundation/AVFoundation.h>
+#import "EmulatorBackend/EmulatorBackend.h"
+#import "EmulatorBackend/Gme.h"
+#import "EmulatorBackend/Sid.h"
 
 #import "AudioEngine.h"
 
@@ -18,35 +21,16 @@
 @property Boolean                     mIsPaused;
 @property NSString *                  mFileName;
 
+@property AudioQueueRef       mAudioQueue;
+@property AudioQueueBufferRef mAudioQueueBuf;
+@property int                 mTrack;
+@property int                 mVoiceMask;
 
-@property AudioQueueRef               mAudioQueue;
-@property AudioQueueBufferRef         mAudioQueueBuf;
-@property int                         mTrack;
-@property int                         mVoiceMask;
-@property Music_Emu *                 mEmu;
-@end
-
-@interface TrackInfo()
-
-@end
-
-@implementation TrackInfo
-
-- (id)init {
-    if (!(self = [super init])) return nil;
-    return self;
-}
+@property (strong, nonatomic, retain) EmulatorBackend * mBackend;
 
 @end
 
 @implementation AudioEngine
-
-#define CHECK_EMU_AND_RETURN() \
-do { \
-if (!_mEmu) { \
-return; \
-} \
-} while(0);
 
 const int kSampleRate = 44100;
 const int kBufferSize = 8000;
@@ -75,6 +59,7 @@ const int kBufferCount = 3;
 - (id)init {
     if (!(self = [super init])) return nil;
 
+    NSLog(@"reinit");
     [self setupFormat];
     OSStatus err = AudioQueueNewOutput(&_mStreamFormat, AudioEngineOutputBufferCallback, (__bridge void * _Nullable)(self), nil, nil, 0, &_mAudioQueue);
     if (err != noErr) {
@@ -89,10 +74,7 @@ const int kBufferCount = 3;
  * @brief Cleans up Audio Engine object
  */
 - (void)dealloc {
-    if (_mEmu) {
-        gme_delete(_mEmu);
-        _mEmu = NULL;
-    }
+    NSLog(@"Deallocating");
 }
 
 /**
@@ -101,14 +83,16 @@ const int kBufferCount = 3;
  * @param [in]fileName Name of file to open
  */
 - (void)setFileName:(NSString *)fileName {
-    @synchronized(self) {
-        if (_mEmu) {
-            gme_delete(_mEmu);
-            _mEmu = NULL;
-        }
+    @synchronized (self) {
         _mFileName = fileName;
-        const char *path_string = [_mFileName UTF8String];
-        handle_error(gme_open_file(path_string, &_mEmu, kSampleRate));
+
+        if ([Gme isFileCompatible:fileName]) {
+            if (_mBackend != nil) {
+                
+            }
+            _mBackend = [[Gme alloc] init:kSampleRate];
+            [_mBackend openFile:fileName];
+        }
     }
 }
 
@@ -119,13 +103,12 @@ const int kBufferCount = 3;
  */
 - (void)setTrack:(int)track {
     @synchronized (self) {
-        CHECK_EMU_AND_RETURN();
         _mTrack = track;
-        int count = gme_track_count(_mEmu);
+        int count = [_mBackend getTrackCount];
         if (_mTrack > count - 1) {
             _mTrack = count - 1;
         }
-        handle_error(gme_start_track(_mEmu, _mTrack));
+        [_mBackend startTrack:_mTrack];
     }
 }
 
@@ -136,13 +119,12 @@ const int kBufferCount = 3;
  */
 - (void)play {
     @synchronized (self) {
-        CHECK_EMU_AND_RETURN();
         if (!_mFileName) {
             NSLog(@"No file name to play");
             return;
         }
         if (_mIsPaused == NO) {
-            handle_error(gme_start_track(_mEmu, _mTrack));
+            [_mBackend startTrack:_mTrack];
             [self setupFormat];
         }
     }
@@ -185,13 +167,13 @@ const int kBufferCount = 3;
  */
 - (void)nextTrack {
     @synchronized (self) {
-        CHECK_EMU_AND_RETURN();
-        int count = gme_track_count(_mEmu);
+        int count = [_mBackend getTrackCount];
         _mTrack++;
         if (_mTrack > count - 1) {
             _mTrack--;
+        } else {
+            [_mBackend startTrack:_mTrack];
         }
-        else handle_error(gme_start_track(_mEmu, _mTrack));
     }
 }
 
@@ -201,12 +183,12 @@ const int kBufferCount = 3;
  */
 - (void)prevTrack {
     @synchronized (self) {
-        CHECK_EMU_AND_RETURN();
         _mTrack--;
         if (_mTrack < 0) {
             _mTrack++;
+        } else {
+            [_mBackend startTrack:_mTrack];
         }
-        else handle_error(gme_start_track(_mEmu, _mTrack));
     }
 }
 
@@ -217,9 +199,8 @@ const int kBufferCount = 3;
  */
 - (void)setMuteVoices:(int)mask {
     @synchronized (self) {
-        CHECK_EMU_AND_RETURN();
         _mVoiceMask = mask;
-        gme_mute_voices(_mEmu, mask);
+        [_mBackend muteVoices:mask];
     }
 }
 
@@ -230,10 +211,7 @@ const int kBufferCount = 3;
  */
 - (int)getVoiceCount {
     @synchronized (self) {
-        if (_mEmu == NULL) {
-            return 0;
-        }
-        return gme_voice_count(_mEmu);
+        return [_mBackend getVoiceCount];
     }
 }
 
@@ -243,12 +221,9 @@ const int kBufferCount = 3;
  * @param index Index of the voice to get
  * @return Voice name
  */
-- (const char *)getVoiceName:(int)index {
+- (NSString *)getVoiceName:(int)index {
     @synchronized (self) {
-        if (_mEmu == NULL) {
-            return NULL;
-        }
-        return gme_voice_name(_mEmu, index);
+        return [_mBackend getVoiceName:index];
     }
 }
 
@@ -260,24 +235,7 @@ const int kBufferCount = 3;
  */
 - (BOOL)getTrackEnded {
     @synchronized (self) {
-        if (_mEmu) {
-            return gme_track_ended(_mEmu);
-        }
-    }
-    return true;
-}
-
-/**
- * fadeOutCurrentTrack
- * @brief Fades out the current track at its play length.
- */
-- (void)fadeOutCurrentTrack {
-    @synchronized (self) {
-        CHECK_EMU_AND_RETURN();
-        gme_info_t *info = NULL;
-        gme_track_info(_mEmu, &info, _mTrack);
-        gme_set_fade(_mEmu, info->play_length);
-        gme_free_info(info);
+        return [_mBackend getTrackEnded];
     }
 }
 
@@ -288,8 +246,7 @@ const int kBufferCount = 3;
  */
 - (void)setFadeTime:(int)msec {
     @synchronized (self) {
-        CHECK_EMU_AND_RETURN();
-        gme_set_fade(_mEmu, msec);
+        [_mBackend setFade:msec];
     }
 }
 
@@ -300,8 +257,7 @@ const int kBufferCount = 3;
  */
 - (void)setTempo:(double)tempo {
     @synchronized (self) {
-        CHECK_EMU_AND_RETURN();
-        gme_set_tempo(_mEmu, tempo);
+        [_mBackend setTempo:tempo];
     }
 }
 
@@ -311,42 +267,7 @@ const int kBufferCount = 3;
  */
 - (void)resetFadeTime {
     @synchronized (self) {
-        CHECK_EMU_AND_RETURN();
-        gme_reset_fade(_mEmu);
-    }
-}
-
-/**
- * getCurrentTrackInfo
- * @brief Gets the info of the current track
- * @return Info of the current track
- */
-- (TrackInfo *)getCurrentTrackInfo {
-    @synchronized (self) {
-        if (!_mEmu) {
-            return nil;
-        }
-        TrackInfo *ret = [[TrackInfo alloc] init];
-        gme_info_t *info = NULL;
-        
-        gme_track_info(_mEmu, &info, _mTrack);
-        
-        ret.artist = [NSString stringWithUTF8String:info->author];
-        ret.game   = [NSString stringWithUTF8String:info->game];
-        if (strlen(info->song) == 0) {
-            ret.title = [NSString stringWithFormat:@"Track %d", _mTrack + 1];
-        } else {
-            ret.title  = [NSString stringWithUTF8String:info->song];
-        }
-        ret.system = [NSString stringWithUTF8String:info->system];
-        
-        ret.play_length  = info->play_length;
-        ret.length       = info->length;
-        ret.intro_length = info->intro_length;
-        ret.loop_length  = info->loop_length;
-        
-        gme_free_info(info);
-        return ret;
+        [_mBackend resetFade];
     }
 }
 
@@ -357,11 +278,8 @@ const int kBufferCount = 3;
  */
 - (int)getElapsedTime {
     @synchronized (self) {
-        if (_mEmu) {
-            return gme_tell(_mEmu);
-        }
+        return [_mBackend tell];
     }
-    return -1;
 }
 
 - (void)ignoreSilence {
@@ -379,7 +297,6 @@ const int kBufferCount = 3;
  */
 - (void)startAudioQueue {
     @synchronized (self) {
-        CHECK_EMU_AND_RETURN();
         if (_mIsPlaying == NO) {
             OSStatus err;
             AudioQueueReset(_mAudioQueue);
@@ -393,7 +310,7 @@ const int kBufferCount = 3;
                 int sampleCount = _mAudioQueueBuf->mAudioDataBytesCapacity / sizeof (SInt16);
                 _mAudioQueueBuf->mAudioDataByteSize = sampleCount * sizeof (SInt16);
                 SInt16 *rawBuf = _mAudioQueueBuf->mAudioData;
-                handle_error(gme_play(_mEmu, sampleCount, rawBuf));
+                [_mBackend play:sampleCount buffer:rawBuf];
                 err = AudioQueueEnqueueBuffer(_mAudioQueue, _mAudioQueueBuf, 0, nil);
                 if (err != noErr) {
                     NSLog(@"AudioQueueEnqueueBuffer() error: %d", err);
@@ -456,10 +373,11 @@ void AudioEngineOutputBufferCallback(void * inUserData, AudioQueueRef inAQ, Audi
 - (void)processOutputBuffer:(AudioQueueBufferRef)buffer queue:(AudioQueueRef)queue {
     @synchronized (self) {
         OSStatus err;
-        if (_mIsPlaying == YES && _mEmu != NULL) {
+        if (_mIsPlaying == YES && _mBackend != nil) {
             SInt16 *rawBuf = buffer->mAudioData;
             int sampleCount = buffer->mAudioDataBytesCapacity / sizeof (SInt16);
-            handle_error(gme_play(_mEmu, sampleCount, rawBuf));
+            [_mBackend play:sampleCount buffer:rawBuf];
+
             buffer->mAudioDataByteSize = sampleCount * sizeof (SInt16);
 
             err = AudioQueueEnqueueBuffer(queue, buffer, 0, nil);
@@ -475,9 +393,4 @@ void AudioEngineOutputBufferCallback(void * inUserData, AudioQueueRef inAQ, Audi
     }
 }
 
-static void handle_error(const char* str) {
-    if (str) {
-        NSLog(@"%@", [NSString stringWithUTF8String:str]);
-    }
-}
 @end

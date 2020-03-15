@@ -183,6 +183,9 @@
 		FAE4DC3A24270B320082C1F3 /* AppleIncRootCertificate.cer in Resources */ = {isa = PBXBuildFile; fileRef = FAE4DC312425844E0082C1F3 /* AppleIncRootCertificate.cer */; };
 		FAE4DC3C24280A790082C1F3 /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FAE4DC3B24280A790082C1F3 /* StoreKit.framework */; };
 		FAE4DC3E24280AC60082C1F3 /* IAP_ProductIDs.plist in Resources */ = {isa = PBXBuildFile; fileRef = FAE4DC3D24280AC60082C1F3 /* IAP_ProductIDs.plist */; };
+		FAE4DC24241DC9500082C1F3 /* EmulatorBackend.m in Sources */ = {isa = PBXBuildFile; fileRef = FAE4DC23241DC9500082C1F3 /* EmulatorBackend.m */; };
+		FAE4DC28241DCAAE0082C1F3 /* Gme.m in Sources */ = {isa = PBXBuildFile; fileRef = FAE4DC27241DCAAE0082C1F3 /* Gme.m */; };
+		FAE4DC2A241DCAD80082C1F3 /* Sid.m in Sources */ = {isa = PBXBuildFile; fileRef = FAE4DC29241DCAD80082C1F3 /* Sid.m */; };
 		FC81EBF7FFCC439B50CFA002 /* Pods_Square_Waves.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 66B060E1199A1D58C2C8AB14 /* Pods_Square_Waves.framework */; };
 /* End PBXBuildFile section */
 
@@ -577,6 +580,13 @@
 		FAE4DC38242708360082C1F3 /* IAPManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IAPManager.swift; sourceTree = "<group>"; };
 		FAE4DC3B24280A790082C1F3 /* StoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = StoreKit.framework; path = System/Library/Frameworks/StoreKit.framework; sourceTree = SDKROOT; };
 		FAE4DC3D24280AC60082C1F3 /* IAP_ProductIDs.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = IAP_ProductIDs.plist; sourceTree = "<group>"; };
+		FAE4DC23241DC9500082C1F3 /* EmulatorBackend.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = EmulatorBackend.m; sourceTree = "<group>"; };
+		FAE4DC25241DCA180082C1F3 /* EmulatorBackend.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = EmulatorBackend.h; sourceTree = "<group>"; };
+		FAE4DC26241DCA4E0082C1F3 /* Gme.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Gme.h; sourceTree = "<group>"; };
+		FAE4DC27241DCAAE0082C1F3 /* Gme.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Gme.m; sourceTree = "<group>"; };
+		FAE4DC29241DCAD80082C1F3 /* Sid.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Sid.m; sourceTree = "<group>"; };
+		FAE4DC2D241DCBD00082C1F3 /* Sid.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Sid.h; sourceTree = "<group>"; };
+		FAE4DC2E241DE1270082C1F3 /* EmulatorBackendPrivate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = EmulatorBackendPrivate.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -1177,6 +1187,7 @@
 		FAC0768623F513920096B786 /* Engine */ = {
 			isa = PBXGroup;
 			children = (
+				FAE4DC2C241DCBAF0082C1F3 /* EmulatorBackend */,
 				FA7992BD241C42D7008F9816 /* libsidplay */,
 				FA15867B2404C74A00F48261 /* gme */,
 				FAC0768823F513D10096B786 /* AudioEngine.h */,
@@ -1198,6 +1209,20 @@
 				FAE4DC35242584D30082C1F3 /* pkcs7_union_accessors.c */,
 			);
 			path = Receipts;
+			sourceTree = "<group>";
+		};
+		FAE4DC2C241DCBAF0082C1F3 /* EmulatorBackend */ = {
+			isa = PBXGroup;
+			children = (
+				FAE4DC23241DC9500082C1F3 /* EmulatorBackend.m */,
+				FAE4DC25241DCA180082C1F3 /* EmulatorBackend.h */,
+				FAE4DC26241DCA4E0082C1F3 /* Gme.h */,
+				FAE4DC29241DCAD80082C1F3 /* Sid.m */,
+				FAE4DC27241DCAAE0082C1F3 /* Gme.m */,
+				FAE4DC2D241DCBD00082C1F3 /* Sid.h */,
+				FAE4DC2E241DE1270082C1F3 /* EmulatorBackendPrivate.h */,
+			);
+			path = EmulatorBackend;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -1478,8 +1503,10 @@
 				FA7995A9241C4453008F9816 /* resid-builder.cpp in Sources */,
 				FA15870A2404C74A00F48261 /* Spc_Filter.cpp in Sources */,
 				FA1586EE2404C74A00F48261 /* Classic_Emu.cpp in Sources */,
+				FAE4DC24241DC9500082C1F3 /* EmulatorBackend.m in Sources */,
 				FA1587062404C74A00F48261 /* Blip_Buffer.cpp in Sources */,
 				FA5A25CB23F5BF4A00D4C28A /* SettingsView.swift in Sources */,
+				FAE4DC2A241DCAD80082C1F3 /* Sid.m in Sources */,
 				FA1586F22404C74A00F48261 /* Snes_Spc.cpp in Sources */,
 				FAC00FA123F728F00072F78C /* NowPlayingMiniView.swift in Sources */,
 				FA1587052404C74A00F48261 /* Gb_Cpu.cpp in Sources */,
@@ -1537,6 +1564,7 @@
 				FA7995C2241C4453008F9816 /* FilterModelConfig8580.cpp in Sources */,
 				FA1586F12404C74A00F48261 /* M3u_Playlist.cpp in Sources */,
 				FA79960A241C4453008F9816 /* mos6526.cpp in Sources */,
+				FAE4DC28241DCAAE0082C1F3 /* Gme.m in Sources */,
 				FA1587012404C74A00F48261 /* Fir_Resampler.cpp in Sources */,
 				FA2D8855240089D30058713E /* VisualEffectView.swift in Sources */,
 				FA1586F02404C74A00F48261 /* Nes_Oscs.cpp in Sources */,

@@ -13,18 +13,6 @@
 
 @class AppDelegate;
 
-@interface TrackInfo : NSObject
-
-@property NSString *title;
-@property NSString *artist;
-@property NSString *system;
-@property NSString *game;
-@property int play_length;
-@property int length;
-@property int intro_length;
-@property int loop_length;
-@end
-
 @interface AudioEngine : NSObject
 
 + (AudioEngine *)sharedInstance;
@@ -32,16 +20,14 @@
 - (void)setTrack:(int)track;
 - (void)setMuteVoices:(int)mask;
 - (int)getVoiceCount;
-- (const char *)getVoiceName:(int)index;
+- (NSString *)getVoiceName:(int)index;
 - (void)play;
 - (void)pause;
 - (void)stop;
 - (void)nextTrack;
 - (void)prevTrack;
-- (TrackInfo *)getCurrentTrackInfo;
 - (int)getElapsedTime;
 - (BOOL)getTrackEnded;
-- (void)fadeOutCurrentTrack;
 - (void)setFadeTime:(int)msec;
 - (void)setTempo:(double)tempo;
 - (void)ignoreSilence;
