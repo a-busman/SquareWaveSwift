@@ -16,10 +16,40 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     static var playbackState = PlaybackState()
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
+
         FirebaseApp.configure()
+        
+        let receiptFetcher = ReceiptFetcher()
+        
+        receiptFetcher.fetchReceipt()
+        
+        let receiptValidator = ReceiptValidator()
+        let validationResult = receiptValidator.validateReceipt()
+        
+        switch validationResult {
+        case .success(let receipt):
+            self.grantPremiumToPreviousUser(receipt: receipt)
+        case .error(let error):
+            NSLog("\(error.localizedDescription)")
+        }
         self.createDirectories()
         
         return true
+    }
+    
+    func grantPremiumToPreviousUser(receipt: ParsedReceipt) {
+        // cast the string into integer (build number)
+        guard let originalAppVersionString = receipt.originalAppVersion,
+              let originalBuildNumber = Int(originalAppVersionString) else {
+            return
+        }
+        
+        // the last build number that the app is still a paid app
+        if originalBuildNumber < 10 {
+            // grant user premium feature here
+            PlaybackStateProperty.purchased.setProperty(newValue: true)
+            AppDelegate.playbackState.restricted = false
+        }
     }
     
     static func updatePlaybackState(hasTracks: Bool) {

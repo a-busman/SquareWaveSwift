@@ -91,6 +91,9 @@
 		FAC0768C23F513D10096B786 /* FileEngine.m in Sources */ = {isa = PBXBuildFile; fileRef = FAC0768923F513D10096B786 /* FileEngine.m */; };
 		FAC0768D23F513D10096B786 /* AudioEngine.m in Sources */ = {isa = PBXBuildFile; fileRef = FAC0768A23F513D10096B786 /* AudioEngine.m */; };
 		FAC0772423F5142F0096B786 /* Podfile in Resources */ = {isa = PBXBuildFile; fileRef = FAC0772323F5142F0096B786 /* Podfile */; };
+		FAE4DC30242582920082C1F3 /* ReceiptFetcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAE4DC2F242582920082C1F3 /* ReceiptFetcher.swift */; };
+		FAE4DC332425847C0082C1F3 /* SwiftyLocalReceiptValidator.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAE4DC322425847C0082C1F3 /* SwiftyLocalReceiptValidator.swift */; };
+		FAE4DC36242584D30082C1F3 /* pkcs7_union_accessors.c in Sources */ = {isa = PBXBuildFile; fileRef = FAE4DC35242584D30082C1F3 /* pkcs7_union_accessors.c */; };
 		FC81EBF7FFCC439B50CFA002 /* Pods_Square_Waves.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 66B060E1199A1D58C2C8AB14 /* Pods_Square_Waves.framework */; };
 /* End PBXBuildFile section */
 
@@ -270,6 +273,11 @@
 		FAC0768A23F513D10096B786 /* AudioEngine.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AudioEngine.m; sourceTree = "<group>"; };
 		FAC0768B23F513D10096B786 /* FileEngine.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FileEngine.h; sourceTree = "<group>"; };
 		FAC0772323F5142F0096B786 /* Podfile */ = {isa = PBXFileReference; lastKnownFileType = text; path = Podfile; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
+		FAE4DC2F242582920082C1F3 /* ReceiptFetcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReceiptFetcher.swift; sourceTree = "<group>"; };
+		FAE4DC312425844E0082C1F3 /* AppleIncRootCertificate.cer */ = {isa = PBXFileReference; lastKnownFileType = file; path = AppleIncRootCertificate.cer; sourceTree = "<group>"; };
+		FAE4DC322425847C0082C1F3 /* SwiftyLocalReceiptValidator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwiftyLocalReceiptValidator.swift; sourceTree = "<group>"; };
+		FAE4DC34242584AA0082C1F3 /* pkcs7_union_accessors.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = pkcs7_union_accessors.h; sourceTree = "<group>"; };
+		FAE4DC35242584D30082C1F3 /* pkcs7_union_accessors.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = pkcs7_union_accessors.c; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -460,9 +468,14 @@
 			isa = PBXGroup;
 			children = (
 				FA5A25DB23F6157000D4C28A /* Square Wave.entitlements */,
+				FAE4DC312425844E0082C1F3 /* AppleIncRootCertificate.cer */,
 				FA8CEAF22416E48C00649CBE /* GoogleService-Info.plist */,
+				FAE4DC322425847C0082C1F3 /* SwiftyLocalReceiptValidator.swift */,
+				FAE4DC34242584AA0082C1F3 /* pkcs7_union_accessors.h */,
+				FAE4DC35242584D30082C1F3 /* pkcs7_union_accessors.c */,
 				FAC0768623F513920096B786 /* Engine */,
 				FA822D3523F1F81C005FCFB3 /* AppDelegate.swift */,
+				FAE4DC2F242582920082C1F3 /* ReceiptFetcher.swift */,
 				FA822D3723F1F81C005FCFB3 /* SceneDelegate.swift */,
 				FA822D3E23F1F81E005FCFB3 /* Assets.xcassets */,
 				FA822D4323F1F81E005FCFB3 /* LaunchScreen.storyboard */,
@@ -746,6 +759,7 @@
 				FA1586FF2404C74A00F48261 /* Spc_Cpu.cpp in Sources */,
 				FA1587082404C74A00F48261 /* Gb_Apu.cpp in Sources */,
 				FA1586EC2404C74A00F48261 /* Sap_Cpu.cpp in Sources */,
+				FAE4DC332425847C0082C1F3 /* SwiftyLocalReceiptValidator.swift in Sources */,
 				FA1587032404C74A00F48261 /* Kss_Scc_Apu.cpp in Sources */,
 				FA1587162404C74A00F48261 /* Spc_Dsp.cpp in Sources */,
 				FA1586EF2404C74A00F48261 /* Sap_Apu.cpp in Sources */,
@@ -771,11 +785,13 @@
 				FA15870B2404C74A00F48261 /* Data_Reader.cpp in Sources */,
 				FA5A25D123F5C75000D4C28A /* GamesView.swift in Sources */,
 				FA2D8853240075140058713E /* PlaylistView.swift in Sources */,
+				FAE4DC30242582920082C1F3 /* ReceiptFetcher.swift in Sources */,
 				FA15871C2404C74A00F48261 /* Hes_Emu.cpp in Sources */,
 				FA244AFE240CC8EA0086DD77 /* AddToPlaylistView.swift in Sources */,
 				FA1587092404C74A00F48261 /* Vgm_Emu_Impl.cpp in Sources */,
 				FA15870F2404C74A00F48261 /* Ay_Apu.cpp in Sources */,
 				FA1586EA2404C74A00F48261 /* Gbs_Emu.cpp in Sources */,
+				FAE4DC36242584D30082C1F3 /* pkcs7_union_accessors.c in Sources */,
 				FA1587002404C74A00F48261 /* Ym2612_MAME.cpp in Sources */,
 				FA15871A2404C74A00F48261 /* Ym2413_Emu.cpp in Sources */,
 				FA1586FA2404C74A00F48261 /* Hes_Apu.cpp in Sources */,

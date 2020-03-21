@@ -30,6 +30,12 @@ enum PlaybackStateProperty: String {
     case tempo              = "tempo"
     /// How to sort tracks
     case sortType           = "sortType"
+    /// How many tracks played today
+    case playCount          = "playCount"
+    /// Date started playing
+    case playDate           = "playDate"
+    /// Determines if app was purchased or not
+    case purchased          = "purchased"
 
     /**
      Gets a property from userdefaults, or initializes a new value.
@@ -54,6 +60,8 @@ enum PlaybackStateProperty: String {
                 }
             }
             return nil
+        case .playCount:
+            fallthrough
         case .sortType:
             fallthrough
         case .lastPlayedTracknum:
@@ -64,6 +72,8 @@ enum PlaybackStateProperty: String {
         case .trackLength:
             let trackLength = UserDefaults.standard.integer(forKey: self.rawValue)
             return trackLength == 0 ? 150000 as? T : trackLength as? T
+        case .purchased:
+            fallthrough
         case .loopTrack:
             fallthrough
         case .shuffleTracks:
@@ -71,6 +81,8 @@ enum PlaybackStateProperty: String {
         case .tempo:
             let value = UserDefaults.standard.double(forKey: self.rawValue)
             return value == 0.0 ? 1.0 as? T : value as? T
+        case .playDate:
+            return UserDefaults.standard.object(forKey: self.rawValue) as? T
         }
     }
     
@@ -86,6 +98,8 @@ enum PlaybackStateProperty: String {
             } else {
                 UserDefaults.standard.removeObject(forKey: self.rawValue)
             }
+        case .playCount:
+            fallthrough
         case .sortType:
             fallthrough
         case .lastPlayedTracknum:
@@ -96,6 +110,8 @@ enum PlaybackStateProperty: String {
             if let num = newValue as? Int {
                 UserDefaults.standard.set(num, forKey: self.rawValue)
             }
+        case .purchased:
+            fallthrough
         case .loopTrack:
             fallthrough
         case .shuffleTracks:
@@ -104,6 +120,10 @@ enum PlaybackStateProperty: String {
             }
         case .tempo:
             if let val = newValue as? Double {
+                UserDefaults.standard.set(val, forKey: self.rawValue)
+            }
+        case .playDate:
+            if let val = newValue as? Date {
                 UserDefaults.standard.set(val, forKey: self.rawValue)
             }
         }
@@ -176,13 +196,13 @@ class PlaybackState: ObservableObject {
         }
     }
     /// Time in ms the currently playing track has progressed.
-    var elapsedTime   = 0
+    var elapsedTime = 0
     /// Whether or not to keep looping the current track.
-    @Published var loopTrack     = false
+    @Published var loopTrack = false
     /// Whether or not to play the current track list in a random order.
     @Published var shuffleTracks = false
     /// Current tempo of playing track
-    @Published var currentTempo  = 1.0
+    @Published var currentTempo = 1.0
     /// Whether or not the current track has finished playing.
     private var trackEnded: Bool = false
     /// Timer used to update track information and determine if track has ended
@@ -193,6 +213,28 @@ class PlaybackState: ObservableObject {
     @Published var muteMask: Int = 0
     /// Whether or not there are any tracks in the DB
     @Published var hasTracks: Bool = false
+    /// Count of how many tracks are played today
+    @Published var playCount: Int = 0 {
+        didSet {
+            if self.playCount > self.playCountLimit {
+                if let purchased: Bool = PlaybackStateProperty.purchased.getProperty() {
+                    if !purchased {
+                        self.restricted = true
+                    } else {
+                        self.restricted = false
+                    }
+                }
+            } else {
+                self.restricted = false
+            }
+        }
+    }
+    /// When playback originally started
+    @Published var playDate: Date?
+    /// Determine if playback is restricted due to lack of purchase
+    @Published var restricted: Bool = false
+    
+    let playCountLimit = 5
     
     // MARK: - Initialization
     /**
@@ -200,6 +242,13 @@ class PlaybackState: ObservableObject {
      - Returns: New playback state
      */
     init() {
+        self.playCount = PlaybackStateProperty.playCount.getProperty() ?? 0
+        self.playDate = PlaybackStateProperty.playCount.getProperty()
+        
+        if self.playDate?.addingTimeInterval(24 * 60 * 60) ?? Date() >= Date() {
+            self.playDate = nil
+            self.playCount = 0
+        }
         UIApplication.shared.beginReceivingRemoteControlEvents()
         let commandCenter = MPRemoteCommandCenter.shared()
         
@@ -516,6 +565,9 @@ class PlaybackState: ObservableObject {
         guard !self.isNowPlaying else {
             return
         }
+        guard !self.restricted else {
+            return
+        }
         guard self.currentTracklist.count > 0 else {
             self.populateTrackList()
             if (self.currentTracklist.count > 0) {
@@ -532,6 +584,7 @@ class PlaybackState: ObservableObject {
             AudioEngine.sharedInstance()?.play()
             self.setFade()
         }
+        
 
         
     }
@@ -567,6 +620,9 @@ class PlaybackState: ObservableObject {
      - Parameter track: Track to play.
      */
     private func play(_ track: Track) {
+        guard !self.restricted else {
+            return
+        }
         self.elapsedTime = 0
         self.nowPlayingTrack = track
         self.nowPlayingInfo[MPNowPlayingInfoPropertyPlaybackRate] = 1.0
@@ -587,6 +643,11 @@ class PlaybackState: ObservableObject {
             DispatchQueue.main.async {
                 self.isNowPlaying = true
             }
+        }
+        self.playCount += 1
+        if self.playDate == nil {
+            self.playDate = Date()
+            PlaybackStateProperty.playDate.setProperty(newValue: self.playDate)
         }
     }
     

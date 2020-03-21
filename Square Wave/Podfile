@@ -9,4 +9,5 @@ target 'Square Waves' do
   pod 'SSZipArchive'
   pod 'Firebase/Analytics'
   pod 'Firebase/Crashlytics'
+  pod 'OpenSSL-Universal'
 end
