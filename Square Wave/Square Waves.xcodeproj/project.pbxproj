@@ -467,15 +467,11 @@
 		FA822D3423F1F81C005FCFB3 /* Square Wave */ = {
 			isa = PBXGroup;
 			children = (
+				FAE4DC372426CADA0082C1F3 /* Receipts */,
 				FA5A25DB23F6157000D4C28A /* Square Wave.entitlements */,
-				FAE4DC312425844E0082C1F3 /* AppleIncRootCertificate.cer */,
 				FA8CEAF22416E48C00649CBE /* GoogleService-Info.plist */,
-				FAE4DC322425847C0082C1F3 /* SwiftyLocalReceiptValidator.swift */,
-				FAE4DC34242584AA0082C1F3 /* pkcs7_union_accessors.h */,
-				FAE4DC35242584D30082C1F3 /* pkcs7_union_accessors.c */,
 				FAC0768623F513920096B786 /* Engine */,
 				FA822D3523F1F81C005FCFB3 /* AppDelegate.swift */,
-				FAE4DC2F242582920082C1F3 /* ReceiptFetcher.swift */,
 				FA822D3723F1F81C005FCFB3 /* SceneDelegate.swift */,
 				FA822D3E23F1F81E005FCFB3 /* Assets.xcassets */,
 				FA822D4323F1F81E005FCFB3 /* LaunchScreen.storyboard */,
@@ -546,6 +542,18 @@
 				FAC0768723F513D10096B786 /* Square Wave-Bridging-Header.h */,
 			);
 			path = Engine;
+			sourceTree = "<group>";
+		};
+		FAE4DC372426CADA0082C1F3 /* Receipts */ = {
+			isa = PBXGroup;
+			children = (
+				FAE4DC312425844E0082C1F3 /* AppleIncRootCertificate.cer */,
+				FAE4DC2F242582920082C1F3 /* ReceiptFetcher.swift */,
+				FAE4DC322425847C0082C1F3 /* SwiftyLocalReceiptValidator.swift */,
+				FAE4DC34242584AA0082C1F3 /* pkcs7_union_accessors.h */,
+				FAE4DC35242584D30082C1F3 /* pkcs7_union_accessors.c */,
+			);
+			path = Receipts;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
