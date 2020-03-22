@@ -19,19 +19,37 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
         FirebaseApp.configure()
         
-        let receiptFetcher = ReceiptFetcher()
+        var purchased: Bool? = PlaybackStateProperty.purchased.getProperty()
         
-        receiptFetcher.fetchReceipt()
-        
-        let receiptValidator = ReceiptValidator()
-        let validationResult = receiptValidator.validateReceipt()
-        
-        switch validationResult {
-        case .success(let receipt):
-            self.grantPremiumToPreviousUser(receipt: receipt)
-        case .error(let error):
-            NSLog("\(error.localizedDescription)")
+        if purchased != true {
+            if let product = IAPManager.shared.getProductIDs()?.first {
+                let iap = UserDefaults.standard.bool(forKey: product)
+                if iap == true {
+                    PlaybackStateProperty.purchased.setProperty(newValue: true)
+                    AppDelegate.playbackState.restricted = false
+                    AppDelegate.playbackState.purchased = true
+                    purchased = true
+                } else {
+                    PlaybackStateProperty.purchased.setProperty(newValue: false)
+                }
+            }
         }
+        if purchased != true {
+            let receiptFetcher = ReceiptFetcher()
+            
+            receiptFetcher.fetchReceipt()
+            
+            let receiptValidator = ReceiptValidator()
+            let validationResult = receiptValidator.validateReceipt()
+            
+            switch validationResult {
+            case .success(let receipt):
+                self.grantPremiumToPreviousUser(receipt: receipt)
+            case .error(let error):
+                NSLog("\(error.localizedDescription)")
+            }
+        }
+        IAPManager.shared.startObserving()
         self.createDirectories()
         
         return true
@@ -46,9 +64,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         // the last build number that the app is still a paid app
         if originalBuildNumber < 10 {
-            // grant user premium feature here
             PlaybackStateProperty.purchased.setProperty(newValue: true)
             AppDelegate.playbackState.restricted = false
+            AppDelegate.playbackState.purchased = true
         }
     }
     
@@ -110,6 +128,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // Called when the user discards a scene session.
         // If any sessions were discarded while the application was not running, this will be called shortly after application:didFinishLaunchingWithOptions.
         // Use this method to release any resources that were specific to the discarded scenes, as they will not return.
+    }
+    
+    func applicationWillTerminate(_ application: UIApplication) {
+        IAPManager.shared.stopObserving()
     }
     
     // MARK: - Core Data stack

@@ -104,6 +104,7 @@ struct NowPlayingView: View {
     @State var optionsShowing: Bool = false
     @State var playbackRate: Double = 2
     @State var elapsedTimer: Timer?
+    @State var purchased: Bool = false
     var showsHandle = true
     let impactGenerator = UIImpactFeedbackGenerator()
     let selectionGenerator = UISelectionFeedbackGenerator()
@@ -223,7 +224,7 @@ struct NowPlayingView: View {
                                         Image(systemName: "checkmark")
                                     }
                                 }
-                            }
+                            }.disabled(!self.getEnabled(index))
                         }
                     }
                 }.padding(.horizontal)
@@ -389,6 +390,7 @@ struct NowPlayingView: View {
         }.onAppear {
             self.impactGenerator.prepare()
             self.selectionGenerator.prepare()
+            self.purchased = Util.getPurchased()
             if self.playbackState.isNowPlaying {
                 self.elapsedTimer = Timer.scheduledTimer(withTimeInterval: 0.5, repeats: true, block: { _ in
                     self.updateTimes()
@@ -398,6 +400,11 @@ struct NowPlayingView: View {
             }
             self.updateTimes()
         }
+    }
+    
+    func getEnabled(_ index: Int32) -> Bool {
+        let indexValid = index < 2
+        return indexValid || self.purchased
     }
     
     func updateTimes() {

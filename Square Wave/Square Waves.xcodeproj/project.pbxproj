@@ -94,6 +94,10 @@
 		FAE4DC30242582920082C1F3 /* ReceiptFetcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAE4DC2F242582920082C1F3 /* ReceiptFetcher.swift */; };
 		FAE4DC332425847C0082C1F3 /* SwiftyLocalReceiptValidator.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAE4DC322425847C0082C1F3 /* SwiftyLocalReceiptValidator.swift */; };
 		FAE4DC36242584D30082C1F3 /* pkcs7_union_accessors.c in Sources */ = {isa = PBXBuildFile; fileRef = FAE4DC35242584D30082C1F3 /* pkcs7_union_accessors.c */; };
+		FAE4DC39242708360082C1F3 /* IAPManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAE4DC38242708360082C1F3 /* IAPManager.swift */; };
+		FAE4DC3A24270B320082C1F3 /* AppleIncRootCertificate.cer in Resources */ = {isa = PBXBuildFile; fileRef = FAE4DC312425844E0082C1F3 /* AppleIncRootCertificate.cer */; };
+		FAE4DC3C24280A790082C1F3 /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FAE4DC3B24280A790082C1F3 /* StoreKit.framework */; };
+		FAE4DC3E24280AC60082C1F3 /* IAP_ProductIDs.plist in Resources */ = {isa = PBXBuildFile; fileRef = FAE4DC3D24280AC60082C1F3 /* IAP_ProductIDs.plist */; };
 		FC81EBF7FFCC439B50CFA002 /* Pods_Square_Waves.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 66B060E1199A1D58C2C8AB14 /* Pods_Square_Waves.framework */; };
 /* End PBXBuildFile section */
 
@@ -278,6 +282,9 @@
 		FAE4DC322425847C0082C1F3 /* SwiftyLocalReceiptValidator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwiftyLocalReceiptValidator.swift; sourceTree = "<group>"; };
 		FAE4DC34242584AA0082C1F3 /* pkcs7_union_accessors.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = pkcs7_union_accessors.h; sourceTree = "<group>"; };
 		FAE4DC35242584D30082C1F3 /* pkcs7_union_accessors.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = pkcs7_union_accessors.c; sourceTree = "<group>"; };
+		FAE4DC38242708360082C1F3 /* IAPManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IAPManager.swift; sourceTree = "<group>"; };
+		FAE4DC3B24280A790082C1F3 /* StoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = StoreKit.framework; path = System/Library/Frameworks/StoreKit.framework; sourceTree = SDKROOT; };
+		FAE4DC3D24280AC60082C1F3 /* IAP_ProductIDs.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = IAP_ProductIDs.plist; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -285,6 +292,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				FAE4DC3C24280A790082C1F3 /* StoreKit.framework in Frameworks */,
 				FA244B00241072DC0086DD77 /* CloudKit.framework in Frameworks */,
 				FC81EBF7FFCC439B50CFA002 /* Pods_Square_Waves.framework in Frameworks */,
 			);
@@ -310,6 +318,7 @@
 		7C4BEDAAD9AF5E2C2797924A /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				FAE4DC3B24280A790082C1F3 /* StoreKit.framework */,
 				FA244AFF241072DC0086DD77 /* CloudKit.framework */,
 				66B060E1199A1D58C2C8AB14 /* Pods_Square_Waves.framework */,
 			);
@@ -483,6 +492,7 @@
 				FA2D8852240075140058713E /* PlaylistView.swift */,
 				FA244AFD240CC8EA0086DD77 /* AddToPlaylistView.swift */,
 				FA5A25CA23F5BF4A00D4C28A /* SettingsView.swift */,
+				FAE4DC38242708360082C1F3 /* IAPManager.swift */,
 				FA5A25CC23F5C6F800D4C28A /* PlaylistsView.swift */,
 				FA244AFB240CAE370086DD77 /* TextView.swift */,
 				FA8CEAF02415C56E00649CBE /* Util.swift */,
@@ -501,6 +511,7 @@
 				FAA4083023F8B55100E3F2A4 /* ListArtView.swift */,
 				FA15871F24056D3500F48261 /* RootViewController.swift */,
 				FA1587462406E36900F48261 /* Main.storyboard */,
+				FAE4DC3D24280AC60082C1F3 /* IAP_ProductIDs.plist */,
 			);
 			path = "Square Wave";
 			sourceTree = "<group>";
@@ -547,9 +558,9 @@
 		FAE4DC372426CADA0082C1F3 /* Receipts */ = {
 			isa = PBXGroup;
 			children = (
-				FAE4DC312425844E0082C1F3 /* AppleIncRootCertificate.cer */,
 				FAE4DC2F242582920082C1F3 /* ReceiptFetcher.swift */,
 				FAE4DC322425847C0082C1F3 /* SwiftyLocalReceiptValidator.swift */,
+				FAE4DC312425844E0082C1F3 /* AppleIncRootCertificate.cer */,
 				FAE4DC34242584AA0082C1F3 /* pkcs7_union_accessors.h */,
 				FAE4DC35242584D30082C1F3 /* pkcs7_union_accessors.c */,
 			);
@@ -664,8 +675,10 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				FAE4DC3A24270B320082C1F3 /* AppleIncRootCertificate.cer in Resources */,
 				FA244AF8240A28130086DD77 /* SongTableViewCell.xib in Resources */,
 				FA822D4523F1F81E005FCFB3 /* LaunchScreen.storyboard in Resources */,
+				FAE4DC3E24280AC60082C1F3 /* IAP_ProductIDs.plist in Resources */,
 				FA1587472406E36900F48261 /* Main.storyboard in Resources */,
 				FA822D4223F1F81E005FCFB3 /* Preview Assets.xcassets in Resources */,
 				FAC0772423F5142F0096B786 /* Podfile in Resources */,
@@ -826,6 +839,7 @@
 				FA1587112404C74A00F48261 /* Sap_Emu.cpp in Sources */,
 				FA5A25CF23F5C74200D4C28A /* PlatformsView.swift in Sources */,
 				FA1587122404C74A00F48261 /* Kss_Emu.cpp in Sources */,
+				FAE4DC39242708360082C1F3 /* IAPManager.swift in Sources */,
 				FA1586F82404C74A00F48261 /* Effects_Buffer.cpp in Sources */,
 				FAC00F9F23F718870072F78C /* NowPlayingView.swift in Sources */,
 				FAC00F9D23F61F3E0072F78C /* FilePicker.swift in Sources */,
@@ -999,7 +1013,7 @@
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = "Square Wave/Square Wave.entitlements";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 10;
 				DEFINES_MODULE = YES;
 				DEVELOPMENT_ASSET_PATHS = "\"Square Wave/Preview Content\"";
 				DEVELOPMENT_TEAM = D9J98STRHA;
@@ -1009,7 +1023,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.1.1;
+				MARKETING_VERSION = 1.2;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.abusman.Square-Wave";
 				PRODUCT_NAME = "Square Waves";
 				SWIFT_OBJC_BRIDGING_HEADER = "Square Wave/Engine/Square Wave-Bridging-Header.h";
@@ -1027,7 +1041,7 @@
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = "Square Wave/Square Wave.entitlements";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 10;
 				DEFINES_MODULE = YES;
 				DEVELOPMENT_ASSET_PATHS = "\"Square Wave/Preview Content\"";
 				DEVELOPMENT_TEAM = D9J98STRHA;
@@ -1037,7 +1051,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.1.1;
+				MARKETING_VERSION = 1.2;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.abusman.Square-Wave";
 				PRODUCT_NAME = "Square Waves";
 				SWIFT_OBJC_BRIDGING_HEADER = "Square Wave/Engine/Square Wave-Bridging-Header.h";

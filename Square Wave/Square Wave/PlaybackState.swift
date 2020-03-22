@@ -130,6 +130,10 @@ enum PlaybackStateProperty: String {
     }
 }
 
+protocol PlaybackStateDelegate {
+    func restricted()
+    func openSettings()
+}
 // MARK: -
 /// Overall playback state of the app.
 class PlaybackState: ObservableObject {
@@ -216,13 +220,19 @@ class PlaybackState: ObservableObject {
     /// Count of how many tracks are played today
     @Published var playCount: Int = 0 {
         didSet {
-            if self.playCount > self.playCountLimit {
+            PlaybackStateProperty.playCount.setProperty(newValue: self.playCount)
+            if self.playCount >= self.playCountLimit {
                 if let purchased: Bool = PlaybackStateProperty.purchased.getProperty() {
                     if !purchased {
                         self.restricted = true
                     } else {
                         self.restricted = false
                     }
+                }
+                if self.playDateExpired() {
+                    self.playDate = Date()
+                    self.playCount = 0
+                    self.restricted = false
                 }
             } else {
                 self.restricted = false
@@ -232,9 +242,21 @@ class PlaybackState: ObservableObject {
     /// When playback originally started
     @Published var playDate: Date?
     /// Determine if playback is restricted due to lack of purchase
-    @Published var restricted: Bool = false
+    @Published var restricted: Bool = false {
+        didSet {
+            if restricted {
+                self.delegate?.restricted()
+            }
+        }
+    }
+    
+    @Published var purchased: Bool = false
     
     let playCountLimit = 5
+    
+    private var firstPlay = true
+    
+    var delegate: PlaybackStateDelegate?
     
     // MARK: - Initialization
     /**
@@ -243,9 +265,8 @@ class PlaybackState: ObservableObject {
      */
     init() {
         self.playCount = PlaybackStateProperty.playCount.getProperty() ?? 0
-        self.playDate = PlaybackStateProperty.playCount.getProperty()
-        
-        if self.playDate?.addingTimeInterval(24 * 60 * 60) ?? Date() >= Date() {
+        self.playDate = PlaybackStateProperty.playDate.getProperty()
+        if self.playDateExpired() {
             self.playDate = nil
             self.playCount = 0
         }
@@ -395,6 +416,22 @@ class PlaybackState: ObservableObject {
         } catch {
             NSLog("Could not get now playing playlist: \(error.localizedDescription)")
         }
+    }
+    
+    /**
+     Determines if saved play date has expired.
+     - Returns: Whether or not date has expired.
+     */
+    func playDateExpired() -> Bool {
+        #if DEBUG
+        let dateLimit = self.playDate?.addingTimeInterval(60) ?? Date()
+        #else
+        let dateLimit = self.playDate?.addingTimeInterval(24 * 60 * 60) ?? Date()
+        #endif
+        if dateLimit <= Date() {
+            return true
+        }
+        return false
     }
     
     /**
@@ -560,20 +597,31 @@ class PlaybackState: ObservableObject {
     /**
      Plays the current track. If there is no current track, it will populate the track list with all tracks, and begin playing at the beginning.
      Also updates MPNowPlayingInfoCenter
+     - Returns: Whether or not playback was restricted
      */
-    func play() {
+    @discardableResult func play() -> Bool {
         guard !self.isNowPlaying else {
-            return
+            return true
+        }
+        if self.playDateExpired() {
+            self.playDate = nil
+            self.playCount = 0
+        }
+        
+        if self.firstPlay {
+            self.playCount += 1
+            self.firstPlay = false
         }
         guard !self.restricted else {
-            return
+            self.delegate?.restricted()
+            return false
         }
         guard self.currentTracklist.count > 0 else {
             self.populateTrackList()
             if (self.currentTracklist.count > 0) {
-                self.play(index: 0)
+                return self.play(index: 0)
             }
-            return
+            return true
         }
         self.isNowPlaying = true
         self.nowPlayingInfo[MPNowPlayingInfoPropertyPlaybackRate] = self.currentTempo
@@ -584,9 +632,7 @@ class PlaybackState: ObservableObject {
             AudioEngine.sharedInstance()?.play()
             self.setFade()
         }
-        
-
-        
+        return true
     }
     /**
      Pauses the currently playing track, and updates MPNowPlayingInfoCenter
@@ -603,25 +649,34 @@ class PlaybackState: ObservableObject {
     /**
      Plays a given index in the current track list
      - Parameter index: Index to play
+     - Returns: Whether or not playback was restricted
      */
-    func play(index: Int) {
-        guard index < self.currentTracklist.count else { return }
+    @discardableResult func play(index: Int) -> Bool {
+        guard index < self.currentTracklist.count else { return true }
         let track = self.currentTracklist[index]
         if self.shuffleTracks {
             self.shuffle(true)
         } else {
             self.trackNum = index
         }
-        self.play(track)
+        return self.play(track)
     }
     
     /**
      Plays a given track.
      - Parameter track: Track to play.
+     - Returns: Whether or not playback was restricted
      */
-    private func play(_ track: Track) {
+    @discardableResult private func play(_ track: Track) -> Bool {
+        if self.playDateExpired() {
+            self.playDate = nil
+            self.playCount = 0
+        }
+        self.playCount += 1
+        self.firstPlay = false
         guard !self.restricted else {
-            return
+            self.delegate?.restricted()
+            return false
         }
         self.elapsedTime = 0
         self.nowPlayingTrack = track
@@ -644,11 +699,13 @@ class PlaybackState: ObservableObject {
                 self.isNowPlaying = true
             }
         }
-        self.playCount += 1
+        
         if self.playDate == nil {
             self.playDate = Date()
             PlaybackStateProperty.playDate.setProperty(newValue: self.playDate)
         }
+        
+        return true
     }
     
     /**
@@ -663,26 +720,27 @@ class PlaybackState: ObservableObject {
     
     /**
      If another track is available in the current track list, play the next track
+     - Returns: Whether or not playback was restricted
      */
-    func nextTrack() {
-        guard (self.trackNum + 1) < self.currentTracklist.count else { return }
+    @discardableResult func nextTrack() -> Bool {
+        guard (self.trackNum + 1) < self.currentTracklist.count else { return true }
         self.trackNum += 1
         let nextTrack = self.currentTracklist[self.trackNum]
-        self.play(nextTrack)
+        return self.play(nextTrack)
     }
     
     /**
      If we aren't already at the first track in the track list, play the previous track. Will restart current track if over 3 seconds of playback has occurred on current track.
+     - Returns: Whether or not playback was restricted
      */
-    func prevTrack() {
+    @discardableResult func prevTrack() -> Bool {
         guard ((self.trackNum - 1) >= 0 && self.elapsedTime < 3000) else {
             self.stop()
-            self.play()
-            return
+            return self.play()
         }
         self.trackNum -= 1
         let prevTrack = self.currentTracklist[self.trackNum]
-        self.play(prevTrack)
+        return self.play(prevTrack)
     }
 }
 

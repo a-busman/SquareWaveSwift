@@ -19,4 +19,8 @@ class Util {
         }
         return ret
     }
+    
+    class func getPurchased() -> Bool {
+        return PlaybackStateProperty.purchased.getProperty() ?? false
+    }
 }

@@ -71,52 +71,73 @@ struct PlaylistRowView: View {
 
 struct PlaylistsView: View {
     @Environment(\.managedObjectContext) var context
+    @EnvironmentObject var playbackState: PlaybackState
     @State var newPlaylistShowing = false
+    @State var purchased = false
     @FetchRequest(entity: Playlist.entity(), sortDescriptors: [NSSortDescriptor(keyPath: \Playlist.dateAdded, ascending: true)], predicate: NSPredicate(format: "isNowPlaying != true")) var playlists: FetchedResults<Playlist>
     var body: some View {
-        List {
-            Button(action: {
-                self.newPlaylistShowing.toggle()
-            }) {
-                PlaylistRowView(uiImage: Binding(get: {
-                    UIImage(named: "placeholder-playlist") ?? UIImage()
-                }, set: { _ in
-                    
-                }), text: .constant("New Playlist..."), blurViewVisible: true)
-            }
-            ForEach(self.playlists, id: \.self) { (playlist: Playlist) in
-                NavigationLink(destination: PlaylistView(playlist: playlist)) {
-                    PlaylistRowView(uiImage: Binding(get: {
-                        self.getPlaylistImage(playlist)
-                    }, set: { _ in
-                        
-                    }), text: Binding(get: {
-                        playlist.name ?? ""
-                    }, set: { _ in
-                        
-                    }))
-                }
-            }.onDelete(perform: { indexSet in
-                for index in indexSet {
-                    let playlist = self.playlists[index]
-                    if let imageUrl = playlist.art,
-                        let fullUrl = Util.getPlaylistImagesDirectory()?.appendingPathComponent(imageUrl.lastPathComponent) {
-                        if FileManager.default.isDeletableFile(atPath: fullUrl.path) {
-                            do {
-                                try FileManager.default.removeItem(at: fullUrl)
-                                NSLog("Successfully deleted playlist art at \(fullUrl.path)")
-                            } catch {
-                                NSLog("Failed to delete playlist art at \(fullUrl.path)")
-                            }
-                        }
+        Group {
+            if self.purchased || self.playbackState.purchased{
+                List {
+                    Button(action: {
+                        self.newPlaylistShowing.toggle()
+                    }) {
+                        PlaylistRowView(uiImage: Binding(get: {
+                            UIImage(named: "placeholder-playlist") ?? UIImage()
+                        }, set: { _ in
+                            
+                        }), text: .constant("New Playlist..."), blurViewVisible: true)
                     }
-                    self.context.delete(playlist)
-                    try? self.context.save()
+                    ForEach(self.playlists, id: \.self) { (playlist: Playlist) in
+                        NavigationLink(destination: PlaylistView(playlist: playlist)) {
+                            PlaylistRowView(uiImage: Binding(get: {
+                                self.getPlaylistImage(playlist)
+                            }, set: { _ in
+                                
+                            }), text: Binding(get: {
+                                playlist.name ?? ""
+                            }, set: { _ in
+                                
+                            }))
+                        }
+                    }.onDelete(perform: { indexSet in
+                        for index in indexSet {
+                            let playlist = self.playlists[index]
+                            if let imageUrl = playlist.art,
+                                let fullUrl = Util.getPlaylistImagesDirectory()?.appendingPathComponent(imageUrl.lastPathComponent) {
+                                if FileManager.default.isDeletableFile(atPath: fullUrl.path) {
+                                    do {
+                                        try FileManager.default.removeItem(at: fullUrl)
+                                        NSLog("Successfully deleted playlist art at \(fullUrl.path)")
+                                    } catch {
+                                        NSLog("Failed to delete playlist art at \(fullUrl.path)")
+                                    }
+                                }
+                            }
+                            self.context.delete(playlist)
+                            try? self.context.save()
+                        }
+                    })
+                }.navigationBarTitle(Text("Playlists"))
+                .sheet(isPresented: self.$newPlaylistShowing) {
+                    NewPlaylistView()
                 }
-            })
-        }.navigationBarTitle(Text("Playlists"))
-        .sheet(isPresented: self.$newPlaylistShowing) {
-            NewPlaylistView()
+            } else {
+                VStack {
+                    Spacer()
+                    Text("Playlists are a premium feature. Buy premium to get this and more!").padding()
+                    Button(action: {self.playbackState.delegate?.openSettings()}) {
+                        ZStack {
+                            RoundedRectangle(cornerRadius: 10).foregroundColor(.blue)
+                            Text("Buy Premium").foregroundColor(.white)
+                        }.frame(maxWidth: 200, maxHeight: 50)
+                    }.padding()
+                    Spacer()
+                }.navigationBarTitle(Text("Playlists"))
+            }
+        }
+        .onAppear {
+            self.purchased = Util.getPurchased()
         }
     }
     

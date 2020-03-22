@@ -10,7 +10,24 @@ import UIKit
 import SwiftUI
 import Combine
 
-class RootViewController: UISplitViewController, UISplitViewControllerDelegate, FileEngineDelegate {
+class RootViewController: UISplitViewController, UISplitViewControllerDelegate, FileEngineDelegate, PlaybackStateDelegate {
+    func restricted() {
+        let alert = UIAlertController(title: "Play Count Exceeded", message: "You have exceeded the maximum amount of tracks per day.\nWould you like to purchase premium?", preferredStyle: .alert)
+        
+        let yesAction = UIAlertAction(title: "Yes", style: .default, handler: { _ in
+            self.settingsPressed(sender: UIBarButtonItem())
+        })
+        let noAction = UIAlertAction(title: "No", style: .cancel)
+        alert.addAction(yesAction)
+        alert.addAction(noAction)
+        self.npController.dismiss(animated: true)
+        self.libraryController.present(alert, animated: true)
+    }
+    
+    func openSettings() {
+        self.settingsPressed(sender: UIBarButtonItem())
+    }
+    
     let reloadBarButtonItem = UIBarButtonItem(barButtonSystemItem: .refresh, target: self, action: #selector(refreshPressed))
     let addBarButtonItem = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(addPressed))
     let activityIndicator = UIActivityIndicatorView(style: .medium)
@@ -38,6 +55,7 @@ class RootViewController: UISplitViewController, UISplitViewControllerDelegate, 
     var navController = UINavigationController()
     var libraryController: UIViewController!
     var splitController = UISplitViewController()
+    var npController = UIViewController()
     
     func setBarItems(_ barItem: UIBarButtonItem) {
         self.libraryController.navigationItem.setRightBarButtonItems([
@@ -61,7 +79,9 @@ class RootViewController: UISplitViewController, UISplitViewControllerDelegate, 
 
         let delegate = UIApplication.shared.delegate as! AppDelegate
         let context = delegate.persistentContainer.viewContext
-        self.libraryController = UIHostingController(rootView: LibraryView().environment(\.managedObjectContext, context).environmentObject(AppDelegate.playbackState))
+        let playbackState = AppDelegate.playbackState
+        playbackState.delegate = self
+        self.libraryController = UIHostingController(rootView: LibraryView().environment(\.managedObjectContext, context).environmentObject(playbackState))
 
         self.navController = UINavigationController(rootViewController: self.libraryController)
         
@@ -73,12 +93,12 @@ class RootViewController: UISplitViewController, UISplitViewControllerDelegate, 
         
         
         let miniDelegate = NowPlayingMiniViewDelegate()
-        let miniViewController = UIHostingController(rootView: NowPlayingMiniView(delegate: miniDelegate).environmentObject(AppDelegate.playbackState))
+        let miniViewController = UIHostingController(rootView: NowPlayingMiniView(delegate: miniDelegate).environmentObject(playbackState))
         
         if UIDevice.current.userInterfaceIdiom == .phone {
-            let npController = UIHostingController(rootView: NowPlayingView().environmentObject(AppDelegate.playbackState))
+            self.npController = UIHostingController(rootView: NowPlayingView().environmentObject(AppDelegate.playbackState))
             self.cancellable = miniDelegate.didChange.sink { _ in
-                self.present(npController, animated: true)
+                self.present(self.npController, animated: true)
             }
         
             let blurView = UIVisualEffectView(effect: UIBlurEffect(style: .systemUltraThinMaterial))
@@ -103,12 +123,11 @@ class RootViewController: UISplitViewController, UISplitViewControllerDelegate, 
             blurView.trailingAnchor.constraint(equalTo: self.view.trailingAnchor).isActive = true
         }
         
-        var npController = UIViewController()
         
         if UIDevice.current.userInterfaceIdiom == .pad {
-            npController = UIHostingController(rootView: NowPlayingView(showsHandle: false).environmentObject(AppDelegate.playbackState))
+            self.npController = UIHostingController(rootView: NowPlayingView(showsHandle: false).environmentObject(playbackState))
         }
-        self.viewControllers = [self.navController, npController]
+        self.viewControllers = [self.navController, self.npController]
     }
     
     func splitViewController(_ splitViewController: UISplitViewController, collapseSecondary secondaryViewController: UIViewController, onto primaryViewController: UIViewController) -> Bool {

@@ -251,7 +251,7 @@ struct ListArtView: View {
         case StringMap.turbo.rawValue:
             imageName = "turbografx"
         default:
-            return nil
+            imageName = "placeholder-art"
         }
         return UIImage(named: imageName)
     }

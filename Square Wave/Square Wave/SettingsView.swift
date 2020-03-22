@@ -6,6 +6,7 @@
 //  Copyright © 2020 Alex Busman. All rights reserved.
 //
 
+import StoreKit
 import SwiftUI
 
 struct PickerView: UIViewRepresentable {
@@ -90,6 +91,11 @@ struct SettingsView: View {
     @State var trackLength: [Int] = SettingsView.getTrackLength(from: PlaybackStateProperty.trackLength.getProperty() ?? 150000)
     @State var isShowingPicker = false
     @State var deleteShowing = false
+    @State var iapFailureShowing = false
+    @State var iapPrice = ""
+    @State var iapProduct: SKProduct?
+    @State var iapError = ""
+    @State var purchased = false
     
     static func getTrackLength(from ms: Int) -> [Int] {
         var ret: [Int] = []
@@ -105,14 +111,17 @@ struct SettingsView: View {
     var body: some View {
         NavigationView {
             Form {
-                Section(footer: Text("For tracks without loop information, you can choose how long you want the track to play for before moving on to the next track.")) {
+                Section(footer: Text("For tracks without loop information, you can choose how long you want the track to play for before moving on to the next track.").font(.footnote)) {
                     Button(action: {self.isShowingPicker.toggle()}) {
                         HStack {
                             Text("Track Length")
+                            .foregroundColor(Color(.label))
                             Spacer()
                             Text(String(format: "%d:%02d", self.trackLength[0], self.trackLength[2]))
+                                .foregroundColor(self.purchased ? Color(.label) : Color(.secondaryLabel))
                         }
-                    }.foregroundColor(Color(.label))
+                    }
+                        .disabled(!self.purchased)
                     if self.isShowingPicker {
                         PickerView(data: self.timesToChoose, selections: Binding(
                             get: {
@@ -125,7 +134,7 @@ struct SettingsView: View {
                         ))
                     }
                 }
-                Section(footer: Text("For tracks with loop information, you can choose how many times you want the track to loop before moving on to the next track.")) {
+                Section(footer: Text("For tracks with loop information, you can choose how many times you want the track to loop before moving on to the next track.").font(.footnote)) {
                     HStack {
                         Stepper(value: Binding(
                             get: {
@@ -136,11 +145,37 @@ struct SettingsView: View {
                             }), in: 1...20) {
                             HStack {
                                 Text("Loop Count")
+                                .foregroundColor(Color(.label))
                                 Spacer()
                                 Text("\(self.loopCount)")
+                                .foregroundColor(self.purchased ? Color(.label) : Color(.secondaryLabel))
+                            }
+                        }.disabled(!self.purchased)
+                    }
+                }
+                Section(footer: self.purchased ? Text("") : Text("With the free version, you are limited to \(self.playbackState.playCountLimit) tracks per day. Help support me, and get unlimited playback, playlist support, voice toggling, and change the track length and loop count!").font(.footnote)) {
+                    if !self.purchased {
+                        Button(action: {
+                            guard let product = self.iapProduct else { return }
+                            self.purchase(product: product)
+                        }) {
+                            HStack {
+                                Text("Buy Premium")
+                                Spacer()
+                                Text("\(self.iapPrice)")
                             }
                         }
+                        Button(action: {
+                            self.restorePurchases()
+                        }) {
+                            Text("Restore Purchases")
+                        }
+                    } else {
+                        Text("Premium Purchased. Thanks!")
+                            .foregroundColor(Color(.secondaryLabel))
                     }
+                }.alert(isPresented: self.$iapFailureShowing) {
+                    Alert(title: Text("Error"), message: Text("Could not complete purchase. \(self.iapError)"), dismissButton: Alert.Button.cancel(Text("Okay")))
                 }
                 Section {
                     Button(action: {
@@ -153,6 +188,22 @@ struct SettingsView: View {
                     .navigationBarItems(trailing: Button(action: self.dismiss) {
                         Text("Done").bold()
                 })
+                #if DEBUG
+                Section(footer: Text("DEBUG OPTIONS")) {
+                    Button(action: {
+                        self.purchased.toggle()
+                        PlaybackStateProperty.purchased.setProperty(newValue: self.purchased)
+                        if self.purchased {
+                            self.playbackState.restricted = false
+                            self.playbackState.purchased = true
+                        } else {
+                            self.playbackState.purchased = false
+                        }
+                    }) {
+                        Text("Toggle purchased")
+                    }
+                }
+                #endif
             }
         }.alert(isPresented: self.$deleteShowing) {
                 Alert(title: Text("Delete All?"), message: Text("This will delete all your music and playlists. This will NOT delete anything stored in your cloud drive.\nAre you sure?"), primaryButton: .destructive(Text("Yes, Delete")) {
@@ -160,6 +211,70 @@ struct SettingsView: View {
                     FileEngine.clearAll()
                     }, secondaryButton: .cancel())
         }.navigationViewStyle(StackNavigationViewStyle())
+            .onAppear {
+                self.purchased = Util.getPurchased()
+                self.getPurchasePrice()
+        }
+    }
+    
+    private func showIAPError(_ error: Error) {
+        self.iapError = error.localizedDescription
+        self.iapFailureShowing = true
+    }
+    
+    @discardableResult private func purchase(product: SKProduct) -> Bool {
+        if !IAPManager.shared.canMakePayments() {
+            self.iapError = "Account cannot make payments"
+            self.iapFailureShowing = true
+            return false
+        } else {
+            IAPManager.shared.buy(product: product) { (result) in
+                DispatchQueue.main.async {
+                    switch result {
+                    case .success(_):
+                        PlaybackStateProperty.purchased.setProperty(newValue: true)
+                        AppDelegate.playbackState.restricted = false
+                        AppDelegate.playbackState.purchased = true
+                        self.purchased = true
+                    case .failure(let error): self.showIAPError(error)
+                    }
+                }
+            }
+            return true
+        }
+    }
+    
+    private func restorePurchases() {
+        IAPManager.shared.restorePurchases { (result) in
+            DispatchQueue.main.async {
+                switch result {
+                case .success(let success):
+                    if success {
+                        PlaybackStateProperty.purchased.setProperty(newValue: true)
+                        AppDelegate.playbackState.restricted = false
+                        self.purchased = true
+                    } else {
+                        NSLog("No products to be restored")
+                    }
+
+                case .failure(let error): self.showIAPError(error)
+                }
+            }
+        }
+    }
+    
+    private func getPurchasePrice() {
+        IAPManager.shared.getProducts { (result) in
+            switch result {
+            case .success(let products):
+                if products.count == 1 {
+                    self.iapProduct = products.first
+                    self.iapPrice = IAPManager.shared.getPriceFormatted(for: products.first!) ?? ""
+                }
+            case .failure(let error):
+                NSLog("Failed to get in-app products: \(error.localizedDescription)")
+            }
+        }
     }
 }
 
