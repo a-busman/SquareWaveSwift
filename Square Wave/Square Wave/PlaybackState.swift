@@ -251,8 +251,11 @@ class PlaybackState: ObservableObject {
     }
     
     @Published var purchased: Bool = false
-    
+    #if DEBUG
     let playCountLimit = 5
+    #else
+    let playCountLimit = 20
+    #endif
     
     private var firstPlay = true
     
