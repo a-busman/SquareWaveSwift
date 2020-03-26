@@ -182,7 +182,6 @@ struct UIListView: UIViewRepresentable {
     func didTapRow(track: Track) {
         self.playbackState.currentTracklist = self.rows as! [Track]
         let index = self.rows.firstIndex(of: track) ?? 0
-        NSLog("Index: \(index) in \(self.rows.count) tracks")
         self.playbackState.play(index: index)
     }
 

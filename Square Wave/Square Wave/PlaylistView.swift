@@ -14,7 +14,6 @@ class PlaylistModel: ObservableObject {
         didSet {
             if let playlist = self.playlist {
                 playlist.tracks = NSOrderedSet(array: self.tracks)
-                NSLog("Setting playlist to have \(self.tracks.count) tracks")
                 let delegate = UIApplication.shared.delegate as! AppDelegate
                 delegate.saveContext()
             }
@@ -36,13 +35,12 @@ class PlaylistModel: ObservableObject {
     var playlist: Playlist?
     
     init() {
-        NSLog("Empty init")
+
     }
     
     init(playlist: Playlist) {
         if let tracks = playlist.tracks {
             self.tracks = tracks.array as! [Track]
-            NSLog("PlaylistModel with \(self.tracks.count) tracks")
         }
         self.titleText = playlist.name ?? ""
         self.playlist = playlist
@@ -110,7 +108,6 @@ class PlaylistModel: ObservableObject {
                 let data = image!.pngData()
                 do {
                     try data?.write(to: filename)
-                    NSLog("Wrote image to \(filename.path)")
                     playlist.art = url
                     delegate.saveContext()
                 } catch {
@@ -244,7 +241,6 @@ struct PlaylistView: View {
     }
     
     init(playlist: Playlist) {
-        NSLog("Playlist with \(playlist.tracks?.count ?? 0) tracks")
         self.playlistModel = PlaylistModel(playlist: playlist)
     }
 
@@ -288,7 +284,6 @@ struct PlaylistView: View {
                 Divider().padding(.leading)
             }
             UIListView(rows: Binding(get: {
-                NSLog("Updating List with \(self.playlistModel.tracks.count) tracks")
                 return self.playlistModel.tracks
             }, set: { value in
                 self.playlistModel.objectWillChange.send()

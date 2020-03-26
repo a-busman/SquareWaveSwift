@@ -36,17 +36,15 @@ class RootViewController: UISplitViewController, UISplitViewControllerDelegate, 
     let notificationGenerator = UINotificationFeedbackGenerator()
     
     func progress(_ currentIndex: UInt, total: UInt) {
-        NSLog("\(currentIndex) out of \(total)")
+
     }
     
     func complete() {
-        NSLog("Done!")
         self.notificationGenerator.notificationOccurred(.success)
         self.setBarItems(self.reloadBarButtonItem)
     }
     
     func failed(_ error: Error) {
-        NSLog("Failed!")
         self.notificationGenerator.notificationOccurred(.error)
         self.setBarItems(self.reloadBarButtonItem)
     }

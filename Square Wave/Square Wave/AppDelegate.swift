@@ -46,7 +46,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             case .success(let receipt):
                 self.grantPremiumToPreviousUser(receipt: receipt)
             case .error(let error):
-                NSLog("\(error.localizedDescription)")
+                Analytics.logEvent("invalidReceipt", parameters: ["error" : error.localizedDescription])
             }
         }
         IAPManager.shared.startObserving()
@@ -59,6 +59,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // cast the string into integer (build number)
         guard let originalAppVersionString = receipt.originalAppVersion,
               let originalBuildNumber = Int(originalAppVersionString) else {
+                Analytics.logEvent("appVersionFailedParse", parameters: ["appVersionString" : receipt.originalAppVersion ?? "N/A"])
             return
         }
         
@@ -104,6 +105,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 do {
                     try FileManager.default.createDirectory(at: playlistImagesDir, withIntermediateDirectories: true, attributes: nil)
                 } catch {
+                    Analytics.logEvent("createImagesErr", parameters: ["error" : error.localizedDescription])
                     NSLog("Could not create playlist images directory. \(error.localizedDescription)")
                 }
             }
@@ -111,7 +113,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
     
     func application(_ application: UIApplication, open url: URL, options: [UIApplication.OpenURLOptionsKey : Any] = [:]) -> Bool {
-        NSLog("URL: \(url.absoluteString)")
         FileEngine.addFile(url, removeOriginal:true)
         return true
     }

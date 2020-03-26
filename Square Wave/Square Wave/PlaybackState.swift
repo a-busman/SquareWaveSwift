@@ -12,7 +12,7 @@ import UIKit
 import MediaPlayer
 
 
-///Playback State Properties. This is an enum that maps directly to user defaults.
+/// Playback State Properties. This is an enum that maps directly to user defaults.
 enum PlaybackStateProperty: String {
     /// UUID of last played track
     case lastPlayedTrack    = "lastPlayedTrack"
@@ -249,7 +249,7 @@ class PlaybackState: ObservableObject {
             }
         }
     }
-    
+    /// Whether or not user has purchased either the app, or the iAP
     @Published var purchased: Bool = false
     #if DEBUG
     let playCountLimit = 5

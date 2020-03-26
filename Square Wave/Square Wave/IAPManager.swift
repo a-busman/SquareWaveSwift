@@ -8,23 +8,40 @@
 
 import StoreKit
 
+/// Manages in-app purchases
 class IAPManager: NSObject {
+    /// Shared manager as singleton
     static let shared = IAPManager()
+    /// Completion handler for products received
     var onReceiveProductsHandler: ((Result<[SKProduct], IAPManagerError>) -> Void)?
+    /// Completion handler for buying products
     var onBuyProductHandler: ((Result<Bool, Error>) -> Void)?
+    /// Count of how many purchases were restored
     var totalRestoredPurchases = 0
 
+    /// Error codes
     enum IAPManagerError: Error {
+        /// No product IDs found in plist
         case noProductIDsFound
+        /// No products found from Apple
         case noProductsFound
+        /// Payment was cancelled
         case paymentWasCancelled
+        /// Failed to retrieve product
         case productRequestFailed
     }
     
+    /**
+     Private default constructor
+     */
     private override init() {
         super.init()
     }
     
+    /**
+     Get product IDs from IAP_ProductIDs.plist
+     - Returns: List of product IDs
+     */
     func getProductIDs() -> [String]? {
         guard let url = Bundle.main.url(forResource: "IAP_ProductIDs", withExtension: "plist") else { return nil }
         
@@ -38,6 +55,10 @@ class IAPManager: NSObject {
         }
     }
     
+    /**
+     Get products list from Apple with given Product IDs
+     - Parameter withHandler: Completion handler for products received
+     */
     func getProducts(withHandler productsReceiveHandler: @escaping (_ result: Result<[SKProduct], IAPManagerError>) -> Void) {
         
         onReceiveProductsHandler = productsReceiveHandler
@@ -54,6 +75,11 @@ class IAPManager: NSObject {
         request.start()
     }
     
+    /**
+     Gets the formatted price for the current locale
+     - Parameter for: Product to get price for from Apple
+     - Returns: Formatted price
+     */
     func getPriceFormatted(for product: SKProduct) -> String? {
         let formatter = NumberFormatter()
         formatter.numberStyle = .currency
@@ -61,18 +87,33 @@ class IAPManager: NSObject {
         return formatter.string(from: product.price)
     }
     
+    /**
+     Starts observing the SKPaymentQueue
+     */
     func startObserving() {
         SKPaymentQueue.default().add(self)
     }
      
+    /**
+     Stops observing the SKPaymentQueue
+     */
     func stopObserving() {
         SKPaymentQueue.default().remove(self)
     }
     
+    /**
+     Check if account/device can make payments
+     - Returns: Whether or not account/device can make payments
+     */
     func canMakePayments() -> Bool {
         return SKPaymentQueue.canMakePayments()
     }
     
+    /**
+     Attempts to buy the given product
+     - Parameter product: Product to purchase
+     - Parameter withHandler: Completion handler for buying products
+     */
     func buy(product: SKProduct, withHandler handler: @escaping ((_ result: Result<Bool, Error>) -> Void)) {
         let payment = SKPayment(product: product)
         SKPaymentQueue.default().add(payment)
@@ -80,6 +121,10 @@ class IAPManager: NSObject {
         onBuyProductHandler = handler
     }
     
+    /**
+     Attempts to restore purchases
+     - Parameter withHandler: Completion handler for buying products
+     */
     func restorePurchases(withHandler handler: @escaping ((_ result: Result<Bool, Error>) -> Void)) {
         onBuyProductHandler = handler
         totalRestoredPurchases = 0

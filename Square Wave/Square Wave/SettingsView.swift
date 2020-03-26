@@ -153,14 +153,14 @@ struct SettingsView: View {
                         }.disabled(!self.purchased)
                     }
                 }
-                Section(footer: self.purchased ? Text("") : Text("With the free version, you are limited to \(self.playbackState.playCountLimit) tracks per day. Help support me, and get unlimited playback, playlist support, voice toggling, and change the track length and loop count!").font(.footnote)) {
+                Section(footer: self.purchased ? Text("") : Text("With the free version, you are limited to \(self.playbackState.playCountLimit) tracks per day. Upgrade, and get unlimited playback, playlist support, voice toggling, and more!").font(.footnote)) {
                     if !self.purchased {
                         Button(action: {
                             guard let product = self.iapProduct else { return }
                             self.purchase(product: product)
                         }) {
                             HStack {
-                                Text("Buy Premium")
+                                Text("Upgrade")
                                 Spacer()
                                 Text("\(self.iapPrice)")
                             }
@@ -171,7 +171,7 @@ struct SettingsView: View {
                             Text("Restore Purchases")
                         }
                     } else {
-                        Text("Premium Purchased. Thanks!")
+                        Text("Upgrade Purchased. Thanks!")
                             .foregroundColor(Color(.secondaryLabel))
                     }
                 }.alert(isPresented: self.$iapFailureShowing) {

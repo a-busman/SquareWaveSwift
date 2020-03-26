@@ -47,7 +47,6 @@ struct NewPlaylistView: View {
                 let data = image!.pngData()
                 do {
                     try data?.write(to: filename)
-                    NSLog("Wrote image to \(filename.path)")
                     playlist.art = url
                     delegate.saveContext()
                 } catch {

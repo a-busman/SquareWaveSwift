@@ -108,7 +108,6 @@ struct PlaylistsView: View {
                                 if FileManager.default.isDeletableFile(atPath: fullUrl.path) {
                                     do {
                                         try FileManager.default.removeItem(at: fullUrl)
-                                        NSLog("Successfully deleted playlist art at \(fullUrl.path)")
                                     } catch {
                                         NSLog("Failed to delete playlist art at \(fullUrl.path)")
                                     }
@@ -125,13 +124,13 @@ struct PlaylistsView: View {
             } else {
                 VStack {
                     Spacer()
-                    Text("Playlists are a premium feature. Buy premium to get this and more!").padding()
+                    Text("Playlists are a premium feature. Upgrade to get this and more!").multilineTextAlignment(.center).padding()
                     Button(action: {self.playbackState.delegate?.openSettings()}) {
                         ZStack {
                             RoundedRectangle(cornerRadius: 10).foregroundColor(.blue)
-                            Text("Buy Premium").foregroundColor(.white)
+                            Text("Sounds like fun!").foregroundColor(.white)
                         }.frame(maxWidth: 200, maxHeight: 50)
-                    }.padding()
+                    }.padding().padding(Edge.Set(arrayLiteral: .bottom), 125)
                     Spacer()
                 }.navigationBarTitle(Text("Playlists"))
             }
