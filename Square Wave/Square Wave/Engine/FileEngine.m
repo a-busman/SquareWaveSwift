@@ -10,6 +10,8 @@
 #import <UIKit/UIKit.h>
 #import <CoreData/CoreData.h>
 #import "SSZipArchive.h"
+#import "UnrarKit.h"
+#import "LzmaSDKObjC.h"
 #include "gme/gme.h"
 #include <CommonCrypto/CommonDigest.h>
 #import "Square_Waves-Swift.h"
@@ -18,6 +20,8 @@
 @implementation FileEngine
 
 const NSString * kZipFolder          = @"Zip";
+const NSString * kRarFolder          = @"Rar";
+const NSString * k7ZipFolder         = @"7Zip";
 const NSString * kMSXFolder          = @"MSX";
 const NSString * kNESFolder          = @"NES";
 const NSString * kSNESFolder         = @"SNES";
@@ -28,12 +32,14 @@ const NSString * kSpectrumFolder     = @"Spectrum";
 const NSString * kTurboGrafxFolder   = @"TurboGrafx";
 const NSString * kMasterSystemFolder = @"MasterSystem";
 
-const NSString * const kSupportedFileTypes[] = { @"zip", @"nsf", @"ay", @"gbs", @"gym", @"hes", @"kss", @"sap", @"spc", @"vgm" };
+const NSString * const kSupportedFileTypes[] = { @"zip", @"7z", @"rar", @"nsf", @"ay", @"gbs", @"gym", @"hes", @"kss", @"sap", @"spc", @"vgm" };
 
 const NSString * kAddToThisFolder = @"Add music files here";
 
 typedef enum {
     ZIP,
+    SEVEN_ZIP,
+    RAR,
     NSF,
     AY,
     GBS,
@@ -205,27 +211,8 @@ typedef enum {
         {
             NSString *destination = [[FileEngine getMusicDirectory] stringByAppendingPathComponent:kZipFolder];
             
-            // Check if Zip directory exists, create it if not, clean it if so
-            if (![defaultManager fileExistsAtPath:destination isDirectory:nil]) {
-                __DEBUG_FE(@"Creating %@", destination);
-                success = [defaultManager createDirectoryAtPath:destination withIntermediateDirectories:NO attributes:nil error:&error];
-                if (!success) {
-                    NSLog(@"Error creating directory %@: %@", destination, error);
-                    return NO;
-                }
-            } else {
-                // Remove everything from directory if it already exists
-                NSDirectoryEnumerator *enumerator = [defaultManager enumeratorAtPath:destination];
-                NSString              *file       = nil;
-
-                while (file = [enumerator nextObject]) {
-                    __DEBUG_FE(@"Removing %@", file);
-                    success = [defaultManager removeItemAtPath:[destination stringByAppendingPathComponent:file] error:&error];
-                    if (!success) {
-                        NSLog(@"Error removing %@: %@", file, error);
-                        return NO;
-                    }
-                }
+            if (![FileEngine createExtractionDirectory:destination]) {
+                return NO;
             }
             
             // Unzip file to Zip directory
@@ -245,19 +232,67 @@ typedef enum {
                     return NO;
                 }
             }
-            // Determine contents of zip file
-            NSDirectoryEnumerator *enumerator = [defaultManager enumeratorAtPath:destination];
-            NSString              *file       = nil;
-
-            while (file = [enumerator nextObject]) {
-                dispatch_async(dispatch_get_main_queue(), ^{
-                    NSError *err = nil;
-                    if (![FileEngine checkAndParseFileContents:[destination stringByAppendingPathComponent:file]]) {
-                        NSLog(@"Removing %@", [destination stringByAppendingPathComponent:file]);
-                        [defaultManager removeItemAtPath:[destination stringByAppendingPathComponent:file] error:&err];
-                    }
-                });
+            [FileEngine moveExtractedFiles:destination];
+        }
+            break;
+        case SEVEN_ZIP:
+        {
+            NSString *destination = [[FileEngine getMusicDirectory] stringByAppendingPathComponent:k7ZipFolder];
+            
+            if (![FileEngine createExtractionDirectory:destination]) {
+                return NO;
             }
+            LzmaSDKObjCReader *reader = [[LzmaSDKObjCReader alloc] initWithFileURL:[NSURL fileURLWithPath:filePath] andType:LzmaSDKObjCFileType7z];
+            
+            NSError * error = nil;
+            __DEBUG_FE(@"Opening reader to %@", destination);
+            if (![reader open:&error]) {
+                NSLog(@"Open error: %@", error);
+            }
+            NSMutableArray * items = [NSMutableArray array];
+            __DEBUG_FE(@"iterating through 7zip items at %@", destination);
+            [reader iterateWithHandler:^BOOL(LzmaSDKObjCItem * item, NSError * error){
+                NSLog(@"\n%@", item);
+                if (item) [items addObject:item]; // If needed, store to array.
+                return YES; // YES - continue iterate, NO - stop iteration
+            }];
+            __DEBUG_FE(@"Un7zipping to %@", destination);
+            [reader extract:items toPath:destination withFullPaths:YES];
+            if (reader.lastError) {
+                NSLog(@"Extract error: %@", reader.lastError);
+                return NO;
+            }
+            
+            [FileEngine moveExtractedFiles:destination];
+        }
+            break;
+        case RAR:
+        {
+            NSString *destination = [[FileEngine getMusicDirectory] stringByAppendingPathComponent:kRarFolder];
+            
+            if (![FileEngine createExtractionDirectory:destination]) {
+                return NO;
+            }
+            
+            NSError *archiveError = nil;
+            URKArchive *archive = [[URKArchive alloc] initWithPath:filePath error:&archiveError];
+            __DEBUG_FE(@"Unraring to %@", destination);
+            success = [archive extractFilesTo:destination overwrite:YES error:&error];
+            if (!success) {
+                NSLog(@"Error unraring %@ to %@: %@", filePath, destination, error);
+                return NO;
+            }
+            
+            if (removeOriginal) {
+                __DEBUG_FE(@"Removing original file %@", filePath);
+                success = [defaultManager removeItemAtPath:filePath error:&error];
+                if (!success) {
+                    NSLog(@"Error removing %@: %@", filePath, error);
+                    return NO;
+                }
+            }
+            
+            [FileEngine moveExtractedFiles:destination];
         }
             break;
         case NSF:
@@ -285,6 +320,51 @@ typedef enum {
     }
     if (removeOriginal) {
         [AppDelegate updatePlaybackStateWithHasTracks:YES];
+    }
+    return YES;
+}
+
++ (void)moveExtractedFiles:(NSString *)path {
+    NSFileManager *defaultManager = [NSFileManager defaultManager];
+    NSDirectoryEnumerator *enumerator = [defaultManager enumeratorAtPath:path];
+    NSString              *file       = nil;
+
+    while (file = [enumerator nextObject]) {
+        dispatch_async(dispatch_get_main_queue(), ^{
+            NSError *err = nil;
+            if (![FileEngine checkAndParseFileContents:[path stringByAppendingPathComponent:file]]) {
+                NSLog(@"Removing %@", [path stringByAppendingPathComponent:file]);
+                [defaultManager removeItemAtPath:[path stringByAppendingPathComponent:file] error:&err];
+            }
+        });
+    }
+}
+
++ (BOOL)createExtractionDirectory:(NSString *)path {
+    NSFileManager *defaultManager = [NSFileManager defaultManager];
+    NSError *error = nil;
+    BOOL success = NO;
+    
+    if (![defaultManager fileExistsAtPath:path isDirectory:nil]) {
+        __DEBUG_FE(@"Creating %@", path);
+        success = [defaultManager createDirectoryAtPath:path withIntermediateDirectories:NO attributes:nil error:&error];
+        if (!success) {
+            NSLog(@"Error creating directory %@: %@", path, error);
+            return NO;
+        }
+    } else {
+        // Remove everything from directory if it already exists
+        NSDirectoryEnumerator *enumerator = [defaultManager enumeratorAtPath:path];
+        NSString              *file       = nil;
+
+        while (file = [enumerator nextObject]) {
+            __DEBUG_FE(@"Removing %@", file);
+            success = [defaultManager removeItemAtPath:[path stringByAppendingPathComponent:file] error:&error];
+            if (!success) {
+                NSLog(@"Error removing %@: %@", file, error);
+                return NO;
+            }
+        }
     }
     return YES;
 }
@@ -455,7 +535,7 @@ typedef enum {
     }
     
     // If game folder doesn't exist, create it
-    gameFolder = strlen(gameInfo->game) > 0 ? [NSString stringWithUTF8String:gameInfo->game] : @"No Game";
+    gameFolder = strlen(gameInfo->game) > 0 ? [NSString stringWithUTF8String:gameInfo->game] : [[[fileObject filename] lastPathComponent] stringByDeletingPathExtension];
     gamePath   = [consolePath stringByAppendingPathComponent:gameFolder];
     
     success = [defaultManager fileExistsAtPath:gamePath isDirectory:&isDirectory];
@@ -697,7 +777,7 @@ typedef enum {
         gme_track_info(emu, &gameInfo, i);
         NSString *trackName  = strlen(gameInfo->song)   > 0 ? [NSString stringWithUTF8String:gameInfo->song]   : [NSString stringWithFormat:@"Track %d", i + 1];
         NSString *artistName = strlen(gameInfo->author) > 0 ? [NSString stringWithUTF8String:gameInfo->author] : @"No Artist";
-        NSString *gameName   = strlen(gameInfo->game)   > 0 ? [NSString stringWithUTF8String:gameInfo->game]   : @"No Game";
+        NSString *gameName   = strlen(gameInfo->game)   > 0 ? [NSString stringWithUTF8String:gameInfo->game]   : [[[fileObject filename] lastPathComponent] stringByDeletingPathExtension];
         NSString *systemName = strlen(gme_type_system(gme_type(emu))) > 0 ? [NSString stringWithUTF8String:gme_type_system(gme_type(emu))] : @"No System";
         int trackLength = gameInfo->length;
         int loopLength = gameInfo->loop_length;

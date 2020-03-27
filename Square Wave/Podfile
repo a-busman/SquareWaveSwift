@@ -7,6 +7,8 @@ target 'Square Waves' do
 
   # Pods for Square Waves
   pod 'SSZipArchive'
+  pod 'UnrarKit'
+  pod 'LzmaSDK-ObjC', :inhibit_warnings => true
   pod 'Firebase/Analytics'
   pod 'Firebase/Crashlytics'
   pod 'openssl-ios-bitcode'

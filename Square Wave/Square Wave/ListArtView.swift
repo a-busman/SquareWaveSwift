@@ -229,6 +229,7 @@ struct ListArtView: View {
         case gameboy    = "Game Boy"
         case spectrum   = "ZX Spectrum"
         case turbo      = "TurboGrafx"
+        case pcengine   = "PC Engine"
     }
     
     static func getImage(for system: String) -> UIImage? {
@@ -248,6 +249,8 @@ struct ListArtView: View {
             imageName = "gameboy"
         case StringMap.spectrum.rawValue:
             imageName = "spectrum"
+        case StringMap.pcengine.rawValue:
+            fallthrough
         case StringMap.turbo.rawValue:
             imageName = "turbografx"
         default:
