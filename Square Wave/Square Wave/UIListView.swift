@@ -431,7 +431,9 @@ struct UIListView: UIViewRepresentable {
                 self.tableView = tableView
             }
             if self.showSections {
-                return self.sectionTitles[section]
+                if section < self.sectionTitles.count {
+                    return self.sectionTitles[section]
+                }
             }
             return nil
         }

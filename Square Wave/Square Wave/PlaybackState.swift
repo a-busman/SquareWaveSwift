@@ -629,9 +629,13 @@ class PlaybackState: ObservableObject {
         self.isNowPlaying = true
         self.nowPlayingInfo[MPNowPlayingInfoPropertyPlaybackRate] = self.currentTempo
         self.updateNowPlayingInfoCenter()
+        let ignoreSilence = self.nowPlayingTrack?.length ?? 0 > 0 || self.nowPlayingTrack?.loopLength ?? 0 > 0
         DispatchQueue.global().async {
             AudioEngine.sharedInstance()?.setTempo(self.currentTempo)
             AudioEngine.sharedInstance()?.setMuteVoices(Int32(self.muteMask))
+            if ignoreSilence {
+                AudioEngine.sharedInstance()?.ignoreSilence()
+            }
             AudioEngine.sharedInstance()?.play()
             self.setFade()
         }
@@ -686,6 +690,8 @@ class PlaybackState: ObservableObject {
         self.nowPlayingInfo[MPNowPlayingInfoPropertyPlaybackRate] = 1.0
         self.updateNowPlayingInfoCenter()
         
+        let ignoreSilence = self.nowPlayingTrack?.length ?? 0 > 0 || self.nowPlayingTrack?.loopLength ?? 0 > 0
+        
         DispatchQueue.global().async {
             let path = URL(fileURLWithPath: FileEngine.getMusicDirectory()).appendingPathComponent(track.url!).path
             DispatchQueue.main.async {
@@ -696,8 +702,12 @@ class PlaybackState: ObservableObject {
             AudioEngine.sharedInstance()?.setTrack(Int32(track.trackNum))
             AudioEngine.sharedInstance()?.setTempo(self.currentTempo)
             AudioEngine.sharedInstance()?.setMuteVoices(Int32(self.muteMask))
+            if ignoreSilence {
+                AudioEngine.sharedInstance()?.ignoreSilence()
+            }
             AudioEngine.sharedInstance()?.play()
             self.setFade()
+
             DispatchQueue.main.async {
                 self.isNowPlaying = true
             }

@@ -211,7 +211,7 @@ typedef enum {
         {
             NSString *destination = [[FileEngine getMusicDirectory] stringByAppendingPathComponent:kZipFolder];
             
-            if (![FileEngine createExtractionDirectory:destination]) {
+            if (![FileEngine prepareExtractionDirectory:destination]) {
                 return NO;
             }
             
@@ -239,7 +239,7 @@ typedef enum {
         {
             NSString *destination = [[FileEngine getMusicDirectory] stringByAppendingPathComponent:k7ZipFolder];
             
-            if (![FileEngine createExtractionDirectory:destination]) {
+            if (![FileEngine prepareExtractionDirectory:destination]) {
                 return NO;
             }
             LzmaSDKObjCReader *reader = [[LzmaSDKObjCReader alloc] initWithFileURL:[NSURL fileURLWithPath:filePath] andType:LzmaSDKObjCFileType7z];
@@ -270,7 +270,7 @@ typedef enum {
         {
             NSString *destination = [[FileEngine getMusicDirectory] stringByAppendingPathComponent:kRarFolder];
             
-            if (![FileEngine createExtractionDirectory:destination]) {
+            if (![FileEngine prepareExtractionDirectory:destination]) {
                 return NO;
             }
             
@@ -307,7 +307,7 @@ typedef enum {
         {
             dispatch_async(dispatch_get_main_queue(), ^{
                 NSError *err = nil;
-                if (![FileEngine checkAndParseFileContents:url.path]) {
+                if (![FileEngine checkAndParseFileContents:url.path m3uPaths:nil]) {
                     NSLog(@"Removing %@", url.path);
                     [defaultManager removeItemAtPath:url.path error:&err];
                 }
@@ -328,11 +328,20 @@ typedef enum {
     NSFileManager *defaultManager = [NSFileManager defaultManager];
     NSDirectoryEnumerator *enumerator = [defaultManager enumeratorAtPath:path];
     NSString              *file       = nil;
-
+    NSArray               *fileList   = [defaultManager contentsOfDirectoryAtPath:path error:nil];
+    NSMutableArray        *m3uPaths   = [NSMutableArray array];
+    for (file in fileList) {
+        if ([[file pathExtension] isEqualToString:@"m3u"]) {
+            [m3uPaths addObject:[path stringByAppendingPathComponent:file]];
+        }
+    }
     while (file = [enumerator nextObject]) {
+        if ([[file pathExtension] isEqualToString:@"m3u"]) {
+            continue;
+        }
         dispatch_async(dispatch_get_main_queue(), ^{
             NSError *err = nil;
-            if (![FileEngine checkAndParseFileContents:[path stringByAppendingPathComponent:file]]) {
+            if (![FileEngine checkAndParseFileContents:[path stringByAppendingPathComponent:file] m3uPaths:m3uPaths]) {
                 NSLog(@"Removing %@", [path stringByAppendingPathComponent:file]);
                 [defaultManager removeItemAtPath:[path stringByAppendingPathComponent:file] error:&err];
             }
@@ -340,7 +349,7 @@ typedef enum {
     }
 }
 
-+ (BOOL)createExtractionDirectory:(NSString *)path {
++ (BOOL)prepareExtractionDirectory:(NSString *)path {
     NSFileManager *defaultManager = [NSFileManager defaultManager];
     NSError *error = nil;
     BOOL success = NO;
@@ -369,7 +378,7 @@ typedef enum {
     return YES;
 }
 
-+ (BOOL)checkAndParseFileContents:(NSString *)path {
++ (BOOL)checkAndParseFileContents:(NSString *)path m3uPaths:(NSArray *)m3uPaths {
     AppDelegate            *delegate      = (AppDelegate *)[[UIApplication sharedApplication] delegate];
     NSManagedObjectContext *objectContext = delegate.persistentContainer.viewContext;
     NSFetchRequest         *request       = [NSFetchRequest fetchRequestWithEntityName:@"File"];
@@ -386,7 +395,7 @@ typedef enum {
             [newFile setExt:[path pathExtension]];
             [newFile setChecksum:checksum];
             [newFile setFilename:path];
-            [FileEngine parseAudioFileContents:newFile];
+            [FileEngine parseAudioFileContents:newFile m3uPaths:m3uPaths];
         } else {
             NSLog(@"File: %@ already imported.", path);
             return NO;
@@ -436,7 +445,7 @@ typedef enum {
  * @param [in]fileObject Preformed file object.
  * @return NO for failure, YES for success
  */
-+ (BOOL)parseAudioFileContents:(File *)fileObject {
++ (BOOL)parseAudioFileContents:(File *)fileObject m3uPaths:(NSArray *)m3uPaths {
     BOOL success     = false;
     BOOL isDirectory = false;
     
@@ -461,6 +470,12 @@ typedef enum {
     
     if (emu == nil) {
         return NO;
+    }
+    
+    if (m3uPaths != nil) {
+        for (NSString *path in m3uPaths) {
+            handle_error(gme_load_m3u(emu, [path UTF8String]));
+        }
     }
     
     handle_error(gme_track_info(emu, &gameInfo, 0));
@@ -573,7 +588,7 @@ typedef enum {
     
     // Add all tracks found in file to database
     [FileEngine addToDatabase:emu relativePath:[[consoleFolder stringByAppendingPathComponent:gameFolder] stringByAppendingPathComponent:[filePath lastPathComponent]] fileObject:fileObject];
-    
+    gme_delete(emu);
     return YES;
 }
 /**
@@ -602,7 +617,16 @@ typedef enum {
         if (![FileEngine removeTrack:tracks[i]]) {
             ret = NO;
         }
-        NSLog(@"deleting %d of %lu", i, (unsigned long)[tracks count]);
+    }
+    
+    NSString *folder = [[FileEngine getMusicDirectory] stringByAppendingPathComponent:[game folder]];
+    if ([[NSFileManager defaultManager] isDeletableFileAtPath:folder]) {
+        NSError *error = nil;
+        [[NSFileManager defaultManager] removeItemAtPath:folder error:&error];
+        if (error != nil) {
+            NSLog(@"Failed to remove folder: %@", folder);
+            ret = NO;
+        }
     }
     return ret;
 }
@@ -844,6 +868,7 @@ typedef enum {
             [gameMO setName:gameName];
             [gameMO setYear:strlen(gameInfo->copyright) > 0 ? [NSString stringWithUTF8String:gameInfo->copyright] : [NSString stringWithFormat:@"No Year"]];
             [gameMO setSystem:systemMO];
+            [gameMO setFolder:[relativePath stringByDeletingLastPathComponent]];
         }
         
         [trackMO setGame:gameMO];

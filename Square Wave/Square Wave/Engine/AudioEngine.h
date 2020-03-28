@@ -44,6 +44,7 @@
 - (void)fadeOutCurrentTrack;
 - (void)setFadeTime:(int)msec;
 - (void)setTempo:(double)tempo;
+- (void)ignoreSilence;
 - (void)resetFadeTime;
 
 @end

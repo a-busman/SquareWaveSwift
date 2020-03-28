@@ -364,6 +364,14 @@ const int kBufferCount = 3;
     return -1;
 }
 
+- (void)ignoreSilence {
+    @synchronized (self) {
+        if (_mEmu) {
+            gme_ignore_silence(_mEmu, 1);
+        }
+    }
+}
+
 // MARK: - Audio Management
 /**
  * startAudioQueue
