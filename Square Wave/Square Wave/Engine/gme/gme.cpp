@@ -309,8 +309,8 @@ gme_err_t gme_track_info( Music_Emu const* me, gme_info_t** out, int track )
 	COPY( length );
 	COPY( intro_length );
 	COPY( loop_length );
+    COPY( track_num );
 
-	info->i4  = -1;
 	info->i5  = -1;
 	info->i6  = -1;
 	info->i7  = -1;

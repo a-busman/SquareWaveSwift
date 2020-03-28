@@ -375,6 +375,8 @@ struct UIListView: UIViewRepresentable {
             let okAction = UIAlertAction(title: "Save", style: .default) { _ in
                 track.name = alert.textFields?[0].text ?? "No Name"
                 (UIApplication.shared.delegate as? AppDelegate)?.saveContext()
+                self.updateSectionTitles()
+                self.tableView?.reloadData()
             }
             let cancelAction = UIAlertAction(title: "Cancel", style: .cancel)
             

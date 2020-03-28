@@ -307,7 +307,7 @@ typedef enum {
         {
             dispatch_async(dispatch_get_main_queue(), ^{
                 NSError *err = nil;
-                if (![FileEngine checkAndParseFileContents:url.path m3uPaths:nil]) {
+                if (![FileEngine checkAndParseFileContents:url.path m3uPath:nil]) {
                     NSLog(@"Removing %@", url.path);
                     [defaultManager removeItemAtPath:url.path error:&err];
                 }
@@ -329,10 +329,15 @@ typedef enum {
     NSDirectoryEnumerator *enumerator = [defaultManager enumeratorAtPath:path];
     NSString              *file       = nil;
     NSArray               *fileList   = [defaultManager contentsOfDirectoryAtPath:path error:nil];
-    NSMutableArray        *m3uPaths   = [NSMutableArray array];
+    NSString              *m3uPath    = nil;
     for (file in fileList) {
         if ([[file pathExtension] isEqualToString:@"m3u"]) {
-            [m3uPaths addObject:[path stringByAppendingPathComponent:file]];
+            // Don't support multiple m3us
+            if (m3uPath != nil) {
+                m3uPath = nil;
+                break;
+            }
+            m3uPath = [path stringByAppendingPathComponent:file];
         }
     }
     while (file = [enumerator nextObject]) {
@@ -341,7 +346,7 @@ typedef enum {
         }
         dispatch_async(dispatch_get_main_queue(), ^{
             NSError *err = nil;
-            if (![FileEngine checkAndParseFileContents:[path stringByAppendingPathComponent:file] m3uPaths:m3uPaths]) {
+            if (![FileEngine checkAndParseFileContents:[path stringByAppendingPathComponent:file] m3uPath:m3uPath]) {
                 NSLog(@"Removing %@", [path stringByAppendingPathComponent:file]);
                 [defaultManager removeItemAtPath:[path stringByAppendingPathComponent:file] error:&err];
             }
@@ -378,7 +383,7 @@ typedef enum {
     return YES;
 }
 
-+ (BOOL)checkAndParseFileContents:(NSString *)path m3uPaths:(NSArray *)m3uPaths {
++ (BOOL)checkAndParseFileContents:(NSString *)path m3uPath:(NSString *)m3uPath {
     AppDelegate            *delegate      = (AppDelegate *)[[UIApplication sharedApplication] delegate];
     NSManagedObjectContext *objectContext = delegate.persistentContainer.viewContext;
     NSFetchRequest         *request       = [NSFetchRequest fetchRequestWithEntityName:@"File"];
@@ -395,7 +400,7 @@ typedef enum {
             [newFile setExt:[path pathExtension]];
             [newFile setChecksum:checksum];
             [newFile setFilename:path];
-            [FileEngine parseAudioFileContents:newFile m3uPaths:m3uPaths];
+            [FileEngine parseAudioFileContents:newFile m3uPath:m3uPath];
         } else {
             NSLog(@"File: %@ already imported.", path);
             return NO;
@@ -445,7 +450,7 @@ typedef enum {
  * @param [in]fileObject Preformed file object.
  * @return NO for failure, YES for success
  */
-+ (BOOL)parseAudioFileContents:(File *)fileObject m3uPaths:(NSArray *)m3uPaths {
++ (BOOL)parseAudioFileContents:(File *)fileObject m3uPath:(NSString *)m3uPath {
     BOOL success     = false;
     BOOL isDirectory = false;
     
@@ -472,10 +477,8 @@ typedef enum {
         return NO;
     }
     
-    if (m3uPaths != nil) {
-        for (NSString *path in m3uPaths) {
-            handle_error(gme_load_m3u(emu, [path UTF8String]));
-        }
+    if (m3uPath != nil) {
+        handle_error(gme_load_m3u(emu, [m3uPath UTF8String]));
     }
     
     handle_error(gme_track_info(emu, &gameInfo, 0));
@@ -797,7 +800,9 @@ typedef enum {
 
     __DEBUG_FE(@"database location: %@", delegate.persistentContainer.persistentStoreCoordinator.persistentStores.firstObject.URL);
     [fileObject setFilename:relativePath];
-    for (int i = 0; i < gme_track_count(emu); i++) {
+    
+    int trackCount = gme_track_count(emu);
+    for (int i = 0; i < trackCount; i++) {
         gme_track_info(emu, &gameInfo, i);
         NSString *trackName  = strlen(gameInfo->song)   > 0 ? [NSString stringWithUTF8String:gameInfo->song]   : [NSString stringWithFormat:@"Track %d", i + 1];
         NSString *artistName = strlen(gameInfo->author) > 0 ? [NSString stringWithUTF8String:gameInfo->author] : @"No Artist";
@@ -806,6 +811,7 @@ typedef enum {
         int trackLength = gameInfo->length;
         int loopLength = gameInfo->loop_length;
         int introLength = gameInfo->intro_length;
+        int trackNum = gameInfo->track_num;
         
         NSPredicate *predicate = [NSPredicate predicateWithFormat:@"name == %@ AND artist.name == %@ AND game.name == %@ AND system.name == %@", trackName, artistName, gameName, systemName];
         [request setPredicate:predicate];
@@ -825,7 +831,7 @@ typedef enum {
         [trackMO setId:[NSUUID UUID]];
         [trackMO setName:trackName];
         [trackMO setFavourite:NO];
-        [trackMO setTrackNum:i];
+        [trackMO setTrackNum:trackNum >= 0 ? trackNum : i];
         [trackMO setUrl:relativePath];
         [trackMO setLength:trackLength];
         [trackMO setIntroLength:introLength];
