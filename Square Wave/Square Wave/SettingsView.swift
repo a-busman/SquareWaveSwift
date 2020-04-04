@@ -111,10 +111,10 @@ struct SettingsView: View {
     var body: some View {
         NavigationView {
             Form {
-                Section(footer: Text("For tracks without loop information, you can choose how long you want the track to play for before moving on to the next track.").font(.footnote)) {
+                Section(footer: Text(NSLocalizedString("Track Length Description", comment: "Track Length Description")).font(.footnote)) {
                     Button(action: {self.isShowingPicker.toggle()}) {
                         HStack {
-                            Text("Track Length")
+                            Text(NSLocalizedString("Track Length", comment: "Track Length"))
                             .foregroundColor(Color(.label))
                             Spacer()
                             Text(String(format: "%d:%02d", self.trackLength[0], self.trackLength[2]))
@@ -134,7 +134,7 @@ struct SettingsView: View {
                         ))
                     }
                 }
-                Section(footer: Text("For tracks with loop information, you can choose how many times you want the track to loop before moving on to the next track.").font(.footnote)) {
+                Section(footer: Text(NSLocalizedString("Loop Count Description", comment: "Loop Count Description")).font(.footnote)) {
                     HStack {
                         Stepper(value: Binding(
                             get: {
@@ -144,7 +144,7 @@ struct SettingsView: View {
                                 PlaybackStateProperty.loopCount.setProperty(newValue: newValue)
                             }), in: 1...20) {
                             HStack {
-                                Text("Loop Count")
+                                Text(NSLocalizedString("Loop Count", comment: "Loop Count"))
                                 .foregroundColor(Color(.label))
                                 Spacer()
                                 Text("\(self.loopCount)")
@@ -153,14 +153,14 @@ struct SettingsView: View {
                         }.disabled(!self.purchased)
                     }
                 }
-                Section(footer: self.purchased ? Text("") : Text("With the free version, you are limited to \(self.playbackState.playCountLimit) tracks per day. Upgrade, and get unlimited playback, playlist support, voice toggling, and more!").font(.footnote)) {
+                Section(footer: self.purchased ? Text("") : Text(String.localizedStringWithFormat(NSLocalizedString("Upgrade Description %@", comment: "Upgrade Description"), "\(self.playbackState.playCountLimit)")).font(.footnote)) {
                     if !self.purchased {
                         Button(action: {
                             guard let product = self.iapProduct else { return }
                             self.purchase(product: product)
                         }) {
                             HStack {
-                                Text("Upgrade")
+                                Text(NSLocalizedString("Upgrade", comment: "Upgrade"))
                                 Spacer()
                                 Text("\(self.iapPrice)")
                             }
@@ -168,25 +168,25 @@ struct SettingsView: View {
                         Button(action: {
                             self.restorePurchases()
                         }) {
-                            Text("Restore Purchases")
+                            Text(NSLocalizedString("Restore Purchases", comment: "Restore Purchases"))
                         }
                     } else {
-                        Text("Upgrade Purchased. Thanks!")
+                        Text(NSLocalizedString("Upgrade Purchased", comment: "Upgrade Purchased"))
                             .foregroundColor(Color(.secondaryLabel))
                     }
                 }.alert(isPresented: self.$iapFailureShowing) {
-                    Alert(title: Text("Error"), message: Text("Could not complete purchase. \(self.iapError)"), dismissButton: Alert.Button.cancel(Text("Okay")))
+                    Alert(title: Text(NSLocalizedString("Error", comment: "Error")), message: Text(String.localizedStringWithFormat(NSLocalizedString("Purchase Error Description", comment: "Purchase Error Description %@"), self.iapError)), dismissButton: Alert.Button.cancel(Text(NSLocalizedString("Okay", comment: "Okay"))))
                 }
                 Section {
                     Button(action: {
                         UINotificationFeedbackGenerator().notificationOccurred(.warning)
                         self.deleteShowing.toggle()
                     }) {
-                        Text("Delete All")
+                        Text(NSLocalizedString("Delete All", comment: "Delete All"))
                     }.foregroundColor(.red)
-                }.navigationBarTitle("Settings", displayMode: .inline)
+                }.navigationBarTitle(Text(NSLocalizedString("Settings", comment: "Settings")), displayMode: .inline)
                     .navigationBarItems(trailing: Button(action: self.dismiss) {
-                        Text("Done").bold()
+                        Text(NSLocalizedString("Done", comment: "Done")).bold()
                 })
                 #if DEBUG
                 Section(footer: Text("DEBUG OPTIONS")) {
@@ -206,7 +206,7 @@ struct SettingsView: View {
                 #endif
             }
         }.alert(isPresented: self.$deleteShowing) {
-                Alert(title: Text("Delete All?"), message: Text("This will delete all your music and playlists. This will NOT delete anything stored in your cloud drive.\nAre you sure?"), primaryButton: .destructive(Text("Yes, Delete")) {
+            Alert(title: Text(NSLocalizedString("Delete All Question", comment: "Delete All Question")), message: Text(NSLocalizedString("Delete All Description", comment: "Delete All Description")), primaryButton: .destructive(Text(NSLocalizedString("Delete All Confirm", comment: "Delete All Confirmation"))) {
                     self.playbackState.clearCurrentPlaybackState()
                     FileEngine.clearAll()
                     }, secondaryButton: .cancel())

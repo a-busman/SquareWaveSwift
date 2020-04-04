@@ -254,7 +254,7 @@ struct PlaylistView: View {
                     .cornerRadius(5.0)
                     .padding()
                 if self.isEditMode {
-                    TextView(title:"Playlist Title", text: self.$playlistModel.titleText).padding(.vertical, 5.0)
+                    TextView(title:NSLocalizedString("Playlist Title", comment: "Playlist Title"), text: self.$playlistModel.titleText).padding(.vertical, 5.0)
                     .frame(height: 128)
                 } else {
                     Text(self.playlistModel.titleText).font(.headline).padding(.vertical, 12.5).padding(.leading, 6.0)
@@ -277,7 +277,7 @@ struct PlaylistView: View {
                                     .frame(width: 24.0, height: 24.0)
                                     .foregroundColor(Color(.systemGreen))
                             }
-                            Text("Add Songs")
+                            Text(NSLocalizedString("Add Songs", comment: "Add Songs"))
                         }
                     }
                 }.padding(.horizontal)
@@ -300,7 +300,7 @@ struct PlaylistView: View {
                     $0.navigationBarItems(trailing: Button(action: {
                         self.isEditMode.toggle()
                     }) {
-                        Text(self.isEditMode ? "Done" : "Edit")
+                        Text(self.isEditMode ? NSLocalizedString("Done", comment: "Done") : NSLocalizedString("Edit", comment: "Edit"))
                     })
                 }
         }.onAppear {

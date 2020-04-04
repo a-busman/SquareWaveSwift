@@ -22,7 +22,7 @@ struct PlatformsView: View {
         }, set: { _ in
             
         }), isEditing: .constant(false), rowType: System.self, keypaths: UIListViewCellKeypaths(art: \System.name, title: \System.name, desc: nil), showSections: false)
-            .navigationBarTitle(Text("Platforms"))
+            .navigationBarTitle(Text(NSLocalizedString("Platforms", comment: "Platforms")))
             .edgesIgnoringSafeArea(.vertical)
     }
 }

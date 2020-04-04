@@ -23,7 +23,7 @@ struct GamesView: View {
         }, set: { _ in
             
         }), isEditing: .constant(false), rowType: Game.self, keypaths: UIListViewCellKeypaths(art: \Game.system?.name, title: \Game.name, desc: \Game.system?.name), showSearch: false, showsHeader: false)
-            .navigationBarTitle(Text("Games"), displayMode: .inline)
+            .navigationBarTitle(Text(NSLocalizedString("Games", comment: "Games")), displayMode: .inline)
         .edgesIgnoringSafeArea(.vertical)
     }
 }

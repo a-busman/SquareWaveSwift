@@ -21,7 +21,7 @@ struct SongsView: View {
     @State private var selectedIndex = ""
     @State private var sortType = PlaybackStateProperty.sortType.getProperty() ?? 0
     
-    init(title: String = "Songs", predicate: NSPredicate?, sortFromDesc: Bool = false) {
+    init(title: String = NSLocalizedString("Songs", comment: "Songs"), predicate: NSPredicate?, sortFromDesc: Bool = false) {
         self.predicate = predicate
         self.tracksRequest = FetchRequest(entity: Track.entity(), sortDescriptors: [], predicate: predicate)
         self.title = title
@@ -96,16 +96,16 @@ struct SongsView: View {
                     self.sortSheetShowing = true
                 }) {
                     if self.predicate == nil {
-                        Text("Sort")
+                        Text(NSLocalizedString("Sort", comment: "Sort"))
                     }
                 }
             ).actionSheet(isPresented: self.$sortSheetShowing) {
-            ActionSheet(title: Text("Sort by..."), buttons: [
-                .default(Text("Title")) {
+                ActionSheet(title: Text(NSLocalizedString("Sort By", comment: "Sort By")), buttons: [
+                    .default(Text(NSLocalizedString("Title", comment: "Title"))) {
                     self.sortType = SortType.title.rawValue
                     PlaybackStateProperty.sortType.setProperty(newValue: self.sortType)
                 },
-                .default(Text("Game")) {
+                    .default(Text(NSLocalizedString("Game", comment: "Game"))) {
                     self.sortType = SortType.game.rawValue
                     PlaybackStateProperty.sortType.setProperty(newValue: self.sortType)
                 },

@@ -19,19 +19,19 @@ struct LibraryView: View {
             if self.hasTracks {
                 List {
                     NavigationLink(destination: PlaylistsView()) {
-                        Text("Playlists")
+                        Text(NSLocalizedString("Playlists", comment: "Playlists"))
                     }
                     NavigationLink(destination: PlatformsView()) {
-                        Text("Platforms")
+                        Text(NSLocalizedString("Platforms", comment: "Platforms"))
                     }
                     NavigationLink(destination: GamesView()) {
-                        Text("Games")
+                        Text(NSLocalizedString("Games", comment: "Games"))
                     }
                     NavigationLink(destination: SongsView(predicate: nil)) {
-                        Text("Songs")
+                        Text(NSLocalizedString("Songs", comment: "Songs"))
                     }
                 }
-                .navigationBarTitle(Text("Library"))
+                .navigationBarTitle(Text(NSLocalizedString("Library", comment: "Library")))
             } else {
                 VStack {
                     Spacer()
@@ -43,14 +43,14 @@ struct LibraryView: View {
                         .aspectRatio(contentMode: .fit)
                         .padding(Edge.Set(arrayLiteral: [.horizontal, .top]), 100)
                     }
-                    Text("Add files by pressing the \"+\" button in the top right, or by adding them to the\nSquare Wave folder on your iCloud Drive").multilineTextAlignment(.center)
+                    Text(NSLocalizedString("Add Files", comment: "Add Files")).multilineTextAlignment(.center)
                     .lineLimit(6)
                     .padding()
                         .padding(.bottom, 50)
                     Spacer()
                 }
                 .foregroundColor(Color(.tertiaryLabel))
-                .navigationBarTitle(Text("Library"))
+                .navigationBarTitle(Text(NSLocalizedString("Library", comment: "Library")))
                 .sheet(isPresented: self.$isShowingPicker) {
                     FilePicker()
                 }

@@ -82,6 +82,7 @@
 		FA822D5B23F1F81E005FCFB3 /* Square_WaveUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA822D5A23F1F81E005FCFB3 /* Square_WaveUITests.swift */; };
 		FA8CEAF12415C56E00649CBE /* Util.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA8CEAF02415C56E00649CBE /* Util.swift */; };
 		FA8CEAF32416E48C00649CBE /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = FA8CEAF22416E48C00649CBE /* GoogleService-Info.plist */; };
+		FAA010602438E4C20069F6BF /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = FAA010622438E4C20069F6BF /* Localizable.strings */; };
 		FAA4083123F8B55100E3F2A4 /* ListArtView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAA4083023F8B55100E3F2A4 /* ListArtView.swift */; };
 		FAC00F9D23F61F3E0072F78C /* FilePicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAC00F9C23F61F3E0072F78C /* FilePicker.swift */; };
 		FAC00F9F23F718870072F78C /* NowPlayingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAC00F9E23F718870072F78C /* NowPlayingView.swift */; };
@@ -265,6 +266,9 @@
 		FA822D5C23F1F81E005FCFB3 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		FA8CEAF02415C56E00649CBE /* Util.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Util.swift; sourceTree = "<group>"; };
 		FA8CEAF22416E48C00649CBE /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
+		FAA010612438E4C20069F6BF /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
+		FAA010632438E5420069F6BF /* fr-CA */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = "fr-CA"; path = "fr-CA.lproj/LaunchScreen.storyboard"; sourceTree = "<group>"; };
+		FAA010642438E5420069F6BF /* fr-CA */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "fr-CA"; path = "fr-CA.lproj/Localizable.strings"; sourceTree = "<group>"; };
 		FAA4083023F8B55100E3F2A4 /* ListArtView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListArtView.swift; sourceTree = "<group>"; };
 		FAC00F9C23F61F3E0072F78C /* FilePicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FilePicker.swift; sourceTree = "<group>"; };
 		FAC00F9E23F718870072F78C /* NowPlayingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NowPlayingView.swift; sourceTree = "<group>"; };
@@ -484,6 +488,7 @@
 				FA822D3723F1F81C005FCFB3 /* SceneDelegate.swift */,
 				FA822D3E23F1F81E005FCFB3 /* Assets.xcassets */,
 				FA822D4323F1F81E005FCFB3 /* LaunchScreen.storyboard */,
+				FAA010622438E4C20069F6BF /* Localizable.strings */,
 				FA5A25D823F5E05C00D4C28A /* Square_Wave.xcdatamodeld */,
 				FA822D4623F1F81E005FCFB3 /* Info.plist */,
 				FA822D4023F1F81E005FCFB3 /* Preview Content */,
@@ -632,7 +637,7 @@
 		FA822D2A23F1F81C005FCFB3 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastSwiftUpdateCheck = 1130;
+				LastSwiftUpdateCheck = 1140;
 				LastUpgradeCheck = 1130;
 				ORGANIZATIONNAME = "Alex Busman";
 				TargetAttributes = {
@@ -657,6 +662,7 @@
 			knownRegions = (
 				en,
 				Base,
+				"fr-CA",
 			);
 			mainGroup = FA822D2923F1F81C005FCFB3;
 			productRefGroup = FA822D3323F1F81C005FCFB3 /* Products */;
@@ -680,6 +686,7 @@
 				FA822D4523F1F81E005FCFB3 /* LaunchScreen.storyboard in Resources */,
 				FAE4DC3E24280AC60082C1F3 /* IAP_ProductIDs.plist in Resources */,
 				FA1587472406E36900F48261 /* Main.storyboard in Resources */,
+				FAA010602438E4C20069F6BF /* Localizable.strings in Resources */,
 				FA822D4223F1F81E005FCFB3 /* Preview Assets.xcassets in Resources */,
 				FAC0772423F5142F0096B786 /* Podfile in Resources */,
 				FA822D3F23F1F81E005FCFB3 /* Assets.xcassets in Resources */,
@@ -884,8 +891,18 @@
 			isa = PBXVariantGroup;
 			children = (
 				FA822D4423F1F81E005FCFB3 /* Base */,
+				FAA010632438E5420069F6BF /* fr-CA */,
 			);
 			name = LaunchScreen.storyboard;
+			sourceTree = "<group>";
+		};
+		FAA010622438E4C20069F6BF /* Localizable.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				FAA010612438E4C20069F6BF /* en */,
+				FAA010642438E5420069F6BF /* fr-CA */,
+			);
+			name = Localizable.strings;
 			sourceTree = "<group>";
 		};
 /* End PBXVariantGroup section */
@@ -895,6 +912,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
@@ -955,6 +973,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
@@ -1013,7 +1032,7 @@
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = "Square Wave/Square Wave.entitlements";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 11;
+				CURRENT_PROJECT_VERSION = 12;
 				DEFINES_MODULE = YES;
 				DEVELOPMENT_ASSET_PATHS = "\"Square Wave/Preview Content\"";
 				DEVELOPMENT_TEAM = D9J98STRHA;
@@ -1023,7 +1042,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.2;
+				MARKETING_VERSION = 1.2.1;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.abusman.Square-Wave";
 				PRODUCT_NAME = "Square Waves";
 				SWIFT_OBJC_BRIDGING_HEADER = "Square Wave/Engine/Square Wave-Bridging-Header.h";
@@ -1041,7 +1060,7 @@
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = "Square Wave/Square Wave.entitlements";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 11;
+				CURRENT_PROJECT_VERSION = 12;
 				DEFINES_MODULE = YES;
 				DEVELOPMENT_ASSET_PATHS = "\"Square Wave/Preview Content\"";
 				DEVELOPMENT_TEAM = D9J98STRHA;
@@ -1051,7 +1070,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.2;
+				MARKETING_VERSION = 1.2.1;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.abusman.Square-Wave";
 				PRODUCT_NAME = "Square Waves";
 				SWIFT_OBJC_BRIDGING_HEADER = "Square Wave/Engine/Square Wave-Bridging-Header.h";

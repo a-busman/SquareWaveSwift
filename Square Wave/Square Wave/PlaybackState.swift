@@ -254,7 +254,7 @@ class PlaybackState: ObservableObject {
     #if DEBUG
     let playCountLimit = 5
     #else
-    let playCountLimit = 20
+    let playCountLimit = 10
     #endif
     
     private var firstPlay = true
@@ -612,7 +612,7 @@ class PlaybackState: ObservableObject {
         }
         
         if self.firstPlay {
-            self.playCount += 1
+            self.playCount = self.playCount + 1
             self.firstPlay = false
         }
         guard !self.restricted else {
@@ -679,7 +679,7 @@ class PlaybackState: ObservableObject {
             self.playDate = nil
             self.playCount = 0
         }
-        self.playCount += 1
+        self.playCount = self.playCount + 1
         self.firstPlay = false
         guard !self.restricted else {
             self.delegate?.restricted()

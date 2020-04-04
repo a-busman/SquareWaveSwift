@@ -130,7 +130,7 @@ struct NowPlayingView: View {
                     .animation(.spring())
                 if self.optionsShowing {
                     VStack(alignment: .leading) {
-                        Text(self.playbackState.nowPlayingTrack?.name ?? "Not Playing")
+                        Text(self.playbackState.nowPlayingTrack?.name ?? NSLocalizedString("Not Playing", comment: "Not Playing"))
                             .font(.system(size: 20.0, weight: .bold, design: .default))
                         Text(self.playbackState.nowPlayingTrack?.game?.name ?? " ")
                             .font(.system(size: 20.0))
@@ -156,7 +156,7 @@ struct NowPlayingView: View {
                 // MARK: - Playback options
                 Divider()
                 VStack(alignment: .leading) {
-                    Text("Playback Rate")
+                    Text(NSLocalizedString("Playback Rate", comment: "Playback Rate"))
                         .font(.callout)
                         .foregroundColor(Color(.tertiaryLabel))
                         .padding(.vertical)
@@ -203,7 +203,7 @@ struct NowPlayingView: View {
                     ), in: 0...4, step: 1.0)
                         .accentColor(Color(.label))
                         .padding(.horizontal)
-                    Text("Voices")
+                    Text(NSLocalizedString("Voices", comment: "Voices"))
                         .font(.callout)
                         .foregroundColor(Color(.tertiaryLabel))
                     List {
@@ -235,7 +235,7 @@ struct NowPlayingView: View {
                 Spacer()
                 HStack {
                     VStack(alignment: .leading) {
-                        Text(self.playbackState.nowPlayingTrack?.name ?? "Not Playing")
+                        Text(self.playbackState.nowPlayingTrack?.name ?? NSLocalizedString("Not Playing", comment: "Not Playing"))
                             .font(.system(size: 24.0, weight: .bold, design: .default))
                             .lineLimit(1)
                         Text(self.playbackState.nowPlayingTrack?.game?.name ?? " ")

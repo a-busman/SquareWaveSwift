@@ -15,11 +15,11 @@ struct NewPlaylistView: View {
     var body: some View {
         NavigationView {
             PlaylistView(isNewPlaylist: true, playlistModel: self.playlistModel)
-                .navigationBarTitle(Text("New Playlist"), displayMode: .inline)
+                .navigationBarTitle(Text(NSLocalizedString("New Playlist", comment: "New Playlist")), displayMode: .inline)
                 .navigationBarItems(leading: Button(action: {
                     self.presentationMode.wrappedValue.dismiss()
                 }) {
-                    Text("Cancel")
+                    Text(NSLocalizedString("Cancel", comment: "Cancel"))
                 }, trailing: Button(action: {
                     let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
                     let playlist = Playlist(entity: Playlist.entity(), insertInto: context)
@@ -33,7 +33,7 @@ struct NewPlaylistView: View {
                     
                     self.presentationMode.wrappedValue.dismiss()
                 }) {
-                    Text("Done")
+                    Text(NSLocalizedString("Done", comment: "Done"))
                     .bold()
                 })
         }

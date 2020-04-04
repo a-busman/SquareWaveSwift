@@ -86,7 +86,7 @@ struct PlaylistsView: View {
                             UIImage(named: "placeholder-playlist") ?? UIImage()
                         }, set: { _ in
                             
-                        }), text: .constant("New Playlist..."), blurViewVisible: true)
+                        }), text: .constant("\(NSLocalizedString("New Playlist", comment: "New Playlist"))..."), blurViewVisible: true)
                     }
                     ForEach(self.playlists, id: \.self) { (playlist: Playlist) in
                         NavigationLink(destination: PlaylistView(playlist: playlist)) {
@@ -117,22 +117,22 @@ struct PlaylistsView: View {
                             try? self.context.save()
                         }
                     })
-                }.navigationBarTitle(Text("Playlists"))
+                }.navigationBarTitle(Text(NSLocalizedString("Playlists", comment: "Playlists")))
                 .sheet(isPresented: self.$newPlaylistShowing) {
                     NewPlaylistView()
                 }
             } else {
                 VStack {
                     Spacer()
-                    Text("Playlists are a premium feature. Upgrade to get this and more!").multilineTextAlignment(.center).padding()
+                    Text(NSLocalizedString("Playlists Premium", comment: "Playlists Premium")).multilineTextAlignment(.center).padding()
                     Button(action: {self.playbackState.delegate?.openSettings()}) {
                         ZStack {
                             RoundedRectangle(cornerRadius: 10).foregroundColor(.blue)
-                            Text("Sounds like fun!").foregroundColor(.white)
+                            Text(NSLocalizedString("Confirm Playlists", comment: "Confirm Playlists")).foregroundColor(.white)
                         }.frame(maxWidth: 200, maxHeight: 50)
                     }.padding().padding(Edge.Set(arrayLiteral: .bottom), 125)
                     Spacer()
-                }.navigationBarTitle(Text("Playlists"))
+                }.navigationBarTitle(Text(NSLocalizedString("Playlists", comment: "Playlists")))
             }
         }
         .onAppear {

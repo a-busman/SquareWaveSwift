@@ -53,7 +53,7 @@ struct NowPlayingMiniView: View {
                     .shadow(radius: 5.0)
                     .padding()
                 VStack(alignment: .leading) {
-                    Text(self.playbackState.nowPlayingTrack?.name ?? "Not Playing")
+                    Text(self.playbackState.nowPlayingTrack?.name ?? NSLocalizedString("Not Playing", comment: "Not Playing"))
                         .foregroundColor(Color(.label))
                         .lineLimit(1)
                     if (self.playbackState.nowPlayingTrack?.game?.name?.count ?? 0) > 0 {

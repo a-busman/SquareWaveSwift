@@ -24,7 +24,7 @@ struct AddToPlaylistView: View {
                     HStack {
                         Image(systemName: "magnifyingglass")
 
-                        TextField("search", text: self.$searchText, onEditingChanged: { isEditing in
+                        TextField(NSLocalizedString("Search", comment: "Search"), text: self.$searchText, onEditingChanged: { isEditing in
                             self.showCancelButton = true
                         }, onCommit: {
                             print("onCommit")
@@ -81,7 +81,7 @@ struct AddToPlaylistView: View {
                         }
                     }
                 }
-                .navigationBarTitle(Text("Add to Playlist"), displayMode: .inline)
+                .navigationBarTitle(Text(NSLocalizedString("Add To Playlist", comment: "Add To Playlist")), displayMode: .inline)
                 .navigationBarItems(leading: Button(action: {
                     self.presentationMode.wrappedValue.dismiss()
                 }) {
@@ -90,7 +90,7 @@ struct AddToPlaylistView: View {
                         self.selectedTracks = self.tempTracks
                         self.presentationMode.wrappedValue.dismiss()
                     }) {
-                        Text("Done").bold()
+                        Text(NSLocalizedString("Done", comment: "Done")).bold()
                 })
                 .resignKeyboardOnDragGesture()
             }

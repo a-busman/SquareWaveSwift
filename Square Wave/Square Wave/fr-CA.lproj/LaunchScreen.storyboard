@@ -6,7 +6,7 @@
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
-        <!--Library-->
+        <!--Bibliothèque-->
         <scene sceneID="ix1-oy-743">
             <objects>
                 <tableViewController id="0Hc-hl-vUw" sceneMemberID="viewController">
@@ -20,8 +20,8 @@
                             <outlet property="delegate" destination="0Hc-hl-vUw" id="bkq-zo-vIK"/>
                         </connections>
                     </tableView>
-                    <navigationItem key="navigationItem" title="Library" largeTitleDisplayMode="always" id="AFR-sD-Ljc">
-                        <barButtonItem key="leftBarButtonItem" title="Settings" id="gVF-Xh-lTc"/>
+                    <navigationItem key="navigationItem" title="Bibliothèque" largeTitleDisplayMode="always" id="AFR-sD-Ljc">
+                        <barButtonItem key="leftBarButtonItem" title="Réglages" id="gVF-Xh-lTc"/>
                         <rightBarButtonItems>
                             <barButtonItem systemItem="refresh" id="O13-zc-4jj"/>
                             <barButtonItem systemItem="add" id="Axq-Vr-2Ve"/>

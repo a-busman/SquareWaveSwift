@@ -72,7 +72,11 @@ typedef enum {
                 containerUrl = nil;
             }
         } else {
-            //[manager removeItemAtURL:containerUrl error:nil];
+            /*NSError *err = nil;
+            [manager removeItemAtURL:documentsDir error:&err];
+            if (err != nil) {
+                NSLog(@"Error removing container url: %@", [err localizedDescription]);
+            }*/
         }
         if (![manager fileExistsAtPath:[[documentsDir URLByAppendingPathComponent:kAddToThisFolder] path]]) {
             [manager createFileAtPath:[[documentsDir URLByAppendingPathComponent:kAddToThisFolder] path] contents:nil attributes:nil];

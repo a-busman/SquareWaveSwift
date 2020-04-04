@@ -1,0 +1,59 @@
+/* 
+  Localizable.strings
+  Square Waves
+
+  Created by Alex Busman on 4/4/20.
+  Copyright © 2020 Alex Busman. All rights reserved.
+*/
+
+"Library" = "Library";
+"Settings" = "Settings";
+"Playlists" = "Playlists";
+"Platforms" = "Platforms";
+"Games" = "Games";
+"Songs" = "Songs";
+"Track Length" = "Track Length";
+"Add Files" = "Add files by pressing the \"+\" button in the top right, or by adding them to the\nSquare Wave folder on your iCloud Drive";
+"Track Length Description" = "For tracks without loop information, you can choose how long you want the track to play for before moving on to the next track.";
+"Loop Count" = "Loop Count";
+"Loop Count Description" = "For tracks with loop information, you can choose how many times you want the track to loop before moving on to the next track.";
+"Upgrade" = "Upgrade";
+"Upgrade Description %@" = "With the free version, you are limited to %@ tracks per day. Upgrade, and get unlimited playback, playlist support, voice toggling, and more!";
+"Restore Purchases" = "Restore Purchases";
+"Upgrade Purchased" = "Upgrade Purchased. Thanks!";
+"Delete All" = "Delete All";
+"Done" = "Done";
+"Edit" = "Edit";
+"Cancel" = "Cancel";
+"Playback Rate" = "Playback Rate";
+"Voices" = "Voices";
+"Play Count Exceeded" = "Play Count Exceeded";
+"Exceeded Error" = "You have exceeded the maximum amount of tracks per day. Would you like to purchase premium?";
+"Yes" = "Yes";
+"No" = "No";
+"Playlists Premium" = "Playlists are a premium feature. Upgrade to get this and more!";
+"Confirm Playlists" = "Sounds like fun!";
+"Sort" = "Sort";
+"Sort By" = "Sort by...";
+"Title" = "Title";
+"Game" = "Game";
+"Playlist Title" = "Playlist Title";
+"Add Songs" = "Add Songs";
+"Error" = "Error";
+"Okay" = "Okay";
+"Delete All Question" = "Delete All?";
+"Delete All Description" = "This will delete all your music and playlists. This will NOT delete anything stored in your cloud drive.\nAre you sure?";
+"Delete All Confirm" = "Yes, Delete";
+"Purchase Error Description %@" = "Could not complete purchase. %@";
+"Add To Playlist" = "Add to Playlist";
+"Search" = "Search";
+"New Playlist" = "New Playlist";
+"tracks" = "tracks";
+"Remove" = "Remove";
+"Delete" = "Delete";
+"Rename" = "Rename";
+"Save" = "Save";
+"No Name" = "No Name";
+"Shuffle" = "Shuffle";
+"Play" = "Play";
+"Not Playing" = "Not Playing";

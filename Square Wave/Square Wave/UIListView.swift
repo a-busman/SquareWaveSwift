@@ -24,7 +24,7 @@ struct HeaderView: View {
                     .foregroundColor(Color(.systemGray6))
                 HStack {
                     Image(systemName: "play.fill")
-                    Text("Play").fixedSize()
+                    Text(NSLocalizedString("Play", comment: "Play")).fixedSize()
                 }
             }
                 .onTapGesture {
@@ -36,7 +36,7 @@ struct HeaderView: View {
                 .foregroundColor(Color(.systemGray6))
                 HStack {
                     Image(systemName: "shuffle")
-                    Text("Shuffle").fixedSize()
+                    Text(NSLocalizedString("Shuffle", comment: "Shuffle")).fixedSize()
                 }
             }.onTapGesture {
                 self.didTapShuffle = true
@@ -226,7 +226,7 @@ struct UIListView: UIViewRepresentable {
             super.init()
             
             if self.showSearch {
-                self.searchController.searchBar.placeholder = "Search"
+                self.searchController.searchBar.placeholder = NSLocalizedString("Search", comment: "Search")
                 self.searchController.obscuresBackgroundDuringPresentation = false
                 self.searchController.searchResultsUpdater = self
             }
@@ -352,7 +352,7 @@ struct UIListView: UIViewRepresentable {
         func tableView(_ tableView: UITableView, contextMenuConfigurationForRowAt indexPath: IndexPath, point: CGPoint) -> UIContextMenuConfiguration? {
             if self.rowType == Track.self && !self.isEditable {
                 let configuration = UIContextMenuConfiguration(identifier: nil, previewProvider: nil) { actions -> UIMenu? in
-                    let action = UIAction(title: "Rename", image: UIImage(systemName: "square.and.pencil"), identifier: .none) { action in
+                    let action = UIAction(title: NSLocalizedString("Rename", comment: "Rename"), image: UIImage(systemName: "square.and.pencil"), identifier: .none) { action in
                         guard let cell = tableView.cellForRow(at: indexPath) as? SongTableViewCell,
                             let track = cell.info as? Track else { return }
                         
@@ -367,18 +367,18 @@ struct UIListView: UIViewRepresentable {
         }
         
         func rename(track: Track) {
-            let alert = UIAlertController(title: "Rename", message: nil, preferredStyle: .alert)
+            let alert = UIAlertController(title: NSLocalizedString("Rename", comment: "Rename"), message: nil, preferredStyle: .alert)
             alert.addTextField { textField in
-                textField.placeholder = "Title"
+                textField.placeholder = NSLocalizedString("Title", comment: "Title")
                 textField.text = track.name
             }
-            let okAction = UIAlertAction(title: "Save", style: .default) { _ in
-                track.name = alert.textFields?[0].text ?? "No Name"
+            let okAction = UIAlertAction(title: NSLocalizedString("Save", comment: "Save"), style: .default) { _ in
+                track.name = alert.textFields?[0].text ?? NSLocalizedString("No Name", comment: "No Name")
                 (UIApplication.shared.delegate as? AppDelegate)?.saveContext()
                 self.updateSectionTitles()
                 self.tableView?.reloadData()
             }
-            let cancelAction = UIAlertAction(title: "Cancel", style: .cancel)
+            let cancelAction = UIAlertAction(title: NSLocalizedString("Cancel", comment: "Cancel"), style: .cancel)
             
             alert.addAction(okAction)
             alert.addAction(cancelAction)
@@ -402,17 +402,17 @@ struct UIListView: UIViewRepresentable {
                 }
 
                 var predicate: NSPredicate!
-                var title = "Songs"
+                var title = NSLocalizedString("Songs", comment: "Songs")
                 var sortFromDesc = false
                 if self.rowType == System.self,
                     let platform = cell.info as? System {
                     predicate = NSPredicate(format: "system.id == %@", platform.id! as CVarArg)
-                    title = platform.name ?? "Songs"
+                    title = platform.name ?? NSLocalizedString("Songs", comment: "Songs")
                     sortFromDesc = true
                 } else if self.rowType == Game.self,
                     let game = cell.info as? Game {
                     predicate = NSPredicate(format: "game.id == %@", game.id! as CVarArg)
-                    title = game.name ?? "Songs"
+                    title = game.name ?? NSLocalizedString("Songs", comment: "Songs")
                 }
                 let delegate = UIApplication.shared.delegate as! AppDelegate
                 let context = delegate.persistentContainer.viewContext
@@ -453,7 +453,7 @@ struct UIListView: UIViewRepresentable {
             var actions: [UIContextualAction] = []
             if !self.isEditable {
                 if self.rowType == Track.self || self.rowType == Game.self {
-                    let deleteAction = UIContextualAction(style: .destructive, title: "Delete", handler: {_,_,_ in
+                    let deleteAction = UIContextualAction(style: .destructive, title: NSLocalizedString("Delete", comment: "Delete"), handler: {_,_,_ in
                         guard let cell = tableView.cellForRow(at: indexPath) as? SongTableViewCell else { return }
                         
                         self.rows.remove(at: indexPath.row)
@@ -506,7 +506,7 @@ struct UIListView: UIViewRepresentable {
                     actions.append(deleteAction)
                 }
                 if self.rowType == Track.self {
-                    let renameAction = UIContextualAction(style: .normal, title: "Rename", handler: {_,_,_ in
+                    let renameAction = UIContextualAction(style: .normal, title: NSLocalizedString("Rename", comment: "Rename"), handler: {_,_,_ in
                         guard let cell = tableView.cellForRow(at: indexPath) as? SongTableViewCell,
                             let track = cell.info as? Track else { return }
                         
@@ -526,7 +526,7 @@ struct UIListView: UIViewRepresentable {
         }
         
         func tableView(_ tableView: UITableView, titleForDeleteConfirmationButtonForRowAt indexPath: IndexPath) -> String? {
-            return "Remove"
+            return NSLocalizedString("Remove", comment: "Remove")
         }
         
         func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
@@ -598,7 +598,7 @@ struct UIListView: UIViewRepresentable {
             } else {
                 if self.rowType == System.self,
                     let platform = info as? System {
-                    tableViewCell.artistLabel?.text = "\(platform.tracks?.count ?? 0) tracks"
+                    tableViewCell.artistLabel?.text = "\(platform.tracks?.count ?? 0) \(NSLocalizedString("tracks", comment: "tracks"))"
                 }
             }
             

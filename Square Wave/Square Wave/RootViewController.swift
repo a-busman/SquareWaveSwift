@@ -12,12 +12,12 @@ import Combine
 
 class RootViewController: UISplitViewController, UISplitViewControllerDelegate, FileEngineDelegate, PlaybackStateDelegate {
     func restricted() {
-        let alert = UIAlertController(title: "Play Count Exceeded", message: "You have exceeded the maximum amount of tracks per day.\nWould you like to purchase premium?", preferredStyle: .alert)
+        let alert = UIAlertController(title: NSLocalizedString("Play Count Exceeded", comment: "Play Count Exceeded"), message: NSLocalizedString("Exceeded Error", comment: "Exceeded Error"), preferredStyle: .alert)
         
-        let yesAction = UIAlertAction(title: "Yes", style: .default, handler: { _ in
+        let yesAction = UIAlertAction(title: NSLocalizedString("Yes", comment: "Yes"), style: .default, handler: { _ in
             self.settingsPressed(sender: UIBarButtonItem())
         })
-        let noAction = UIAlertAction(title: "No", style: .cancel)
+        let noAction = UIAlertAction(title: NSLocalizedString("No", comment: "No"), style: .cancel)
         alert.addAction(yesAction)
         alert.addAction(noAction)
         self.npController.dismiss(animated: true)
@@ -85,7 +85,7 @@ class RootViewController: UISplitViewController, UISplitViewControllerDelegate, 
         
         self.navController.navigationBar.prefersLargeTitles = true
         
-        self.libraryController.navigationItem.leftBarButtonItem = UIBarButtonItem(title: "Settings", style: .plain, target: self, action: #selector(settingsPressed))
+        self.libraryController.navigationItem.leftBarButtonItem = UIBarButtonItem(title: NSLocalizedString("Settings", comment: "Settings"), style: .plain, target: self, action: #selector(settingsPressed))
         
         self.setBarItems(self.activityIndicatorBarButtonItem)
         

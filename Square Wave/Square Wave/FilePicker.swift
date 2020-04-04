@@ -13,7 +13,9 @@ struct FilePicker: UIViewControllerRepresentable {
     @Environment(\.presentationMode) var presentationMode
     
     func makeUIViewController(context: UIViewControllerRepresentableContext<FilePicker>) -> UIDocumentPickerViewController {
-        let documentTypes: [String] = [kUTTypeZipArchive as String, "com.abusman.nsf", "com.abusman.ay", "com.abusman.gbs", "com.abusman.gym", "com.abusman.hes", "com.abusman.kss", "com.abusman.sap", "com.abusman.spc", "com.abusman.vgm"]
+        let sevenZipUTI = UTTypeCreatePreferredIdentifierForTag(kUTTagClassFilenameExtension, "7z" as CFString, nil)?.takeRetainedValue() as String? ?? ""
+        let rarUTI = UTTypeCreatePreferredIdentifierForTag(kUTTagClassFilenameExtension, "rar" as CFString, nil)?.takeRetainedValue() as String? ?? ""
+        let documentTypes: [String] = [kUTTypeZipArchive as String, "com.abusman.nsf", "com.abusman.ay", "com.abusman.gbs", "com.abusman.gym", "com.abusman.hes", "com.abusman.kss", "com.abusman.sap", "com.abusman.spc", "com.abusman.vgm", sevenZipUTI, rarUTI]
 
         let picker = UIDocumentPickerViewController(documentTypes: documentTypes, in: .import)
         picker.allowsMultipleSelection = true

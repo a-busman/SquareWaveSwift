@@ -132,6 +132,34 @@
 				<string>com.abusman.gym</string>
 			</array>
 		</dict>
+		<dict>
+			<key>CFBundleTypeIconFiles</key>
+			<array/>
+			<key>CFBundleTypeName</key>
+			<string>7Z File</string>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>LSHandlerRank</key>
+			<string>Owner</string>
+			<key>LSItemContentTypes</key>
+			<array>
+				<string>org.7-zip.7-zip-archive</string>
+			</array>
+		</dict>
+		<dict>
+			<key>CFBundleTypeIconFiles</key>
+			<array/>
+			<key>CFBundleTypeName</key>
+			<string>RAR File</string>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>LSHandlerRank</key>
+			<string>Owner</string>
+			<key>LSItemContentTypes</key>
+			<array>
+				<string>com.abusman.rar</string>
+			</array>
+		</dict>
 	</array>
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
@@ -151,6 +179,18 @@
 	<true/>
 	<key>LSSupportsOpeningDocumentsInPlace</key>
 	<true/>
+	<key>NSUbiquitousContainers</key>
+	<dict>
+		<key>iCloud.com.abusman.square-wave</key>
+		<dict>
+			<key>NSUbiquitousContainerIsDocumentScopePublic</key>
+			<true/>
+			<key>NSUbiquitousContainerName</key>
+			<string>Square Waves</string>
+			<key>NSUbiquitousContainerSupportedFolderLevels</key>
+			<string>Any</string>
+		</dict>
+	</dict>
 	<key>UIApplicationSceneManifest</key>
 	<dict>
 		<key>UIApplicationSupportsMultipleScenes</key>
@@ -363,6 +403,44 @@
 				<key>public.filename-extension</key>
 				<array>
 					<string>gym</string>
+				</array>
+			</dict>
+		</dict>
+		<dict>
+			<key>UTTypeConformsTo</key>
+			<array>
+				<string>public.data</string>
+			</array>
+			<key>UTTypeDescription</key>
+			<string>7Z File</string>
+			<key>UTTypeIconFiles</key>
+			<array/>
+			<key>UTTypeIdentifier</key>
+			<string>org.7-zip.7-zip-archive</string>
+			<key>UTTypeTagSpecification</key>
+			<dict>
+				<key>public.filename-extension</key>
+				<array>
+					<string>7z</string>
+				</array>
+			</dict>
+		</dict>
+		<dict>
+			<key>UTTypeConformsTo</key>
+			<array>
+				<string>public.data</string>
+			</array>
+			<key>UTTypeDescription</key>
+			<string>RAR File</string>
+			<key>UTTypeIconFiles</key>
+			<array/>
+			<key>UTTypeIdentifier</key>
+			<string>com.abusman.rar</string>
+			<key>UTTypeTagSpecification</key>
+			<dict>
+				<key>public.filename-extension</key>
+				<array>
+					<string>rar</string>
 				</array>
 			</dict>
 		</dict>
