@@ -202,13 +202,18 @@ blargg_err_t Gme_File::track_info( track_info_t* out, int track ) const
 	if ( playlist.size() )
 	{
 		M3u_Playlist::info_t const& i = playlist.info();
-		copy_field_( out->game  , i.title );
+        if ( *out->game == '\0' )
+        {
+            copy_field_( out->game  , i.title );
+        }
 		copy_field_( out->author, i.engineer );
 		copy_field_( out->author, i.composer );
 		copy_field_( out->dumper, i.ripping );
 		
 		M3u_Playlist::entry_t const& e = playlist [track];
-		copy_field_( out->song, e.name );
+        if ( *out->song == '\0' ) {
+            copy_field_( out->song, e.name );
+        }
 		if ( e.length >= 0 ) out->length       = e.length;
 		if ( e.intro  >= 0 ) out->intro_length = e.intro;
 		if ( e.loop   >= 0 ) out->loop_length  = e.loop;

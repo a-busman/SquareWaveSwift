@@ -64,7 +64,7 @@ gme_err_t gme_load_m3u_data( Music_Emu* me, const void* data, long size )
 
 static char* skip_white( char* in )
 {
-	while ( *in == ' ' )
+	while ( *in == ' ' || *in == '\t' )
 		in++;
 	return in;
 }
