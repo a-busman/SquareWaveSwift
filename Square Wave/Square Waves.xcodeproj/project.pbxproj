@@ -1032,7 +1032,7 @@
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = "Square Wave/Square Wave.entitlements";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 12;
+				CURRENT_PROJECT_VERSION = 13;
 				DEFINES_MODULE = YES;
 				DEVELOPMENT_ASSET_PATHS = "\"Square Wave/Preview Content\"";
 				DEVELOPMENT_TEAM = D9J98STRHA;
@@ -1042,7 +1042,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.2.1;
+				MARKETING_VERSION = 1.2.2;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.abusman.Square-Wave";
 				PRODUCT_NAME = "Square Waves";
 				SWIFT_OBJC_BRIDGING_HEADER = "Square Wave/Engine/Square Wave-Bridging-Header.h";
@@ -1060,7 +1060,7 @@
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = "Square Wave/Square Wave.entitlements";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 12;
+				CURRENT_PROJECT_VERSION = 13;
 				DEFINES_MODULE = YES;
 				DEVELOPMENT_ASSET_PATHS = "\"Square Wave/Preview Content\"";
 				DEVELOPMENT_TEAM = D9J98STRHA;
@@ -1070,7 +1070,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.2.1;
+				MARKETING_VERSION = 1.2.2;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.abusman.Square-Wave";
 				PRODUCT_NAME = "Square Waves";
 				SWIFT_OBJC_BRIDGING_HEADER = "Square Wave/Engine/Square Wave-Bridging-Header.h";
