@@ -83,4 +83,8 @@
     NSLog(@"%s unimplemented", __FUNCTION__);
 }
 
+- (void)ignoreSilence:(int)ignore {
+    NSLog(@"%s unimplemented", __FUNCTION__);
+}
+
 @end

@@ -137,6 +137,13 @@ return; \
     }
 }
 
+- (void)ignoreSilence:(int)ignore {
+    @synchronized (self) {
+        CHECK_EMU_AND_RETURN();
+        gme_ignore_silence(_mEmu, ignore);
+    }
+}
+
 static void handle_error(const char* str) {
     if (str) {
         NSLog(@"%@", [NSString stringWithUTF8String:str]);

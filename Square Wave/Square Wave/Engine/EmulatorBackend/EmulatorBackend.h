@@ -26,6 +26,7 @@
 - (void)setTempo:(double)tempo;
 - (void)resetFade;
 - (int)tell;
+- (void)ignoreSilence:(int)ignore;
 - (void)play:(int)sampleCount buffer:(SInt16 *)buf;
 
 @end
