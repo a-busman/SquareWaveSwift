@@ -15,6 +15,10 @@ class SongTableViewCell: UITableViewCell {
     @IBOutlet weak var artistLabel:    UILabel?
     @IBOutlet weak var albumArtImage:  UIImageView?
     @IBOutlet weak var controlOverlay: UIView?
+    @IBOutlet weak var artView:        UIView?
+    
+    @IBOutlet var titleTopConstraint:     NSLayoutConstraint?
+    @IBOutlet var titleLeadingConstraint: NSLayoutConstraint?
     
     var firstBar:  CAShapeLayer?
     var secondBar: CAShapeLayer?
@@ -112,6 +116,21 @@ class SongTableViewCell: UITableViewCell {
         } else {
             self.animating = false
         }
+    }
+    
+    func hideArt() {
+        self.artView?.isHidden = true
+        self.separatorInset = UIEdgeInsets(top: 0.0, left: 15.0, bottom: 0.0, right: 0.0)
+        self.titleLeadingConstraint?.isActive = false
+        self.titleLeadingConstraint = NSLayoutConstraint(item: self.titleLabel!, attribute: .leading, relatedBy: .equal, toItem: self.contentView, attribute: .leadingMargin, multiplier: 1.0, constant: 0.0)
+        self.titleLeadingConstraint?.isActive = true
+    }
+    
+    func hideArtist() {
+        self.artistLabel?.isHidden = true
+        self.titleTopConstraint?.isActive = false
+        self.titleTopConstraint = NSLayoutConstraint(item: self.titleLabel!, attribute: .centerY, relatedBy: .equal, toItem: self.contentView, attribute: .centerY, multiplier: 1.0, constant: 0.0)
+        self.titleTopConstraint?.isActive = true
     }
     
     private func createBar(from start: CGPoint, to end: CGPoint) -> CAShapeLayer {

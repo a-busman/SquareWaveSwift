@@ -24,6 +24,9 @@ struct LibraryView: View {
                     NavigationLink(destination: PlatformsView()) {
                         Text(NSLocalizedString("Platforms", comment: "Platforms"))
                     }
+                    NavigationLink(destination: ArtistsView()) {
+                        Text(NSLocalizedString("Artists", comment: "Artists"))
+                    }
                     NavigationLink(destination: GamesView()) {
                         Text(NSLocalizedString("Games", comment: "Games"))
                     }

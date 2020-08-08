@@ -53,7 +53,7 @@ enum SortType: Int {
 }
 
 struct UIListViewCellKeypaths {
-    var art:   AnyKeyPath
+    var art:   AnyKeyPath?
     var title: AnyKeyPath
     var desc:  AnyKeyPath?
 }
@@ -277,6 +277,11 @@ struct UIListView: UIViewRepresentable {
                         if let _ = Int(key) {
                             key = "#"
                         }
+                    } else if let artist = object as? Artist {
+                        key = String(artist.name?.prefix(1) ?? "")
+                        if let _ = Int(key) {
+                            key = "#"
+                        }
                     }
                 } else if self.rowType == Track.self {
                     if let track = object as? Track {
@@ -413,6 +418,10 @@ struct UIListView: UIViewRepresentable {
                     let game = cell.info as? Game {
                     predicate = NSPredicate(format: "game.id == %@", game.id! as CVarArg)
                     title = game.name ?? NSLocalizedString("Songs", comment: "Songs")
+                } else if self.rowType == Artist.self,
+                    let artist = cell.info as? Artist {
+                    predicate = NSPredicate(format: "artist.id == %@", artist.id! as CVarArg)
+                    title = artist.name ?? NSLocalizedString("Songs", comment: "Songs")
                 }
                 let delegate = UIApplication.shared.delegate as! AppDelegate
                 let context = delegate.persistentContainer.viewContext
@@ -591,7 +600,12 @@ struct UIListView: UIViewRepresentable {
             }
             tableViewCell.info = info
 
-            tableViewCell.albumArtImage?.image = ListArtView.getImage(for: info[keyPath: self.keypaths.art] as? String ?? "")
+            if let artKp = self.keypaths.art {
+                tableViewCell.albumArtImage?.image = ListArtView.getImage(for: info[keyPath: artKp] as? String ?? "")
+            } else {
+                tableViewCell.albumArtImage?.image = nil
+                tableViewCell.hideArt()
+            }
             tableViewCell.titleLabel?.text = info[keyPath: self.keypaths.title] as? String
             if self.keypaths.desc != nil {
                 tableViewCell.artistLabel?.text = info[keyPath: self.keypaths.desc!] as? String
@@ -599,6 +613,8 @@ struct UIListView: UIViewRepresentable {
                 if self.rowType == System.self,
                     let platform = info as? System {
                     tableViewCell.artistLabel?.text = "\(platform.tracks?.count ?? 0) \(NSLocalizedString("tracks", comment: "tracks"))"
+                } else {
+                    tableViewCell.hideArtist()
                 }
             }
             
