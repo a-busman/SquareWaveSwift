@@ -66,6 +66,7 @@
 		FA244B00241072DC0086DD77 /* CloudKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FA244AFF241072DC0086DD77 /* CloudKit.framework */; };
 		FA2D8853240075140058713E /* PlaylistView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA2D8852240075140058713E /* PlaylistView.swift */; };
 		FA2D8855240089D30058713E /* VisualEffectView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA2D8854240089D30058713E /* VisualEffectView.swift */; };
+		FA4139E12453F06700D1232C /* SidTuneWrapper.mm in Sources */ = {isa = PBXBuildFile; fileRef = FA4139E02453F06700D1232C /* SidTuneWrapper.mm */; };
 		FA5A25C923F5BEF400D4C28A /* LibraryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA5A25C823F5BEF400D4C28A /* LibraryView.swift */; };
 		FA5A25CB23F5BF4A00D4C28A /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA5A25CA23F5BF4A00D4C28A /* SettingsView.swift */; };
 		FA5A25CD23F5C6F800D4C28A /* PlaylistsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA5A25CC23F5C6F800D4C28A /* PlaylistsView.swift */; };
@@ -176,6 +177,9 @@
 		FAC0768C23F513D10096B786 /* FileEngine.m in Sources */ = {isa = PBXBuildFile; fileRef = FAC0768923F513D10096B786 /* FileEngine.m */; };
 		FAC0768D23F513D10096B786 /* AudioEngine.m in Sources */ = {isa = PBXBuildFile; fileRef = FAC0768A23F513D10096B786 /* AudioEngine.m */; };
 		FAC0772423F5142F0096B786 /* Podfile in Resources */ = {isa = PBXBuildFile; fileRef = FAC0772323F5142F0096B786 /* Podfile */; };
+		FAE4DC24241DC9500082C1F3 /* EmulatorBackend.m in Sources */ = {isa = PBXBuildFile; fileRef = FAE4DC23241DC9500082C1F3 /* EmulatorBackend.m */; };
+		FAE4DC28241DCAAE0082C1F3 /* Gme.m in Sources */ = {isa = PBXBuildFile; fileRef = FAE4DC27241DCAAE0082C1F3 /* Gme.m */; };
+		FAE4DC2A241DCAD80082C1F3 /* Sid.m in Sources */ = {isa = PBXBuildFile; fileRef = FAE4DC29241DCAD80082C1F3 /* Sid.m */; };
 		FAE4DC30242582920082C1F3 /* ReceiptFetcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAE4DC2F242582920082C1F3 /* ReceiptFetcher.swift */; };
 		FAE4DC332425847C0082C1F3 /* SwiftyLocalReceiptValidator.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAE4DC322425847C0082C1F3 /* SwiftyLocalReceiptValidator.swift */; };
 		FAE4DC36242584D30082C1F3 /* pkcs7_union_accessors.c in Sources */ = {isa = PBXBuildFile; fileRef = FAE4DC35242584D30082C1F3 /* pkcs7_union_accessors.c */; };
@@ -183,9 +187,6 @@
 		FAE4DC3A24270B320082C1F3 /* AppleIncRootCertificate.cer in Resources */ = {isa = PBXBuildFile; fileRef = FAE4DC312425844E0082C1F3 /* AppleIncRootCertificate.cer */; };
 		FAE4DC3C24280A790082C1F3 /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FAE4DC3B24280A790082C1F3 /* StoreKit.framework */; };
 		FAE4DC3E24280AC60082C1F3 /* IAP_ProductIDs.plist in Resources */ = {isa = PBXBuildFile; fileRef = FAE4DC3D24280AC60082C1F3 /* IAP_ProductIDs.plist */; };
-		FAE4DC24241DC9500082C1F3 /* EmulatorBackend.m in Sources */ = {isa = PBXBuildFile; fileRef = FAE4DC23241DC9500082C1F3 /* EmulatorBackend.m */; };
-		FAE4DC28241DCAAE0082C1F3 /* Gme.m in Sources */ = {isa = PBXBuildFile; fileRef = FAE4DC27241DCAAE0082C1F3 /* Gme.m */; };
-		FAE4DC2A241DCAD80082C1F3 /* Sid.m in Sources */ = {isa = PBXBuildFile; fileRef = FAE4DC29241DCAD80082C1F3 /* Sid.m */; };
 		FC81EBF7FFCC439B50CFA002 /* Pods_Square_Waves.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 66B060E1199A1D58C2C8AB14 /* Pods_Square_Waves.framework */; };
 /* End PBXBuildFile section */
 
@@ -330,6 +331,8 @@
 		FA244AFF241072DC0086DD77 /* CloudKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CloudKit.framework; path = System/Library/Frameworks/CloudKit.framework; sourceTree = SDKROOT; };
 		FA2D8852240075140058713E /* PlaylistView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaylistView.swift; sourceTree = "<group>"; };
 		FA2D8854240089D30058713E /* VisualEffectView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VisualEffectView.swift; sourceTree = "<group>"; };
+		FA4139E02453F06700D1232C /* SidTuneWrapper.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = SidTuneWrapper.mm; sourceTree = "<group>"; };
+		FA4139E22453F08500D1232C /* SidTuneWrapper.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SidTuneWrapper.h; sourceTree = "<group>"; };
 		FA5A25C823F5BEF400D4C28A /* LibraryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LibraryView.swift; sourceTree = "<group>"; };
 		FA5A25CA23F5BF4A00D4C28A /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		FA5A25CC23F5C6F800D4C28A /* PlaylistsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaylistsView.swift; sourceTree = "<group>"; };
@@ -572,6 +575,13 @@
 		FAC0768A23F513D10096B786 /* AudioEngine.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AudioEngine.m; sourceTree = "<group>"; };
 		FAC0768B23F513D10096B786 /* FileEngine.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FileEngine.h; sourceTree = "<group>"; };
 		FAC0772323F5142F0096B786 /* Podfile */ = {isa = PBXFileReference; lastKnownFileType = text; path = Podfile; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
+		FAE4DC23241DC9500082C1F3 /* EmulatorBackend.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = EmulatorBackend.m; sourceTree = "<group>"; };
+		FAE4DC25241DCA180082C1F3 /* EmulatorBackend.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = EmulatorBackend.h; sourceTree = "<group>"; };
+		FAE4DC26241DCA4E0082C1F3 /* Gme.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Gme.h; sourceTree = "<group>"; };
+		FAE4DC27241DCAAE0082C1F3 /* Gme.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Gme.m; sourceTree = "<group>"; };
+		FAE4DC29241DCAD80082C1F3 /* Sid.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Sid.m; sourceTree = "<group>"; };
+		FAE4DC2D241DCBD00082C1F3 /* Sid.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Sid.h; sourceTree = "<group>"; };
+		FAE4DC2E241DE1270082C1F3 /* EmulatorBackendPrivate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = EmulatorBackendPrivate.h; sourceTree = "<group>"; };
 		FAE4DC2F242582920082C1F3 /* ReceiptFetcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReceiptFetcher.swift; sourceTree = "<group>"; };
 		FAE4DC312425844E0082C1F3 /* AppleIncRootCertificate.cer */ = {isa = PBXFileReference; lastKnownFileType = file; path = AppleIncRootCertificate.cer; sourceTree = "<group>"; };
 		FAE4DC322425847C0082C1F3 /* SwiftyLocalReceiptValidator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwiftyLocalReceiptValidator.swift; sourceTree = "<group>"; };
@@ -580,13 +590,6 @@
 		FAE4DC38242708360082C1F3 /* IAPManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IAPManager.swift; sourceTree = "<group>"; };
 		FAE4DC3B24280A790082C1F3 /* StoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = StoreKit.framework; path = System/Library/Frameworks/StoreKit.framework; sourceTree = SDKROOT; };
 		FAE4DC3D24280AC60082C1F3 /* IAP_ProductIDs.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = IAP_ProductIDs.plist; sourceTree = "<group>"; };
-		FAE4DC23241DC9500082C1F3 /* EmulatorBackend.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = EmulatorBackend.m; sourceTree = "<group>"; };
-		FAE4DC25241DCA180082C1F3 /* EmulatorBackend.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = EmulatorBackend.h; sourceTree = "<group>"; };
-		FAE4DC26241DCA4E0082C1F3 /* Gme.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Gme.h; sourceTree = "<group>"; };
-		FAE4DC27241DCAAE0082C1F3 /* Gme.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Gme.m; sourceTree = "<group>"; };
-		FAE4DC29241DCAD80082C1F3 /* Sid.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Sid.m; sourceTree = "<group>"; };
-		FAE4DC2D241DCBD00082C1F3 /* Sid.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Sid.h; sourceTree = "<group>"; };
-		FAE4DC2E241DE1270082C1F3 /* EmulatorBackendPrivate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = EmulatorBackendPrivate.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -750,6 +753,26 @@
 				FA1586E92404C74A00F48261 /* Hes_Emu.cpp */,
 			);
 			path = gme;
+			sourceTree = "<group>";
+		};
+		FA4139DC2453ECFD00D1232C /* Sid */ = {
+			isa = PBXGroup;
+			children = (
+				FAE4DC2D241DCBD00082C1F3 /* Sid.h */,
+				FAE4DC29241DCAD80082C1F3 /* Sid.m */,
+				FA4139E02453F06700D1232C /* SidTuneWrapper.mm */,
+				FA4139E22453F08500D1232C /* SidTuneWrapper.h */,
+			);
+			path = Sid;
+			sourceTree = "<group>";
+		};
+		FA4139DD2453ED0F00D1232C /* Gme */ = {
+			isa = PBXGroup;
+			children = (
+				FAE4DC26241DCA4E0082C1F3 /* Gme.h */,
+				FAE4DC27241DCAAE0082C1F3 /* Gme.m */,
+			);
+			path = Gme;
 			sourceTree = "<group>";
 		};
 		FA7992BD241C42D7008F9816 /* libsidplay */ = {
@@ -1199,6 +1222,18 @@
 			path = Engine;
 			sourceTree = "<group>";
 		};
+		FAE4DC2C241DCBAF0082C1F3 /* EmulatorBackend */ = {
+			isa = PBXGroup;
+			children = (
+				FA4139DC2453ECFD00D1232C /* Sid */,
+				FAE4DC23241DC9500082C1F3 /* EmulatorBackend.m */,
+				FAE4DC25241DCA180082C1F3 /* EmulatorBackend.h */,
+				FA4139DD2453ED0F00D1232C /* Gme */,
+				FAE4DC2E241DE1270082C1F3 /* EmulatorBackendPrivate.h */,
+			);
+			path = EmulatorBackend;
+			sourceTree = "<group>";
+		};
 		FAE4DC372426CADA0082C1F3 /* Receipts */ = {
 			isa = PBXGroup;
 			children = (
@@ -1209,20 +1244,6 @@
 				FAE4DC35242584D30082C1F3 /* pkcs7_union_accessors.c */,
 			);
 			path = Receipts;
-			sourceTree = "<group>";
-		};
-		FAE4DC2C241DCBAF0082C1F3 /* EmulatorBackend */ = {
-			isa = PBXGroup;
-			children = (
-				FAE4DC23241DC9500082C1F3 /* EmulatorBackend.m */,
-				FAE4DC25241DCA180082C1F3 /* EmulatorBackend.h */,
-				FAE4DC26241DCA4E0082C1F3 /* Gme.h */,
-				FAE4DC29241DCAD80082C1F3 /* Sid.m */,
-				FAE4DC27241DCAAE0082C1F3 /* Gme.m */,
-				FAE4DC2D241DCBD00082C1F3 /* Sid.h */,
-				FAE4DC2E241DE1270082C1F3 /* EmulatorBackendPrivate.h */,
-			);
-			path = EmulatorBackend;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -1553,6 +1574,7 @@
 				FA7995E8241C4453008F9816 /* prg.cpp in Sources */,
 				FA7995EF241C4453008F9816 /* iniParser.cpp in Sources */,
 				FA7995F9241C4453008F9816 /* mos656x.cpp in Sources */,
+				FA4139E12453F06700D1232C /* SidTuneWrapper.mm in Sources */,
 				FAC00FA523F887530072F78C /* PlaybackState.swift in Sources */,
 				FA1587142404C74A00F48261 /* Music_Emu.cpp in Sources */,
 				FA15870C2404C74A00F48261 /* Ay_Cpu.cpp in Sources */,

@@ -11,7 +11,7 @@
 #import "Gme.h"
 #import "EmulatorBackendPrivate.h"
 
-#include "../gme/gme.h"
+#include "../../gme/gme.h"
 
 @interface Gme()
 
