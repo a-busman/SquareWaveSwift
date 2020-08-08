@@ -84,6 +84,7 @@
 		FA8CEAF32416E48C00649CBE /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = FA8CEAF22416E48C00649CBE /* GoogleService-Info.plist */; };
 		FAA010602438E4C20069F6BF /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = FAA010622438E4C20069F6BF /* Localizable.strings */; };
 		FAA4083123F8B55100E3F2A4 /* ListArtView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAA4083023F8B55100E3F2A4 /* ListArtView.swift */; };
+		FABE31D824DF045300721CDA /* ArtistsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FABE31D724DF045300721CDA /* ArtistsView.swift */; };
 		FAC00F9D23F61F3E0072F78C /* FilePicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAC00F9C23F61F3E0072F78C /* FilePicker.swift */; };
 		FAC00F9F23F718870072F78C /* NowPlayingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAC00F9E23F718870072F78C /* NowPlayingView.swift */; };
 		FAC00FA123F728F00072F78C /* NowPlayingMiniView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAC00FA023F728F00072F78C /* NowPlayingMiniView.swift */; };
@@ -270,6 +271,7 @@
 		FAA010632438E5420069F6BF /* fr-CA */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = "fr-CA"; path = "fr-CA.lproj/LaunchScreen.storyboard"; sourceTree = "<group>"; };
 		FAA010642438E5420069F6BF /* fr-CA */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "fr-CA"; path = "fr-CA.lproj/Localizable.strings"; sourceTree = "<group>"; };
 		FAA4083023F8B55100E3F2A4 /* ListArtView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListArtView.swift; sourceTree = "<group>"; };
+		FABE31D724DF045300721CDA /* ArtistsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArtistsView.swift; sourceTree = "<group>"; };
 		FAC00F9C23F61F3E0072F78C /* FilePicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FilePicker.swift; sourceTree = "<group>"; };
 		FAC00F9E23F718870072F78C /* NowPlayingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NowPlayingView.swift; sourceTree = "<group>"; };
 		FAC00FA023F728F00072F78C /* NowPlayingMiniView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NowPlayingMiniView.swift; sourceTree = "<group>"; };
@@ -517,6 +519,7 @@
 				FA15871F24056D3500F48261 /* RootViewController.swift */,
 				FA1587462406E36900F48261 /* Main.storyboard */,
 				FAE4DC3D24280AC60082C1F3 /* IAP_ProductIDs.plist */,
+				FABE31D724DF045300721CDA /* ArtistsView.swift */,
 			);
 			path = "Square Wave";
 			sourceTree = "<group>";
@@ -776,6 +779,7 @@
 			files = (
 				FA1586ED2404C74A00F48261 /* Vgm_Emu.cpp in Sources */,
 				FAC0768D23F513D10096B786 /* AudioEngine.m in Sources */,
+				FABE31D824DF045300721CDA /* ArtistsView.swift in Sources */,
 				FA1586FE2404C74A00F48261 /* Gb_Oscs.cpp in Sources */,
 				FA1586FC2404C74A00F48261 /* Nes_Fme7_Apu.cpp in Sources */,
 				FA1587132404C74A00F48261 /* Gme_File.cpp in Sources */,
