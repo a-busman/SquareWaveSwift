@@ -17,6 +17,8 @@ struct HeaderView: View {
     @Binding var didTapPlay: Bool
     @Binding var didTapShuffle: Bool
     
+    let isPhone = UIDevice.current.userInterfaceIdiom == .phone
+    
     var body: some View {
         HStack {
             ZStack {
@@ -42,7 +44,7 @@ struct HeaderView: View {
                 self.didTapShuffle = true
 
             }
-        }.padding()
+        }.padding(EdgeInsets(top: 15.0, leading: self.isPhone ? 15.0 : 25.0, bottom: 15.0, trailing: self.isPhone ? 15.0 : 25.0))
     }
 }
 
