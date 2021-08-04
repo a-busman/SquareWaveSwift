@@ -30,7 +30,7 @@ struct LibraryView: View {
                     NavigationLink(destination: GamesView()) {
                         Text(NSLocalizedString("Games", comment: "Games"))
                     }
-                    NavigationLink(destination: SongsView(predicate: nil)) {
+                    NavigationLink(destination: SongsView(predicate: nil).environmentObject(playbackState)) {
                         Text(NSLocalizedString("Songs", comment: "Songs"))
                     }
                 }

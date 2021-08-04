@@ -9,6 +9,7 @@
 import UIKit
 import SwiftUI
 import Combine
+import CoreData
 
 class RootViewController: UISplitViewController, UISplitViewControllerDelegate, FileEngineDelegate, PlaybackStateDelegate {
     func restricted() {
@@ -54,6 +55,7 @@ class RootViewController: UISplitViewController, UISplitViewControllerDelegate, 
     var libraryController: UIViewController!
     var splitController = UISplitViewController()
     var npController = UIViewController()
+    var context: NSManagedObjectContext!
     
     func setBarItems(_ barItem: UIBarButtonItem) {
         self.libraryController.navigationItem.setRightBarButtonItems([
@@ -66,7 +68,7 @@ class RootViewController: UISplitViewController, UISplitViewControllerDelegate, 
         super.viewDidLoad()
         
         self.delegate = self
-        self.preferredDisplayMode = .allVisible
+        self.preferredDisplayMode = .oneBesideSecondary
         self.preferredPrimaryColumnWidthFraction = 1 / 3
         self.selectionGenerator.prepare()
         self.notificationGenerator.prepare()
@@ -76,10 +78,10 @@ class RootViewController: UISplitViewController, UISplitViewControllerDelegate, 
         FileEngine.reloadFromCloud(with: self)
 
         let delegate = UIApplication.shared.delegate as! AppDelegate
-        let context = delegate.persistentContainer.viewContext
+        self.context = delegate.persistentContainer.viewContext
         let playbackState = AppDelegate.playbackState
         playbackState.delegate = self
-        self.libraryController = UIHostingController(rootView: LibraryView().environment(\.managedObjectContext, context).environmentObject(playbackState))
+        self.libraryController = UIHostingController(rootView: LibraryView().environment(\.managedObjectContext, self.context).environmentObject(playbackState))
 
         self.navController = UINavigationController(rootViewController: self.libraryController)
         
@@ -91,10 +93,10 @@ class RootViewController: UISplitViewController, UISplitViewControllerDelegate, 
         
         
         let miniDelegate = NowPlayingMiniViewDelegate()
-        let miniViewController = UIHostingController(rootView: NowPlayingMiniView(delegate: miniDelegate).environmentObject(playbackState))
+        let miniViewController = UIHostingController(rootView: NowPlayingMiniView(delegate: miniDelegate).environment(\.managedObjectContext, self.context).environmentObject(playbackState))
         
         if UIDevice.current.userInterfaceIdiom == .phone {
-            self.npController = UIHostingController(rootView: NowPlayingView().environmentObject(AppDelegate.playbackState))
+            self.npController = UIHostingController(rootView: NowPlayingView().environment(\.managedObjectContext, self.context).environmentObject(AppDelegate.playbackState))
             self.cancellable = miniDelegate.didChange.sink { _ in
                 self.present(self.npController, animated: true)
             }
@@ -123,7 +125,7 @@ class RootViewController: UISplitViewController, UISplitViewControllerDelegate, 
         
         
         if UIDevice.current.userInterfaceIdiom == .pad {
-            self.npController = UIHostingController(rootView: NowPlayingView(showsHandle: false).environmentObject(playbackState))
+            self.npController = UIHostingController(rootView: NowPlayingView(showsHandle: false).environment(\.managedObjectContext, self.context).environmentObject(playbackState))
         }
         self.viewControllers = [self.navController, self.npController]
     }
@@ -133,7 +135,7 @@ class RootViewController: UISplitViewController, UISplitViewControllerDelegate, 
     }
     
     @objc func settingsPressed(sender: UIBarButtonItem) {
-        let settingsView = UIHostingController(rootView: SettingsView(dismiss: {self.dismiss(animated: true, completion: nil)}).environmentObject(AppDelegate.playbackState))
+        let settingsView = UIHostingController(rootView: SettingsView(dismiss: {self.dismiss(animated: true, completion: nil)}).environment(\.managedObjectContext, self.context).environmentObject(AppDelegate.playbackState))
         self.present(settingsView, animated: true)
     }
     
@@ -145,7 +147,7 @@ class RootViewController: UISplitViewController, UISplitViewControllerDelegate, 
     
     @objc func addPressed(sender: UIBarButtonItem) {
         self.selectionGenerator.selectionChanged()
-        let controller = UIHostingController(rootView: FilePicker())
+        let controller = UIHostingController(rootView: FilePicker().environment(\.managedObjectContext, self.context))
         self.present(controller, animated: true)
     }
 }
