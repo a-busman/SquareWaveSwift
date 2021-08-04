@@ -169,6 +169,7 @@
 		FA8CEAF32416E48C00649CBE /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = FA8CEAF22416E48C00649CBE /* GoogleService-Info.plist */; };
 		FAA010602438E4C20069F6BF /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = FAA010622438E4C20069F6BF /* Localizable.strings */; };
 		FAA4083123F8B55100E3F2A4 /* ListArtView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAA4083023F8B55100E3F2A4 /* ListArtView.swift */; };
+		FABE31D824DF045300721CDA /* ArtistsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FABE31D724DF045300721CDA /* ArtistsView.swift */; };
 		FAC00F9D23F61F3E0072F78C /* FilePicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAC00F9C23F61F3E0072F78C /* FilePicker.swift */; };
 		FAC00F9F23F718870072F78C /* NowPlayingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAC00F9E23F718870072F78C /* NowPlayingView.swift */; };
 		FAC00FA123F728F00072F78C /* NowPlayingMiniView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAC00FA023F728F00072F78C /* NowPlayingMiniView.swift */; };
@@ -564,6 +565,7 @@
 		FAA010632438E5420069F6BF /* fr-CA */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = "fr-CA"; path = "fr-CA.lproj/LaunchScreen.storyboard"; sourceTree = "<group>"; };
 		FAA010642438E5420069F6BF /* fr-CA */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "fr-CA"; path = "fr-CA.lproj/Localizable.strings"; sourceTree = "<group>"; };
 		FAA4083023F8B55100E3F2A4 /* ListArtView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListArtView.swift; sourceTree = "<group>"; };
+		FABE31D724DF045300721CDA /* ArtistsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArtistsView.swift; sourceTree = "<group>"; };
 		FAC00F9C23F61F3E0072F78C /* FilePicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FilePicker.swift; sourceTree = "<group>"; };
 		FAC00F9E23F718870072F78C /* NowPlayingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NowPlayingView.swift; sourceTree = "<group>"; };
 		FAC00FA023F728F00072F78C /* NowPlayingMiniView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NowPlayingMiniView.swift; sourceTree = "<group>"; };
@@ -1177,6 +1179,7 @@
 				FA15871F24056D3500F48261 /* RootViewController.swift */,
 				FA1587462406E36900F48261 /* Main.storyboard */,
 				FAE4DC3D24280AC60082C1F3 /* IAP_ProductIDs.plist */,
+				FABE31D724DF045300721CDA /* ArtistsView.swift */,
 			);
 			path = "Square Wave";
 			sourceTree = "<group>";
@@ -1312,7 +1315,7 @@
 			isa = PBXProject;
 			attributes = {
 				LastSwiftUpdateCheck = 1140;
-				LastUpgradeCheck = 1130;
+				LastUpgradeCheck = 1250;
 				ORGANIZATIONNAME = "Alex Busman";
 				TargetAttributes = {
 					FA822D3123F1F81C005FCFB3 = {
@@ -1476,6 +1479,7 @@
 				FA79958C241C4453008F9816 /* filter.cc in Sources */,
 				FA7995D5241C4453008F9816 /* Spline.cpp in Sources */,
 				FA7995E1241C4453008F9816 /* SidTuneTools.cpp in Sources */,
+				FABE31D824DF045300721CDA /* ArtistsView.swift in Sources */,
 				FA1586FE2404C74A00F48261 /* Gb_Oscs.cpp in Sources */,
 				FA1586FC2404C74A00F48261 /* Nes_Fme7_Apu.cpp in Sources */,
 				FA1587132404C74A00F48261 /* Gme_File.cpp in Sources */,
@@ -1697,6 +1701,7 @@
 				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
 				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
 				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
 				CLANG_WARN_STRICT_PROTOTYPES = YES;
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
@@ -1721,7 +1726,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 13.2;
+				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
@@ -1758,6 +1763,7 @@
 				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
 				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
 				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
 				CLANG_WARN_STRICT_PROTOTYPES = YES;
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
@@ -1776,7 +1782,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 13.2;
+				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				SDKROOT = iphoneos;
@@ -1795,7 +1801,7 @@
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = "Square Wave/Square Wave.entitlements";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 13;
+				CURRENT_PROJECT_VERSION = 16;
 				DEFINES_MODULE = YES;
 				DEVELOPMENT_ASSET_PATHS = "\"Square Wave/Preview Content\"";
 				DEVELOPMENT_TEAM = D9J98STRHA;
@@ -1826,7 +1832,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.2.2;
+				MARKETING_VERSION = 1.2.5;
 				OTHER_CPLUSPLUSFLAGS = "$(OTHER_CFLAGS)";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.abusman.Square-Wave";
 				PRODUCT_NAME = "Square Waves";
@@ -1846,7 +1852,7 @@
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = "Square Wave/Square Wave.entitlements";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 13;
+				CURRENT_PROJECT_VERSION = 16;
 				DEFINES_MODULE = YES;
 				DEVELOPMENT_ASSET_PATHS = "\"Square Wave/Preview Content\"";
 				DEVELOPMENT_TEAM = D9J98STRHA;
@@ -1877,7 +1883,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.2.2;
+				MARKETING_VERSION = 1.2.5;
 				OTHER_CPLUSPLUSFLAGS = "$(OTHER_CFLAGS)";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.abusman.Square-Wave";
 				PRODUCT_NAME = "Square Waves";
