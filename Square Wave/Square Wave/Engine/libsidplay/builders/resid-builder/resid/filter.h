@@ -672,7 +672,7 @@ void Filter::clock(cycle_count delta_t, int voice1, int voice2, int voice3)
     // MOS 6581.
     while (delta_t) {
       if (unlikely(delta_t < delta_t_flt)) {
-	delta_t_flt = delta_t;
+        delta_t_flt = delta_t;
       }
 
       // Calculate filter outputs.
@@ -687,7 +687,7 @@ void Filter::clock(cycle_count delta_t, int voice1, int voice2, int voice3)
     // MOS 8580. FIXME: Not yet using op-amp model.
     while (delta_t) {
       if (delta_t < delta_t_flt) {
-	delta_t_flt = delta_t;
+        delta_t_flt = delta_t;
       }
 
       // delta_t is converted to seconds given a 1MHz clock by dividing
@@ -1370,7 +1370,7 @@ int Filter::solve_gain(opamp_t* opamp, int n, int vi, int& x, model_filter_t& mf
     // The dividend is scaled by m^2*2^27.
     int f = a*int(unsigned(b_vx)*unsigned(b_vx) >> 12) - c - int(unsigned(b_vo)*unsigned(b_vo) >> 5);
     // The divisor is scaled by m*2^11.
-    int df = (b_vo*(dvx + (1 << 11)) - a*(b_vx*dvx >> 7)) >> 15;
+    int df = ((b_vo*(dvx + (1 << 11)) >> 1) - (a*(b_vx*dvx >> 8))) >> 14;
     // The resulting quotient is thus scaled by m*2^16.
 
     // Newton-Raphson step: xk1 = xk - f(xk)/f'(xk)

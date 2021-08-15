@@ -9,6 +9,8 @@
 #ifndef Sid_h
 #define Sid_h
 
+#import "EmulatorBackend.h"
+
 @interface Sid : EmulatorBackend
 
 @end

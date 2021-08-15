@@ -1,7 +1,7 @@
 /*
  * This file is part of libsidplayfp, a SID player engine.
  *
- * Copyright 2011-2018 Leandro Nini <drfiemost@users.sourceforge.net>
+ * Copyright 2011-2020 Leandro Nini <drfiemost@users.sourceforge.net>
  * Copyright 2007-2010 Antti Lankila
  * Copyright 2004, 2010 Dag Lem <resid@nimrod.no>
  *
@@ -34,9 +34,9 @@ namespace reSIDfp
 /**
  * 8580 integrator
  *
- *                    ---C---
+ *                   +---C---+
  *                   |       |
- *     vi -----Rfc------[A>----- vo
+ *     vi -----Rfc---o--[A>--o-- vo
  *                   vx
  *
  *     IRfc + ICr = 0
@@ -57,27 +57,21 @@ private:
     mutable int vx;
     mutable int vc;
 
-    unsigned short kVgt;
+    unsigned short nVgt;
     unsigned short n_dac;
 
     const double Vth;
-    const double denorm;
-    const double C;
-    const double k;
-    const double uCox;
+    const double nKp;
     const double vmin;
     const double N16;
 
 public:
-    Integrator8580(const unsigned short* opamp_rev, double Vth, double denorm, double C, double k, double uCox, double vmin, double N16) :
+    Integrator8580(const unsigned short* opamp_rev, double Vth, double nKp, double vmin, double N16) :
         opamp_rev(opamp_rev),
         vx(0),
         vc(0),
         Vth(Vth),
-        denorm(denorm),
-        C(C),
-        k(k),
-        uCox(uCox),
+        nKp(nKp),
         vmin(vmin),
         N16(N16)
     {
@@ -88,7 +82,7 @@ public:
     {
         // Normalized current factor, 1 cycle at 1MHz.
         // Fit in 5 bits.
-        const double tmp = denorm * (1 << 13) * (uCox / (2. * k) * wl * 1.0e-6 / C);
+        const double tmp = (1 << 13) * nKp * wl;
         assert(tmp > -0.5 && tmp < 65535.5);
         n_dac = static_cast<unsigned short>(tmp + 0.5);
     }
@@ -101,13 +95,13 @@ public:
         // Gate voltage is controlled by the switched capacitor voltage divider
         // Ua = Ue * v = 4.76v  1<v<2
         const double Vg = 4.76 * v;
-        const double Vgt = k * (Vg - Vth);
+        const double Vgt = Vg - Vth;
 
         // Vg - Vth, normalized so that translated values can be subtracted:
-        // k*Vgt - x = (k*Vgt - t) - (x - t)
+        // Vgt - x = (Vgt - t) - (x - t)
         const double tmp = N16 * (Vgt - vmin);
         assert(tmp > -0.5 && tmp < 65535.5);
-        kVgt = static_cast<unsigned short>(tmp + 0.5);
+        nVgt = static_cast<unsigned short>(tmp + 0.5);
     }
 
     int solve(int vi) const;
@@ -123,9 +117,12 @@ namespace reSIDfp
 RESID_INLINE
 int Integrator8580::solve(int vi) const
 {
+    // Make sure we're not in subthreshold mode
+    assert(vx < nVgt);
+
     // DAC voltages
-    const unsigned int Vgst = kVgt - vx;
-    const unsigned int Vgdt = (vi < kVgt) ? kVgt - vi : 0;  // triode/saturation mode
+    const unsigned int Vgst = nVgt - vx;
+    const unsigned int Vgdt = (vi < nVgt) ? nVgt - vi : 0;  // triode/saturation mode
 
     const unsigned int Vgst_2 = Vgst * Vgst;
     const unsigned int Vgdt_2 = Vgdt * Vgdt;

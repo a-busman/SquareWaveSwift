@@ -1,7 +1,7 @@
 /*
  * This file is part of libsidplayfp, a SID player engine.
  *
- * Copyright 2011-2019 Leandro Nini <drfiemost@users.sourceforge.net>
+ * Copyright 2011-2020 Leandro Nini <drfiemost@users.sourceforge.net>
  * Copyright 2007-2010 Antti Lankila
  * Copyright 2004,2010 Dag Lem <resid@nimrod.no>
  *
@@ -28,14 +28,14 @@
 #include <memory>
 
 #include "Filter.h"
-#include "FilterModelConfig.h"
+#include "FilterModelConfig6581.h"
 
 #include "sidcxx11.h"
 
 namespace reSIDfp
 {
 
-class Integrator;
+class Integrator6581;
 
 /**
  * The SID filter is modeled with a two-integrator-loop biquadratic filter,
@@ -106,7 +106,7 @@ class Integrator;
  *     |   |   v2           |    |                    |              |
  * D1  |   |   \ -------R8--o    |   +----------------+              |
  *     |   |   |   v1       |    |   |                               |
- * D0  |   |   |   \ ---R8--+    |   |    ---------------------------+
+ * D0  |   |   |   \ ---R8--+    |   |   +---------------------------+
  *     |   |   |   |             |   |   |
  *     R6  R6  R6  R6            R6  R6  R6
  *     |   |   |   | $18         |   |   |  $18
@@ -210,9 +210,9 @@ class Integrator;
  * Note that these are only approximate values for one particular SID chip,
  * due to process variations the values can be substantially different in
  * other chips.
- * 
- * 
- * 
+ *
+ *
+ *
  * Filter frequency cutoff DAC
  * ---------------------------
  *
@@ -293,11 +293,11 @@ class Integrator;
  * 
  *             |
  *             |
- *         ||--
+ *         ||--+
  * vi -----||
- *         ||--
+ *         ||--+
  *             |
- *             |------ vo
+ *             o------ vo
  *             |     (AUDIO
  *            Rext    OUT)
  *             |
@@ -328,14 +328,14 @@ private:
     unsigned short** summer;
     unsigned short** gain;
 
-    const int voiceScaleS14;
+    const int voiceScaleS11;
     const int voiceDC;
 
     /// VCR + associated capacitor connected to highpass output.
-    std::unique_ptr<Integrator> const hpIntegrator;
+    std::unique_ptr<Integrator6581> const hpIntegrator;
 
     /// VCR + associated capacitor connected to bandpass output.
-    std::unique_ptr<Integrator> const bpIntegrator;
+    std::unique_ptr<Integrator6581> const bpIntegrator;
 
 protected:
     /**
@@ -354,23 +354,23 @@ protected:
 
 public:
     Filter6581() :
-        f0_dac(FilterModelConfig::getInstance()->getDAC(0.5)),
-        mixer(FilterModelConfig::getInstance()->getMixer()),
-        summer(FilterModelConfig::getInstance()->getSummer()),
-        gain(FilterModelConfig::getInstance()->getGain()),
-        voiceScaleS14(FilterModelConfig::getInstance()->getVoiceScaleS14()),
-        voiceDC(FilterModelConfig::getInstance()->getVoiceDC()),
-        hpIntegrator(FilterModelConfig::getInstance()->buildIntegrator()),
-        bpIntegrator(FilterModelConfig::getInstance()->buildIntegrator())
+        f0_dac(FilterModelConfig6581::getInstance()->getDAC(0.5)),
+        mixer(FilterModelConfig6581::getInstance()->getMixer()),
+        summer(FilterModelConfig6581::getInstance()->getSummer()),
+        gain(FilterModelConfig6581::getInstance()->getGain()),
+        voiceScaleS11(FilterModelConfig6581::getInstance()->getVoiceScaleS11()),
+        voiceDC(FilterModelConfig6581::getInstance()->getVoiceDC()),
+        hpIntegrator(FilterModelConfig6581::getInstance()->buildIntegrator()),
+        bpIntegrator(FilterModelConfig6581::getInstance()->buildIntegrator())
     {
         input(0);
     }
 
     ~Filter6581();
 
-    int clock(int voice1, int voice2, int voice3) override;
+    unsigned short clock(int voice1, int voice2, int voice3) override;
 
-    void input(int sample) override { ve = (sample * voiceScaleS14 * 3 >> 10) + mixer[0][0]; }
+    void input(int sample) override { ve = (sample * voiceScaleS11 * 3 >> 11) + mixer[0][0]; }
 
     /**
      * Set filter curve type based on single parameter.
@@ -384,18 +384,18 @@ public:
 
 #if RESID_INLINING || defined(FILTER6581_CPP)
 
-#include "Integrator.h"
+#include "Integrator6581.h"
 
 namespace reSIDfp
 {
 
 RESID_INLINE
-int Filter6581::clock(int voice1, int voice2, int voice3)
+unsigned short Filter6581::clock(int voice1, int voice2, int voice3)
 {
-    voice1 = (voice1 * voiceScaleS14 >> 18) + voiceDC;
-    voice2 = (voice2 * voiceScaleS14 >> 18) + voiceDC;
+    voice1 = (voice1 * voiceScaleS11 >> 15) + voiceDC;
+    voice2 = (voice2 * voiceScaleS11 >> 15) + voiceDC;
     // Voice 3 is silenced by voice3off if it is not routed through the filter.
-    voice3 = filt3 || !voice3off ? (voice3 * voiceScaleS14 >> 18) + voiceDC : 0;
+    voice3 = (filt3 || !voice3off) ? (voice3 * voiceScaleS11 >> 15) + voiceDC : 0;
 
     int Vi = 0;
     int Vo = 0;
@@ -413,7 +413,7 @@ int Filter6581::clock(int voice1, int voice2, int voice3)
     if (bp) Vo += Vbp;
     if (hp) Vo += Vhp;
 
-    return currentGain[currentMixer[Vo]] - (1 << 15);
+    return currentGain[currentMixer[Vo]];
 }
 
 } // namespace reSIDfp

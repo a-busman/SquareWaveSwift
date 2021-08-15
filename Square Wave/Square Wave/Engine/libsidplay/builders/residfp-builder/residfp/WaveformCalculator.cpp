@@ -41,7 +41,7 @@ WaveformCalculator* WaveformCalculator::getInstance()
  * In parentheses the number of mispredicted bits
  * on a total of 32768.
  *
- * [1] http://svn.code.sf.net/p/sidplay-residfp/code/trunk/combined-waveforms/
+ * [1] https://github.com/libsidplayfp/combined-waveforms
  */
 const CombinedWaveformConfig config[2][4] =
 {
@@ -66,7 +66,7 @@ const CombinedWaveformConfig config[2][4] =
  * @param waveform the waveform to emulate, 1 .. 7
  * @param accumulator the high bits of the accumulator value
  */
-short calculateCombinedWaveform(CombinedWaveformConfig config, int waveform, int accumulator)
+short calculateCombinedWaveform(const CombinedWaveformConfig& config, int waveform, int accumulator)
 {
     float o[12];
 

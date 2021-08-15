@@ -10,8 +10,8 @@
 #import <AudioToolbox/AudioToolbox.h>
 #import <AVFoundation/AVFoundation.h>
 #import "EmulatorBackend/EmulatorBackend.h"
-#import "EmulatorBackend/Gme.h"
-#import "EmulatorBackend/Sid.h"
+#import "EmulatorBackend/Gme/Gme.h"
+#import "EmulatorBackend/Sid/Sid.h"
 
 #import "AudioEngine.h"
 
@@ -87,12 +87,14 @@ const int kBufferCount = 3;
         _mFileName = fileName;
 
         if ([Gme isFileCompatible:fileName]) {
-            if (_mBackend != nil) {
-                
-            }
             _mBackend = [[Gme alloc] init:kSampleRate];
-            [_mBackend openFile:fileName];
+        } else if ([Sid isFileCompatible:fileName]) {
+            _mBackend = [[Sid alloc] init:kSampleRate];
+        } else {
+            NSLog(@"File incompatible: %@", fileName);
+            return;
         }
+        [_mBackend openFile:fileName];
     }
 }
 
@@ -229,13 +231,13 @@ const int kBufferCount = 3;
 
 // MARK: - Track Properties
 /**
- * getTrackEnded
+ * isTrackEnded
  * @brief Checks to see if the current track has ended
  * @return NO for not ended, YES for ended
  */
-- (BOOL)getTrackEnded {
+- (BOOL)isTrackEnded {
     @synchronized (self) {
-        return [_mBackend getTrackEnded];
+        return [_mBackend isTrackEnded];
     }
 }
 

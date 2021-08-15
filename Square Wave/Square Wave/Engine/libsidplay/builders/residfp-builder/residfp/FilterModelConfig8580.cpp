@@ -1,7 +1,7 @@
 /*
  * This file is part of libsidplayfp, a SID player engine.
  *
- * Copyright 2011-2019 Leandro Nini <drfiemost@users.sourceforge.net>
+ * Copyright 2011-2020 Leandro Nini <drfiemost@users.sourceforge.net>
  * Copyright 2007-2010 Antti Lankila
  * Copyright 2010 Dag Lem
  *
@@ -122,17 +122,16 @@ FilterModelConfig8580* FilterModelConfig8580::getInstance()
 }
 
 FilterModelConfig8580::FilterModelConfig8580() :
-    voice_voltage_range(0.4), // FIXME measure
+    voice_voltage_range(0.25), // FIXME measure
     voice_DC_voltage(4.80), // FIXME was 4.76
     C(22e-9),
     Vdd(9.09),
     Vth(0.80),
     Ut(26.0e-3),
-    k(1.3), // FIXME this is just a hack, k must be less than one, likely around 0.7
-    uCox(55e-6), // FIXME measure
-    kVddt(k * (Vdd - Vth)),
+    uCox(100e-6),
+    Vddt(Vdd - Vth),
     vmin(opamp_voltage[0].x),
-    vmax(kVddt < opamp_voltage[0].y ? opamp_voltage[0].y : kVddt),
+    vmax(Vddt < opamp_voltage[0].y ? opamp_voltage[0].y : Vddt),
     denorm(vmax - vmin),
     norm(1.0 / denorm),
     N16(norm * ((1 << 16) - 1))
@@ -155,14 +154,13 @@ FilterModelConfig8580::FilterModelConfig8580() :
     {
         const Spline::Point out = s.evaluate(x);
         double tmp = out.x;
-        if (tmp < 0.) tmp = 0.;
-        assert(tmp < 65535.5);
+        assert(tmp > -0.5 && tmp < 65535.5);
         opamp_rev[x] = static_cast<unsigned short>(tmp + 0.5);
     }
 
     // Create lookup tables for gains / summers.
 
-    OpAmp opampModel(opamp_voltage, OPAMP_SIZE, kVddt);
+    OpAmp opampModel(opamp_voltage, OPAMP_SIZE, Vddt);
 
     // The filter summer operates at n ~ 1, and has 5 fundamentally different
     // input configurations (2 - 6 input "resistors").
@@ -188,7 +186,7 @@ FilterModelConfig8580::FilterModelConfig8580() :
         }
     }
 
-    // The audio mixer operates at n ~ 8/6, and has 8 fundamentally different
+    // The audio mixer operates at n ~ 8/5, and has 8 fundamentally different
     // input configurations (0 - 7 input "resistors").
     //
     // All "on", transistors are modeled as one - see comments above for
@@ -197,7 +195,7 @@ FilterModelConfig8580::FilterModelConfig8580() :
     {
         const int idiv = (i == 0) ? 1 : i;
         const int size = (i == 0) ? 1 : i << 16;
-        const double n = i * 8.0 / 6.0;
+        const double n = i * 8.0 / 5.0;
         opampModel.reset();
         mixer[i] = new unsigned short[size];
 
@@ -213,11 +211,11 @@ FilterModelConfig8580::FilterModelConfig8580() :
     // 4 bit "resistor" ladders in the audio output gain
     // necessitate 16 gain tables.
     // From die photographs of the volume "resistor" ladders
-    // it follows that gain ~ vol/8 (assuming ideal op-amps
+    // it follows that gain ~ vol/16 (assuming ideal op-amps
     for (int n8 = 0; n8 < 16; n8++)
     {
         const int size = 1 << 16;
-        const double n = n8 / 8.0;
+        const double n = n8 / 16.0;
         opampModel.reset();
         gain_vol[n8] = new unsigned short[size];
 
@@ -272,7 +270,8 @@ FilterModelConfig8580::~FilterModelConfig8580()
 
 std::unique_ptr<Integrator8580> FilterModelConfig8580::buildIntegrator()
 {
-    return std::unique_ptr<Integrator8580>(new Integrator8580(opamp_rev, Vth, denorm, C, k, uCox, vmin, N16));
+    const double nKp = denorm* (uCox / 2. * 1.0e-6 / C);
+    return std::unique_ptr<Integrator8580>(new Integrator8580(opamp_rev, Vth, nKp, vmin, N16));
 }
 
 } // namespace reSIDfp

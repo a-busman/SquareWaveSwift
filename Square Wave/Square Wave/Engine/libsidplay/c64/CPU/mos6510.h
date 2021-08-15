@@ -48,16 +48,6 @@ namespace MOS6510Debug
 }
 #endif
 
-/*
- * Define this to get correct emulation of SHA/SHX/SHY/SHS instructions
- * (see VICE CPU tests).
- * This will slow down the emulation a bit with no real benefit
- * for SID playing so we keep it disabled.
- */
-#ifdef VICE_TESTSUITE
-#  define CORRECT_SH_INSTRUCTIONS
-#endif
-
 
 /**
  * Cycle-exact 6502/6510 emulation core.
@@ -129,10 +119,8 @@ private:
 
     bool d1x1;
 
-#ifdef CORRECT_SH_INSTRUCTIONS
     /// The RDY pin state during last throw away read.
     bool rdyOnThrowAwayRead;
-#endif
 
     /// Status register
     Flags flags;
@@ -168,8 +156,11 @@ private:
     /// Represents an instruction subcycle that reads
     EventCallback<MOS6510> m_steal;
 
+    EventCallback<MOS6510> clearInt;
+
     void eventWithoutSteals();
     void eventWithSteals();
+    void removeIRQ();
 
     inline void Initialise();
 
@@ -327,10 +318,6 @@ protected:
     virtual void cpuWrite(uint_least16_t addr, uint8_t data) =0;
 
 public:
-#ifdef PC64_TESTSUITE
-    virtual void loadFile(const char *file) =0;
-#endif
-
     void reset();
 
     static const char *credits();

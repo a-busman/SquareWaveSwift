@@ -23,7 +23,7 @@
 
 #define CHECK_EMU_AND_RETURN() \
 do { \
-if (!_mEmu) { \
+if (_mEmu == NULL) { \
 return; \
 } \
 } while(0);
@@ -91,7 +91,7 @@ return; \
     }
 }
 
-- (BOOL)getTrackEnded {
+- (BOOL)isTrackEnded {
     @synchronized (self) {
         if (_mEmu == NULL) {
             return YES;

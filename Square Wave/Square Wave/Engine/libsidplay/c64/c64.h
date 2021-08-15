@@ -1,7 +1,7 @@
 /*
  * This file is part of libsidplayfp, a SID player engine.
  *
- * Copyright 2011-2019 Leandro Nini <drfiemost@users.sourceforge.net>
+ * Copyright 2011-2020 Leandro Nini <drfiemost@users.sourceforge.net>
  * Copyright 2007-2010 Antti Lankila
  * Copyright 2000 Simon White
  *
@@ -54,15 +54,6 @@ namespace libsidplayfp
 class c64sid;
 class sidmemory;
 
-#ifdef PC64_TESTSUITE
-class testEnv
-{
-public:
-    virtual ~testEnv() {}
-    virtual void load(const char *) =0;
-};
-#endif
-
 /**
  * Commodore 64 emulation core.
  *
@@ -89,6 +80,13 @@ public:
         ,PAL_N        ///< C64 Drean
         ,PAL_M        ///< C64 Brasil
     } model_t;
+
+    typedef enum
+    {
+        OLD = 0     ///< Old CIA
+        ,NEW        ///< New CIA
+        ,OLD_4485   ///< Old CIA, special batch labeled 4485
+    } cia_model_t;
 
 private:
     typedef std::map<int, ExtraSidBank*> sidBankMap_t;
@@ -186,6 +184,9 @@ private:
      */
     inline void setBA(bool state) override;
 
+    /**
+     * @param state fire pressed, active low
+     */
     inline void lightpen(bool state) override;
 
     void resetIoBank();
@@ -224,12 +225,7 @@ public:
     /**
      * Set the cia model.
      */
-    void setCiaModel(bool newModel);
-
-    void setRoms(const uint8_t* kernal, const uint8_t* basic, const uint8_t* character)
-    {
-        mmu.setRoms(kernal, basic, character);
-    }
+    void setCiaModel(cia_model_t model);
 
     /**
      * Get the CPU clock speed.
@@ -306,7 +302,7 @@ void c64::setBA(bool state)
 
 void c64::lightpen(bool state)
 {
-    if (state)
+    if (!state)
         vic.triggerLightpen();
     else
         vic.clearLightpen();

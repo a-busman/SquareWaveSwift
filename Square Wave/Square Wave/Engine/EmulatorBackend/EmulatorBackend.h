@@ -21,7 +21,7 @@
 - (void)muteVoices:(int)mask;
 - (int)getVoiceCount;
 - (NSString *)getVoiceName:(int)index;
-- (BOOL)getTrackEnded;
+- (BOOL)isTrackEnded;
 - (void)setFade:(int)ms;
 - (void)setTempo:(double)tempo;
 - (void)resetFade;

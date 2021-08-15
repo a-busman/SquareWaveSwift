@@ -1,7 +1,7 @@
 /*
  * This file is part of libsidplayfp, a SID player engine.
  *
- * Copyright 2011-2018 Leandro Nini <drfiemost@users.sourceforge.net>
+ * Copyright 2011-2020 Leandro Nini <drfiemost@users.sourceforge.net>
  * Copyright 2007-2010 Antti Lankila
  * Copyright 2000 Simon White
  *
@@ -33,7 +33,7 @@
 namespace libsidplayfp
 {
 
-class MOS6526;
+class MOS652X;
 
 /**
  * This is the base class for the MOS6526 interrupt sources.
@@ -52,28 +52,38 @@ public:
         INTERRUPT_REQUEST      = 1 << 7  ///< control bit
     };
 
-protected:
+private:
     /// Pointer to the MOS6526 which this Interrupt belongs to.
-    MOS6526 &parent;
+    MOS652X &parent;
 
+protected:
     /// Event scheduler.
     EventScheduler &eventScheduler;
 
-private:
+    /// Clock when clear was called last
+    event_clock_t last_clear;
+
     /// Interrupt control register
     uint8_t icr;
 
     /// Interrupt data register
     uint8_t idr;
 
+private:
+    /// Have we already scheduled CIA->CPU interrupt transition?
+    bool scheduled;
+
 protected:
-    bool interruptMasked() const { return icr & idr; }
+    inline bool interruptMasked() const { return icr & idr; }
 
-    bool interruptTriggered() const { return idr & INTERRUPT_REQUEST; }
+    inline bool interruptTriggered() const { return idr & INTERRUPT_REQUEST; }
 
-    void triggerInterrupt() { idr |= INTERRUPT_REQUEST; }
+    inline void triggerInterrupt() { idr |= INTERRUPT_REQUEST; }
 
-    void triggerBug() { idr &= ~INTERRUPT_UNDERFLOW_B; }
+    /**
+     * Check if interrupts were ackowledged during previous cycle.
+     */
+    inline bool ack0() const { return eventScheduler.getTime(EVENT_CLOCK_PHI2) == (last_clear+1); }
 
 protected:
     /**
@@ -82,13 +92,29 @@ protected:
      * @param scheduler event scheduler
      * @param parent the MOS6526 which this Interrupt belongs to
      */
-    InterruptSource(EventScheduler &scheduler, MOS6526 &parent) :
+    InterruptSource(EventScheduler &scheduler, MOS652X &parent) :
         Event("CIA Interrupt"),
         parent(parent),
         eventScheduler(scheduler),
+        last_clear(0),
         icr(0),
-        idr(0)
+        idr(0),
+        scheduled(false)
     {}
+
+    /**
+     * Schedules an IRQ asserting state transition for next cycle.
+     */
+    void schedule()
+    {
+        if (!scheduled)
+        {
+            eventScheduler.schedule(*this, 1, EVENT_CLOCK_PHI1);
+            scheduled = true;
+        }
+    }
+
+    void interrupt(bool state);
 
 public:
     virtual ~InterruptSource() {}
@@ -105,12 +131,7 @@ public:
      * 
      * @return old interrupt state
      */
-    virtual uint8_t clear()
-    {
-        uint8_t const old = idr;
-        idr = 0;
-        return old;
-    }
+    virtual uint8_t clear();
 
     /**
      * Clear pending interrupts, but do not signal to CPU we lost them.
@@ -121,6 +142,7 @@ public:
         icr = 0;
         idr = 0;
         eventScheduler.cancel(*this);
+        scheduled = false;
     }
 
     /**
@@ -140,6 +162,11 @@ public:
             icr &= ~interruptMask;
         }
     }
+
+    /**
+     * Signal interrupt to CPU.
+     */
+    void event() override;
 };
 
 }

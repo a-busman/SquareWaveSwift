@@ -57,7 +57,7 @@
     return nil;
 }
 
-- (BOOL)getTrackEnded {
+- (BOOL)isTrackEnded {
     NSLog(@"%s unimplemented", __FUNCTION__);
     return NO;
 }

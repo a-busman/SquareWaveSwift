@@ -27,7 +27,7 @@
 - (void)nextTrack;
 - (void)prevTrack;
 - (int)getElapsedTime;
-- (BOOL)getTrackEnded;
+- (BOOL)isTrackEnded;
 - (void)setFadeTime:(int)msec;
 - (void)setTempo:(double)tempo;
 - (void)ignoreSilence;

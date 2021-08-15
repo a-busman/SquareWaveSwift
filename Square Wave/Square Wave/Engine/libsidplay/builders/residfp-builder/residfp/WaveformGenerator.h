@@ -71,12 +71,12 @@ namespace reSIDfp
  *
  * Operation: Calculate EOR result, shift register, set bit 0 = result.
  *
- *                    reset    -------------------------------------------
- *                      |     |                                           |
- *               test--OR-->EOR<--                                        |
+ *                    reset  +--------------------------------------------+
+ *                      |    |                                            |
+ *               test--OR-->EOR<--+                                       |
  *                      |         |                                       |
  *                      2 2 2 1 1 1 1 1 1 1 1 1 1                         |
- *     Register bits:   2 1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0 <---
+ *     Register bits:   2 1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0 <---+
  *                          |   |       |     |   |       |     |   |
  *     Waveform bits:       1   1       9     8   7       6     5   4
  *                          1   0
@@ -108,25 +108,25 @@ private:
     /// The control register right-shifted 4 bits; used for output function table lookup.
     unsigned int waveform;
 
-    int floating_output_ttl;
-
     unsigned int waveform_output;
 
-    /// Current and previous accumulator value.
+    /// Current accumulator value.
     unsigned int accumulator;
 
-    // Fout  = (Fn*Fclk/16777216)Hz
+    // Fout = (Fn*Fclk/16777216)Hz
     unsigned int freq;
 
-    // 8580 tri/saw pipeline
+    /// 8580 tri/saw pipeline
     unsigned int tri_saw_pipeline;
+
+    /// The OSC3 value
     unsigned int osc3;
 
     /// Remaining time to fully reset shift register.
-    int shift_register_reset;
+    unsigned int shift_register_reset;
 
-    /// Current chip model's shift register reset time.
-    int model_shift_register_reset;
+    // The wave signal TTL when no waveform is selected
+    unsigned int floating_output_ttl;
 
     /// The control register bits. Gate is handled by EnvelopeGenerator.
     //@{
@@ -148,9 +148,13 @@ private:
 
     void write_shift_register();
 
-    void reset_shift_register();
-
     void set_noise_output();
+    
+    void set_no_noise_or_noise_output();
+
+    void waveBitfade();
+
+    void shiftregBitfade();
 
 public:
     void setWaveformModels(matrix_t* models);
@@ -165,7 +169,7 @@ public:
     void setChipModel(ChipModel chipModel);
 
     /**
-     * SID clocking - 1 cycle.
+     * SID clocking.
      */
     void clock();
 
@@ -174,8 +178,8 @@ public:
      * This must be done after all the oscillators have been clock()'ed,
      * so that they are in the same state.
      *
-     * @param syncDest The oscillator I am syncing
-     * @param syncSource The oscillator syncing me.
+     * @param syncDest The oscillator that will be synced
+     * @param syncSource The sync source oscillator
      */
     void synchronize(WaveformGenerator* syncDest, const WaveformGenerator* syncSource) const;
 
@@ -191,17 +195,17 @@ public:
         ring_msb_mask(0),
         no_noise(0),
         noise_output(0),
-        no_noise_or_noise_output(no_noise | noise_output),
+        no_noise_or_noise_output(0),
         no_pulse(0),
         pulse_output(0),
         waveform(0),
-        floating_output_ttl(0),
         waveform_output(0),
         accumulator(0x555555),          // Accumulator's even bits are high on powerup
         freq(0),
         tri_saw_pipeline(0x555),
         osc3(0),
         shift_register_reset(0),
+        floating_output_ttl(0),
         test(false),
         sync(false),
         msb_rising(false),
@@ -295,7 +299,7 @@ void WaveformGenerator::clock()
     {
         if (unlikely(shift_register_reset != 0) && unlikely(--shift_register_reset == 0))
         {
-            reset_shift_register();
+            shiftregBitfade();
 
             // New noise waveform output.
             set_noise_output();
@@ -368,7 +372,7 @@ float WaveformGenerator::output(const WaveformGenerator* ringModulator)
         // Age floating DAC input.
         if (likely(floating_output_ttl != 0) && unlikely(--floating_output_ttl == 0))
         {
-            waveform_output = 0;
+            waveBitfade();
         }
     }
 

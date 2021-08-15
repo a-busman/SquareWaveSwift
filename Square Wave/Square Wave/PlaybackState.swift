@@ -144,7 +144,7 @@ class PlaybackState: ObservableObject {
                 self.playTimer = Timer.scheduledTimer(withTimeInterval: 0.5, repeats: true) { _ in
                     self.elapsedTime = Int(Double(AudioEngine.sharedInstance()?.getElapsedTime() ?? 0) * self.currentTempo)
                     self.updateNowPlayingElapsed()
-                    if let didEnd = AudioEngine.sharedInstance()?.getTrackEnded() {
+                    if let didEnd = AudioEngine.sharedInstance()?.isTrackEnded() {
                         if (didEnd && !self.loopTrack && !self.trackEnded) || (didEnd && self.loopTrack && !self.trackEnded && self.nowPlayingTrack?.length ?? 0 > 0) {
                             self.playTimer?.invalidate()
                             self.trackEnded = true
