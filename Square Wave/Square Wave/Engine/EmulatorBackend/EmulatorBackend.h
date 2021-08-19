@@ -9,7 +9,26 @@
 #ifndef EmulatorBackend_h
 #define EmulatorBackend_h
 
-#import <Foundation/Foundation.h>
+@class Track;
+
+typedef struct {
+    // Track data
+    UInt32 introLength;
+    UInt32 length;
+    UInt32 loopLength;
+    NSString * title;
+    UInt16 trackNum;
+    
+    // Artist data
+    NSString * artist;
+    
+    // Game data
+    NSString * game;
+    NSString * year;
+    
+    // System data
+    NSString * system;
+} track_info_t;
 
 @interface EmulatorBackend : NSObject
 
@@ -28,6 +47,10 @@
 - (int)tell;
 - (void)ignoreSilence:(int)ignore;
 - (void)play:(int)sampleCount buffer:(SInt16 *)buf;
++ (track_info_t)getTrackInfo:(NSString *)fileName trackNum:(UInt16)trackNum;
+- (track_info_t)getTrackInfo:(UInt16)trackNum;
+
+@property (nonatomic, readwrite) int mSampleRate;
 
 @end
 

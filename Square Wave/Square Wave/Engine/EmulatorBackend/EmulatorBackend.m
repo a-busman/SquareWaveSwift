@@ -9,19 +9,20 @@
 #import <Foundation/Foundation.h>
 
 #import "EmulatorBackend.h"
-#import "EmulatorBackendPrivate.h"
+
+#define UNIMPLEMENTED_EXCEPTION [NSException exceptionWithName:NSInternalInconsistencyException \
+                                     reason:[NSString stringWithFormat:@"You must override %@ in a subclass", NSStringFromSelector(_cmd)] \
+                                     userInfo:nil]
 
 @implementation EmulatorBackend
 
 + (BOOL)isFileCompatible:(NSString *)fileName {
-    NSLog(@"%s unimplemented", __FUNCTION__);
+    @throw UNIMPLEMENTED_EXCEPTION;
     return NO;
 }
 
 - (id)init {
-    @throw [NSException exceptionWithName:NSInternalInconsistencyException
-      reason:@"-init is not a valid initializer for the class Foo"
-    userInfo:nil];
+    @throw UNIMPLEMENTED_EXCEPTION;
 }
 
 - (id)init:(int)sampleRate {
@@ -31,60 +32,70 @@
 }
 
 - (void)openFile:(NSString *)fileName {
-    NSLog(@"%s unimplemented", __FUNCTION__);
+    @throw UNIMPLEMENTED_EXCEPTION;
 }
 
 - (int)getTrackCount {
-    NSLog(@"%s unimplemented", __FUNCTION__);
+    @throw UNIMPLEMENTED_EXCEPTION;
     return -1;
 }
 
 - (void)startTrack:(int)trackNum {
-    NSLog(@"%s unimplemented", __FUNCTION__);
+    @throw UNIMPLEMENTED_EXCEPTION;
 }
 
 - (void)muteVoices:(int)mask {
-    NSLog(@"%s unimplemented", __FUNCTION__);
+    @throw UNIMPLEMENTED_EXCEPTION;
 }
 
 - (int)getVoiceCount {
-    NSLog(@"%s unimplemented", __FUNCTION__);
+    @throw UNIMPLEMENTED_EXCEPTION;
     return -1;
 }
 
 - (NSString *)getVoiceName:(int)index {
-    NSLog(@"%s unimplemented", __FUNCTION__);
+    @throw UNIMPLEMENTED_EXCEPTION;
     return nil;
 }
 
 - (BOOL)isTrackEnded {
-    NSLog(@"%s unimplemented", __FUNCTION__);
+    @throw UNIMPLEMENTED_EXCEPTION;
     return NO;
 }
 
 - (void)setFade:(int)ms {
-    NSLog(@"%s unimplemented", __FUNCTION__);
+    @throw UNIMPLEMENTED_EXCEPTION;
 }
 
 - (void)setTempo:(double)tempo {
-    NSLog(@"%s unimplemented", __FUNCTION__);
+    @throw UNIMPLEMENTED_EXCEPTION;
 }
 
 - (void)resetFade {
-    NSLog(@"%s unimplemented", __FUNCTION__);
+    @throw UNIMPLEMENTED_EXCEPTION;
 }
 
 - (int)tell {
-    NSLog(@"%s unimplemented", __FUNCTION__);
+    @throw UNIMPLEMENTED_EXCEPTION;
     return -1;
 }
 
 - (void)play:(int)sampleCount buffer:(SInt16 *)buf {
-    NSLog(@"%s unimplemented", __FUNCTION__);
+    @throw UNIMPLEMENTED_EXCEPTION;
 }
 
 - (void)ignoreSilence:(int)ignore {
-    NSLog(@"%s unimplemented", __FUNCTION__);
+    @throw UNIMPLEMENTED_EXCEPTION;
+}
+
++ (Track *)getTrackInfo:(NSString *)fileName {
+    @throw UNIMPLEMENTED_EXCEPTION;
+    return nil;
+}
+
+- (Track *)getTrackInfo {
+    @throw UNIMPLEMENTED_EXCEPTION;
+    return nil;
 }
 
 @end

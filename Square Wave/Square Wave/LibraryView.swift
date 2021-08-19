@@ -18,7 +18,7 @@ struct LibraryView: View {
         Group {
             if self.hasTracks {
                 List {
-                    NavigationLink(destination: PlaylistsView()) {
+                    NavigationLink(destination: PlaylistsView().environmentObject(playbackState)) {
                         Text(NSLocalizedString("Playlists", comment: "Playlists"))
                     }
                     NavigationLink(destination: PlatformsView()) {

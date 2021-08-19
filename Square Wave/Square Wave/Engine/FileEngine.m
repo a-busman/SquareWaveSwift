@@ -31,8 +31,15 @@ const NSString * kGameBoyFolder      = @"GameBoy";
 const NSString * kSpectrumFolder     = @"Spectrum";
 const NSString * kTurboGrafxFolder   = @"TurboGrafx";
 const NSString * kMasterSystemFolder = @"MasterSystem";
+const NSString * kC64Folder          = @"C64";
 
-const NSString * const kSupportedFileTypes[] = { @"zip", @"7z", @"rar", @"nsf", @"ay", @"gbs", @"gym", @"hes", @"kss", @"sap", @"spc", @"vgm" };
+const NSString * const kSupportedFileTypes[] = {
+    // Archives
+    @"zip", @"7z", @"rar",
+    // GME
+    @"nsf", @"ay", @"gbs", @"gym", @"hes", @"kss", @"sap", @"spc", @"vgm",
+    // SID
+    @"sid", @"c64", @"prg", @"p00", @"mus" };
 
 const NSString * kAddToThisFolder = @"Add music files here";
 
@@ -48,7 +55,12 @@ typedef enum {
     KSS,
     SAP,
     SPC,
-    VGM
+    VGM,
+    SID,
+    C64,
+    PRG,
+    P00,
+    MUS
 } FILE_TYPE;
 
 /**
@@ -308,6 +320,11 @@ typedef enum {
         case SAP:
         case SPC:
         case VGM:
+        case SID:
+        case C64:
+        case PRG:
+        case P00:
+        case MUS:
         {
             dispatch_async(dispatch_get_main_queue(), ^{
                 NSError *err = nil;

@@ -9,7 +9,6 @@
 #import <Foundation/Foundation.h>
 
 #import "Gme.h"
-#import "EmulatorBackendPrivate.h"
 
 #include "../../gme/gme.h"
 
@@ -123,7 +122,7 @@ return; \
 
 - (int)tell {
     @synchronized (self) {
-        if (_mEmu == nil) {
+        if (_mEmu == NULL) {
             return -1;
         }
         return gme_tell(_mEmu);
@@ -141,6 +140,30 @@ return; \
     @synchronized (self) {
         CHECK_EMU_AND_RETURN();
         gme_ignore_silence(_mEmu, ignore);
+    }
+}
+
+- (track_info_t)getTrackInfo:(UInt16)trackNum {
+    @synchronized (self) {
+        track_info_t trackInfo = {};
+        if (_mEmu == NULL) {
+            return trackInfo;
+        }
+        gme_info_t * info = NULL;
+        handle_error(gme_track_info(_mEmu, &info, trackNum));
+        if (info == NULL) {
+            return trackInfo;
+        }
+        [NSString stringWithUTF8String:info->author];
+        trackInfo.artist = [NSString stringWithUTF8String:info->author];
+        trackInfo.game = [NSString stringWithUTF8String:info->game];
+        trackInfo.introLength = info->intro_length;
+        trackInfo.length = info->length;
+        trackInfo.loopLength = info->loop_length;
+        trackInfo.system = [NSString stringWithUTF8String:info->system];
+        trackInfo.title = [NSString stringWithUTF8String:info->song];
+        trackInfo.trackNum = info->track_num;
+        return trackInfo;
     }
 }
 

@@ -9,7 +9,6 @@
 #import <Foundation/Foundation.h>
 
 #import "Sid.h"
-#import "EmulatorBackendPrivate.h"
 
 #include "../../libsidplay/config.h"
 #include "../../libsidplay/sidplayfp/sidplayfp.h"
@@ -74,8 +73,7 @@ NSArray * sidFileNameExt = [NSArray arrayWithObjects:
 }
 
 - (void)openFile:(NSString *)fileName {
-    const char *path_string = [fileName UTF8String];
-    _mTune = new SidTune(path_string);
+    _mTune = new SidTune([fileName UTF8String]);
     _mPlayer = new sidplayfp();
     _mPlayer->load(_mTune);
 }
@@ -158,6 +156,47 @@ NSArray * sidFileNameExt = [NSArray arrayWithObjects:
 
 - (void)ignoreSilence:(int)ignore {
     UNSUPPORTED(@"ignoreSilence");
+}
+
+- (track_info_t)getTrackInfo:(UInt16)trackNum {
+    @synchronized (self) {
+        track_info_t trackInfo = {};
+        if (_mTune == nullptr) {
+            return trackInfo;
+        }
+        const SidTuneInfo * info = _mTune->getInfo(trackNum);
+        
+        return [Sid getTrackInfo:info];
+    }
+}
+
++ (track_info_t)getTrackInfo:(NSString *)fileName trackNum:(UInt16)trackNum {
+    SidTune * tune = new SidTune([fileName UTF8String]);
+    if (tune == nullptr) {
+        return track_info_t{};
+    }
+    return [Sid getTrackInfo:tune->getInfo(trackNum)];
+}
+
++ (track_info_t)getTrackInfo:(const SidTuneInfo *)info {
+    track_info_t trackInfo = {};
+    if (info == nullptr) {
+        return trackInfo;
+    }
+    
+    if (info->numberOfInfoStrings() > 0) {
+        trackInfo.title = [NSString stringWithUTF8String:info->infoString(0)];
+    }
+    if (info->numberOfInfoStrings() > 1) {
+        trackInfo.artist = [NSString stringWithUTF8String:info->infoString(1)];
+    }
+    trackInfo.trackNum = info->currentSong();
+    trackInfo.system = @"Commodore 64";
+    
+    // Get game name from file name
+    trackInfo.game = [[NSString stringWithUTF8String:info->dataFileName()] stringByDeletingPathExtension];
+    
+    return trackInfo;
 }
 
 @end

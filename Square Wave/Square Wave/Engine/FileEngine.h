@@ -6,6 +6,9 @@
 //  Copyright © 2018 Alex Busman. All rights reserved.
 //
 
+#ifndef FileEngine_h
+#define FileEngine_h
+
 #define __DEBUG_FILE_ENGINE
 
 #if defined(__DEBUG_FILE_ENGINE)
@@ -37,3 +40,5 @@
 + (BOOL) clearAll;
 + (BOOL) clearDatabase;
 @end
+
+#endif /* FileEngine_h */

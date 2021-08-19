@@ -569,7 +569,6 @@
 		FAE4DC27241DCAAE0082C1F3 /* Gme.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Gme.m; sourceTree = "<group>"; };
 		FAE4DC29241DCAD80082C1F3 /* Sid.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = Sid.mm; sourceTree = "<group>"; };
 		FAE4DC2D241DCBD00082C1F3 /* Sid.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Sid.h; sourceTree = "<group>"; };
-		FAE4DC2E241DE1270082C1F3 /* EmulatorBackendPrivate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = EmulatorBackendPrivate.h; sourceTree = "<group>"; };
 		FAE4DC2F242582920082C1F3 /* ReceiptFetcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReceiptFetcher.swift; sourceTree = "<group>"; };
 		FAE4DC312425844E0082C1F3 /* AppleIncRootCertificate.cer */ = {isa = PBXFileReference; lastKnownFileType = file; path = AppleIncRootCertificate.cer; sourceTree = "<group>"; };
 		FAE4DC322425847C0082C1F3 /* SwiftyLocalReceiptValidator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwiftyLocalReceiptValidator.swift; sourceTree = "<group>"; };
@@ -1273,7 +1272,6 @@
 				FAE4DC23241DC9500082C1F3 /* EmulatorBackend.m */,
 				FAE4DC25241DCA180082C1F3 /* EmulatorBackend.h */,
 				FA4139DD2453ED0F00D1232C /* Gme */,
-				FAE4DC2E241DE1270082C1F3 /* EmulatorBackendPrivate.h */,
 			);
 			path = EmulatorBackend;
 			sourceTree = "<group>";
