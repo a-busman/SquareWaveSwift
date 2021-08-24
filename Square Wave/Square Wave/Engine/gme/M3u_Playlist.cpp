@@ -64,7 +64,7 @@ gme_err_t gme_load_m3u_data( Music_Emu* me, const void* data, long size )
 
 static char* skip_white( char* in )
 {
-	while ( *in == ' ' || *in == '\t' )
+	while ( *in == ' ' )
 		in++;
 	return in;
 }
@@ -354,28 +354,6 @@ static void parse_comment( char* in, M3u_Playlist::info_t& info, bool first )
 			*in = ':';
 		}
 	}
-    else
-    {
-        in = const_cast<char *>(field);
-        while ( *in && *in != ' ' )
-            in++;
-        if ( *in == ' ')
-        {
-            const char* text = skip_white( in );
-            if ( *text )
-            {
-                    *in = 0;
-                     if ( !strcmp( "@TITLE"   , field ) ) info.title    = text;
-                else if ( !strcmp( "@COMPOSER", field ) ) info.composer = text;
-                else if ( !strcmp( "@RIPPER"  , field ) ) info.ripping  = text;
-                else if ( !strcmp( "@TAGGER"  , field ) ) info.tagging  = text;
-                else
-                    text = 0;
-                if ( text )
-                    return;
-            }
-        }
-    }
 	
 	if ( first )
 		info.title = field;

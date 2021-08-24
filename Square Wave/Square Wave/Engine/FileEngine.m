@@ -832,7 +832,7 @@ typedef enum {
         int trackLength = gameInfo->length;
         int loopLength = gameInfo->loop_length;
         int introLength = gameInfo->intro_length;
-        int trackNum = gameInfo->track_num;
+        int trackNum = i;
         
         NSPredicate *predicate = [NSPredicate predicateWithFormat:@"name == %@ AND artist.name == %@ AND game.name == %@ AND system.name == %@", trackName, artistName, gameName, systemName];
         [request setPredicate:predicate];

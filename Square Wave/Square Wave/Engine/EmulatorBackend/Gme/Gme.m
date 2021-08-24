@@ -27,6 +27,8 @@ return; \
 } \
 } while(0);
 
+#define FADE_LENGTH_MS 8000
+
 + (BOOL)isFileCompatible:(NSString *)fileName {
     gme_type_t type = {0};
     gme_err_t err = gme_identify_file([fileName UTF8String], &type);
@@ -102,7 +104,7 @@ return; \
 - (void)setFade:(int)ms {
     @synchronized (self) {
         CHECK_EMU_AND_RETURN();
-        gme_set_fade(_mEmu, ms);
+        gme_set_fade(_mEmu, ms, FADE_LENGTH_MS);
     }
 }
 
@@ -116,7 +118,7 @@ return; \
 - (void)resetFade {
     @synchronized (self) {
         CHECK_EMU_AND_RETURN();
-        gme_reset_fade(_mEmu);
+        gme_set_fade(_mEmu, INT_MAX / 2 + 1, 0);
     }
 }
 
@@ -162,7 +164,7 @@ return; \
         trackInfo.loopLength = info->loop_length;
         trackInfo.system = [NSString stringWithUTF8String:info->system];
         trackInfo.title = [NSString stringWithUTF8String:info->song];
-        trackInfo.trackNum = info->track_num;
+        trackInfo.trackNum = trackNum;
         return trackInfo;
     }
 }

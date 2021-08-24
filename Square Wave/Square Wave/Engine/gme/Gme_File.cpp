@@ -182,7 +182,7 @@ blargg_err_t Gme_File::track_info( track_info_t* out, int track ) const
 	out->length        = -1;
 	out->loop_length   = -1;
 	out->intro_length  = -1;
-    out->track_num     = -1;
+	out->fade_length   = -1;
 	out->song [0]      = 0;
 	
 	out->game [0]      = 0;
@@ -202,22 +202,17 @@ blargg_err_t Gme_File::track_info( track_info_t* out, int track ) const
 	if ( playlist.size() )
 	{
 		M3u_Playlist::info_t const& i = playlist.info();
-        if ( *out->game == '\0' )
-        {
-            copy_field_( out->game  , i.title );
-        }
+		copy_field_( out->game  , i.title );
 		copy_field_( out->author, i.engineer );
 		copy_field_( out->author, i.composer );
 		copy_field_( out->dumper, i.ripping );
 		
 		M3u_Playlist::entry_t const& e = playlist [track];
-        if ( *out->song == '\0' ) {
-            copy_field_( out->song, e.name );
-        }
+		copy_field_( out->song, e.name );
 		if ( e.length >= 0 ) out->length       = e.length;
 		if ( e.intro  >= 0 ) out->intro_length = e.intro;
 		if ( e.loop   >= 0 ) out->loop_length  = e.loop;
-        if ( e.track  >= 0 ) out->track_num    = e.track - e.decimal_track;
+		if ( e.fade   >= 0 ) out->fade_length  = e.fade;
 	}
 	return 0;
 }

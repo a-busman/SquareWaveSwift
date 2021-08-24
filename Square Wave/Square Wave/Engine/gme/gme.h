@@ -1,6 +1,6 @@
 /* Game music emulator library C interface (also usable from C++) */
 
-/* Game_Music_Emu 0.6.3 */
+/* Game_Music_Emu 0.7.0 */
 #ifndef GME_H
 #define GME_H
 
@@ -10,7 +10,7 @@
 	extern "C" {
 #endif
 
-#define GME_VERSION 0x000603 /* 1 byte major, 1 byte minor, 1 byte patch-level */
+#define GME_VERSION 0x000700 /* 1 byte major, 1 byte minor, 1 byte patch-level */
 
 /* Error string returned by library functions, or NULL if no error (success) */
 typedef const char* gme_err_t;
@@ -41,11 +41,8 @@ BLARGG_EXPORT void gme_delete( Music_Emu* );
 
 /* Set time to start fading track out. Once fade ends track_ended() returns true.
 Fade time can be changed while track is playing. */
-BLARGG_EXPORT void gme_set_fade( Music_Emu*, int start_msec );
-    
-/* Remove track fade */
-BLARGG_EXPORT void gme_reset_fade( Music_Emu* );
-    
+BLARGG_EXPORT void gme_set_fade( Music_Emu*, int start_msec, int length_msec );
+
 /**
  * If do_autoload_limit is nonzero, then automatically load track length
  * metadata (if present) and terminate playback once the track length has been
@@ -64,7 +61,7 @@ BLARGG_EXPORT void gme_set_autoload_playback_limit( Music_Emu *, int do_autoload
  * @since 0.6.2
  */
 BLARGG_EXPORT int gme_autoload_playback_limit( Music_Emu const* );
-    
+
 /* True if a track has reached its end */
 BLARGG_EXPORT int gme_track_ended( Music_Emu const* );
 
@@ -116,8 +113,9 @@ struct BLARGG_EXPORT gme_info_t
 	/* Length if available, otherwise intro_length+loop_length*2 if available,
 	otherwise a default of 150000 (2.5 minutes). */
 	int play_length;
-    
-    int track_num;
+
+	/* fade length in milliseconds; -1 if unknown */
+	int fade_length;
 	
 	int i5,i6,i7,i8,i9,i10,i11,i12,i13,i14,i15; /* reserved */
 	
@@ -197,6 +195,7 @@ extern BLARGG_EXPORT const gme_type_t
 	gme_nsfe_type,
 	gme_sap_type,
 	gme_spc_type,
+	gme_rsn_type,
 	gme_vgm_type,
 	gme_vgz_type;
 
