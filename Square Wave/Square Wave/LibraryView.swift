@@ -9,6 +9,7 @@
 import SwiftUI
 
 struct LibraryView: View {
+    @Environment(\.managedObjectContext) var context
     @EnvironmentObject var playbackState: PlaybackState
     @State var hasTracks: Bool = false
     @State var isShowingPicker: Bool = false
@@ -18,19 +19,19 @@ struct LibraryView: View {
         Group {
             if self.hasTracks {
                 List {
-                    NavigationLink(destination: PlaylistsView()) {
+                    NavigationLink(destination: PlaylistsView().environment(\.managedObjectContext, context).environmentObject(playbackState)) {
                         Text(NSLocalizedString("Playlists", comment: "Playlists"))
                     }
-                    NavigationLink(destination: PlatformsView()) {
+                    NavigationLink(destination: PlatformsView().environment(\.managedObjectContext, context)) {
                         Text(NSLocalizedString("Platforms", comment: "Platforms"))
                     }
-                    NavigationLink(destination: ArtistsView()) {
+                    NavigationLink(destination: ArtistsView().environment(\.managedObjectContext, context)) {
                         Text(NSLocalizedString("Artists", comment: "Artists"))
                     }
-                    NavigationLink(destination: GamesView()) {
+                    NavigationLink(destination: GamesView().environment(\.managedObjectContext, context)) {
                         Text(NSLocalizedString("Games", comment: "Games"))
                     }
-                    NavigationLink(destination: SongsView(predicate: nil).environmentObject(playbackState)) {
+                    NavigationLink(destination: SongsView(predicate: nil).environment(\.managedObjectContext, context).environmentObject(playbackState)) {
                         Text(NSLocalizedString("Songs", comment: "Songs"))
                     }
                 }
